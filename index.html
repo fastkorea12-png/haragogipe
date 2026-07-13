@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>도멘 니콜라스 페로 선물 와인 제안</title>
+  <meta name="description" content="도멘 니콜라스 페로, 마랑주 프리미에 크뤼를 감사 선물 후보로 제안하는 스토리 페이지">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #201b18;
+      --text: #342a25;
+      --muted: #73665d;
+      --line: #d7c8b7;
+      --paper: #fbf6ee;
+      --cream: #fffaf2;
+      --wine: #8f2634;
+      --wine-deep: #4b1420;
+      --moss: #52624c;
+      --stone: #e7ded2;
+      --gold: #b58a56;
+      --shadow: 0 28px 80px rgba(50, 31, 21, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Apple SD Gothic Neo", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background:
+        linear-gradient(110deg, rgba(82, 98, 76, 0.12), transparent 38rem),
+        linear-gradient(180deg, #f7efe4 0%, #fbf7ef 48%, #eee1d2 100%);
+      letter-spacing: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    h1,
+    h2,
+    h3,
+    p,
+    figure {
+      margin: 0;
+    }
+
+    .wrap {
+      width: min(1140px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      min-height: 92vh;
+      display: grid;
+      align-items: center;
+      padding: 74px 0 96px;
+      background:
+        linear-gradient(90deg, rgba(255, 250, 242, 0.98) 0%, rgba(255, 250, 242, 0.86) 58%, rgba(241, 229, 215, 0.7) 100%),
+        radial-gradient(circle at 84% 48%, rgba(143, 38, 52, 0.12), transparent 24rem);
+      border-bottom: 1px solid rgba(143, 38, 52, 0.16);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(300px, 0.7fr);
+      gap: 56px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      color: var(--wine);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 40px;
+      height: 1px;
+      background: currentColor;
+    }
+
+    h1 {
+      max-width: 710px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(44px, 7vw, 86px);
+      font-weight: 500;
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 650px;
+      margin-top: 28px;
+      color: var(--text);
+      font-size: 20px;
+      line-height: 1.78;
+      word-break: keep-all;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      padding: 0 18px;
+      font-weight: 700;
+    }
+
+    .button.primary {
+      background: var(--wine);
+      color: #fff8ef;
+      box-shadow: 0 16px 34px rgba(143, 38, 52, 0.22);
+    }
+
+    .button.secondary {
+      border: 1px solid rgba(143, 38, 52, 0.28);
+      background: rgba(255, 250, 242, 0.78);
+      color: var(--wine-deep);
+    }
+
+    .hero-panel {
+      border: 1px solid rgba(215, 200, 183, 0.88);
+      border-radius: 8px;
+      background: rgba(255, 250, 242, 0.88);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      backdrop-filter: blur(7px);
+    }
+
+    .bottle-line {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+      min-height: 450px;
+      border-radius: 6px;
+      background:
+        radial-gradient(circle at 50% 24%, rgba(181, 138, 86, 0.18), transparent 15rem),
+        linear-gradient(180deg, rgba(255, 250, 242, 0.9), rgba(231, 222, 210, 0.72));
+      padding: 24px 12px 18px;
+    }
+
+    .bottle-line img {
+      width: 100%;
+      height: 390px;
+      object-fit: contain;
+      filter: drop-shadow(0 22px 20px rgba(44, 29, 22, 0.22));
+    }
+
+    .hero-panel figcaption {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    main {
+      padding: 0 0 86px;
+    }
+
+    .summary {
+      margin-top: -36px;
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .summary-item {
+      min-height: 132px;
+      border: 1px solid rgba(143, 38, 52, 0.13);
+      border-radius: 8px;
+      background: rgba(255, 250, 242, 0.95);
+      box-shadow: 0 14px 42px rgba(58, 39, 26, 0.1);
+      padding: 24px;
+    }
+
+    .summary-item span {
+      display: block;
+      margin-bottom: 11px;
+      color: var(--wine);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .summary-item b {
+      display: block;
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.45;
+      word-break: keep-all;
+    }
+
+    .section {
+      padding-top: 82px;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.7fr) minmax(280px, 1fr);
+      gap: 48px;
+      align-items: end;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(34px, 5vw, 58px);
+      font-weight: 500;
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.78;
+      word-break: keep-all;
+    }
+
+    .story-block {
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255, 250, 242, 0.86);
+      display: grid;
+      grid-template-columns: minmax(0, 0.74fr) minmax(280px, 1fr);
+      overflow: hidden;
+    }
+
+    .story-year {
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      min-height: 420px;
+      padding: 36px;
+      background:
+        linear-gradient(145deg, rgba(75, 20, 32, 0.92), rgba(32, 27, 24, 0.92)),
+        linear-gradient(180deg, var(--wine-deep), var(--ink));
+      color: #fff7ec;
+    }
+
+    .story-year strong {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(66px, 10vw, 122px);
+      font-weight: 500;
+      line-height: 0.86;
+    }
+
+    .story-year span {
+      max-width: 300px;
+      color: rgba(255, 247, 236, 0.78);
+      font-size: 17px;
+      line-height: 1.72;
+      word-break: keep-all;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 0;
+      padding: 16px 0;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 20px;
+      padding: 25px 32px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .timeline-row:last-child {
+      border-bottom: 0;
+    }
+
+    .timeline-row time {
+      color: var(--wine);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+    }
+
+    .timeline-row p {
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.72;
+      word-break: keep-all;
+    }
+
+    .maranges {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
+      gap: 20px;
+    }
+
+    .essay,
+    .recognition {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 250, 242, 0.88);
+      padding: 30px;
+    }
+
+    .essay p,
+    .recognition p {
+      color: var(--text);
+      font-size: 17px;
+      line-height: 1.86;
+      word-break: keep-all;
+    }
+
+    .essay p + p,
+    .recognition p + p {
+      margin-top: 16px;
+    }
+
+    .recognition {
+      background:
+        linear-gradient(150deg, rgba(82, 98, 76, 0.15), transparent 54%),
+        rgba(255, 250, 242, 0.9);
+    }
+
+    .badge {
+      display: inline-flex;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      background: var(--moss);
+      color: #fff9ef;
+      padding: 9px 13px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .cuvee-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .cuvee-card {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 250, 242, 0.9);
+      padding: 26px;
+      overflow: hidden;
+    }
+
+    .cuvee-visual {
+      display: grid;
+      place-items: center;
+      min-height: 260px;
+      margin: -4px 0 20px;
+      border-radius: 8px;
+      background:
+        radial-gradient(circle at center 28%, rgba(181, 138, 86, 0.2), transparent 11rem),
+        linear-gradient(180deg, rgba(255, 250, 242, 0.96), rgba(231, 222, 210, 0.72));
+    }
+
+    .cuvee-visual img {
+      width: auto;
+      height: 240px;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 17px rgba(44, 29, 22, 0.22));
+    }
+
+    .cuvee-card.recommended {
+      border-color: rgba(143, 38, 52, 0.38);
+      box-shadow: 0 16px 46px rgba(143, 38, 52, 0.12);
+    }
+
+    .cuvee-card .tag {
+      display: inline-flex;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      background: rgba(143, 38, 52, 0.1);
+      color: var(--wine);
+      padding: 8px 11px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .cuvee-card h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 30px;
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    .ko-name {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-family: "Apple SD Gothic Neo", "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    .cuvee-card p {
+      margin-top: 16px;
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.76;
+      word-break: keep-all;
+    }
+
+    .decision {
+      margin-top: 22px;
+      border: 1px solid rgba(143, 38, 52, 0.18);
+      border-radius: 8px;
+      background:
+        linear-gradient(120deg, rgba(143, 38, 52, 0.1), transparent 48%),
+        rgba(255, 250, 242, 0.92);
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .decision h3 {
+      color: var(--wine-deep);
+      font-size: clamp(28px, 4vw, 42px);
+      line-height: 1.14;
+      word-break: keep-all;
+    }
+
+    .decision p {
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.82;
+      word-break: keep-all;
+    }
+
+    .message-band {
+      display: grid;
+      grid-template-columns: minmax(0, 0.7fr) minmax(280px, 1fr);
+      gap: 36px;
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(75, 20, 32, 0.95), rgba(32, 27, 24, 0.95)),
+        var(--wine-deep);
+      padding: 38px;
+      color: #fff8ef;
+    }
+
+    .message-band h2 {
+      color: #fff8ef;
+      font-size: clamp(32px, 4vw, 52px);
+    }
+
+    .message {
+      border-left: 3px solid var(--gold);
+      padding-left: 24px;
+      color: rgba(255, 248, 239, 0.92);
+      font-size: 18px;
+      line-height: 1.9;
+      word-break: keep-all;
+    }
+
+    @media (max-width: 920px) {
+      .hero {
+        min-height: auto;
+        background:
+          linear-gradient(180deg, rgba(255, 250, 242, 0.98) 0%, rgba(255, 250, 242, 0.92) 100%);
+      }
+
+      .hero-grid,
+      .summary,
+      .section-head,
+      .story-block,
+      .maranges,
+      .cuvee-grid,
+      .decision,
+      .message-band {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel {
+        max-width: 620px;
+      }
+
+      .story-year {
+        min-height: 260px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .wrap {
+        width: min(100% - 28px, 1140px);
+      }
+
+      .hero {
+        padding: 52px 0 72px;
+      }
+
+      .hero-copy,
+      .section-head p,
+      .decision p {
+        font-size: 17px;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .summary {
+        margin-top: -24px;
+      }
+
+      .story-year,
+      .essay,
+      .recognition,
+      .decision,
+      .message-band {
+        padding: 24px;
+      }
+
+      .bottle-line {
+        min-height: 360px;
+      }
+
+      .bottle-line img {
+        height: 305px;
+      }
+
+      .timeline-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 22px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero" aria-label="도멘 니콜라스 페로 소개">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">하라고지페 선물 와인 제안 · 부르고뉴</div>
+        <h1>하라고지페가 제안하는 감사의 와인</h1>
+        <p class="hero-copy">
+          도멘 니콜라스 페로는 화려하게 시작한 이야기가 아닙니다. 떠났다가 돌아오고, 겸업으로 버티고, 오래 흔들린 끝에 자기 포도밭에 온전히 전념하게 된 작은 가족 도멘입니다. 그래서 이 와인은 “어려운 일을 끝내 가능하게 만든 분”께 전할 감사의 언어가 있습니다.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#recommend">추천 와인 보기</a>
+          <a class="button secondary" href="#message">감사 문구 보기</a>
+        </div>
+      </div>
+
+      <figure class="hero-panel">
+        <div class="bottle-line" aria-label="도멘 니콜라스 페로 세 가지 와인">
+          <img src="assets/clos-des-rois.png" alt="끌로 데 루아 와인 병">
+          <img src="assets/clos-roussot.png" alt="끌로 루쏘 와인 병">
+          <img src="assets/clos-des-loyeres.png" alt="끌로 데 루아예르 와인 병">
+        </div>
+        <figcaption>제안 후보: 끌로 데 루아 · 끌로 루쏘 · 끌로 데 루아예르</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <main>
+    <section class="wrap summary" aria-label="핵심 요약">
+      <div class="summary-item">
+        <span>도멘의 결</span>
+        <b>1947년 시작된 작은 가족 도멘, 4헥타르 규모의 극소량 생산</b>
+      </div>
+      <div class="summary-item">
+        <span>선물의 의미</span>
+        <b>오래 흔들려도 결국 자기 자리를 찾아낸 사람의 와인</b>
+      </div>
+      <div class="summary-item">
+        <span>제안 방향</span>
+        <b>감사 메시지는 끌로 데 루아, 완성도는 끌로 데 루아예르</b>
+      </div>
+    </section>
+
+    <section class="section wrap">
+      <div class="section-head">
+        <h2>도멘 이야기 <span class="ko-name">Domaine Story</span></h2>
+        <p>
+          와인을 잘 모르는 분께도 전하기 쉬운 핵심은 하나입니다. 이 도멘은 “처음부터 완성된 명성”이 아니라, 돌아와서도 오래 버티며 결국 뿌리내린 사람의 이야기입니다.
+        </p>
+      </div>
+
+      <div class="story-block">
+        <div class="story-year">
+          <strong>1947</strong>
+          <span>니콜라스의 할아버지 조제프가 부르고뉴 마랑주에 작은 가족 도멘을 시작했습니다.</span>
+        </div>
+        <div class="timeline">
+          <div class="timeline-row">
+            <time>2012</time>
+            <p>니콜라스는 한때 도멘을 떠나 인근 상트네의 Château de la Crée에서 재배 책임자로 일했습니다. 아버지가 은퇴하면서 돌아왔지만, 처음부터 안정적인 복귀는 아니었습니다.</p>
+          </div>
+          <div class="timeline-row">
+            <time>4ha</time>
+            <p>처음 맡은 밭은 4헥타르. 생계를 온전히 기대기에는 작았고, 그는 한동안 다른 일을 병행하며 반쪽짜리 도멘 운영을 이어갔습니다.</p>
+          </div>
+          <div class="timeline-row">
+            <time>2021</time>
+            <p>비로소 다른 일을 완전히 접고 포도밭에만 전념하기로 결심합니다. 돌아와서도 한참을 흔들리다가, 결국 자기 땅에 온전히 뿌리내린 셈입니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap">
+      <div class="section-head">
+        <h2>마랑주 <span class="ko-name">Maranges</span></h2>
+        <p>
+          마랑주는 코트 드 본 최남단에 자리한 부르고뉴 산지입니다. 이름만으로 과시하기보다, 아는 사람이 조용히 고르는 산지라는 점이 선물의 품격을 더합니다.
+        </p>
+      </div>
+
+      <div class="maranges">
+        <div class="essay">
+          <p>
+            니콜라스 페로가 집중하는 곳은 오래 방치되다시피 했던 올드 바인 밭입니다. 그는 오래된 나무를 무리하게 밀어붙이기보다, 새로운 전정 방식으로 다시 숨 쉬게 만들고 있습니다.
+          </p>
+          <p>
+            양조장은 15세기 시토회 수도원 건물을 그대로 사용합니다. 오래된 공간, 오래된 뿌리, 그리고 뒤늦게 돌아온 사람이 다시 일으켜 세우는 포도밭. 이 세 가지가 이 도멘의 이야기를 선물답게 만들어줍니다.
+          </p>
+        </div>
+        <div class="recognition">
+          <span class="badge">미슐랭 그레이프 셀렉션 부르고뉴 · 셀렉티드 선정</span>
+          <p>
+            최근 미슐랭 그레이프 셀렉션 부르고뉴에서 셀렉티드로 소개되며, 아직 널리 알려지지 않은 작은 생산자임에도 주목할 만한 도멘으로 이름을 올렸습니다.
+          </p>
+          <p>
+            “많이 알려진 유명 와인”보다 “이제 막 알아보는 사람들이 늘어나는 와인”이라는 점이, 정성스럽게 찾아 고른 제안이라는 인상을 줍니다.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section wrap" id="recommend">
+      <div class="section-head">
+        <h2>세 가지 추천 와인 <span class="ko-name">Three Cuvées</span></h2>
+        <p>
+          세 병 모두 마랑주 프리미에 크뤼의 격을 갖고 있지만, 제안 포인트는 조금씩 다릅니다. 어떤 병을 고르느냐에 따라 감사의 메시지도 달라집니다.
+        </p>
+      </div>
+
+      <div class="cuvee-grid">
+        <article class="cuvee-card recommended">
+          <figure class="cuvee-visual">
+            <img src="assets/clos-des-rois.png" alt="끌로 데 루아 와인 병">
+          </figure>
+          <span class="tag">감사 선물 1순위</span>
+          <h3>Clos des Rois <span class="ko-name">끌로 데 루아 · 왕들의 밭</span></h3>
+          <p>
+            85년 된 올드 바인이 찬바람을 피하는 지형에서 천천히 익어가는 밭입니다. 오래 버틴 뿌리가 보호받아 결실을 맺는다는 이미지가 있어, “덕분에 일이 풀렸다”는 감사와 가장 잘 이어집니다.
+          </p>
+        </article>
+
+        <article class="cuvee-card">
+          <figure class="cuvee-visual">
+            <img src="assets/clos-roussot.png" alt="끌로 루쏘 와인 병">
+          </figure>
+          <span class="tag">작지만 밀도 있게</span>
+          <h3>Clos Roussot <span class="ko-name">끌로 루쏘 · 붉은 흙의 밭</span></h3>
+          <p>
+            점토질이 강해 수확량은 많지 않지만 풍미가 응축되는 밭입니다. “크게 드러나지 않아도 결과는 단단하다”는 메시지를 전하고 싶을 때 어울립니다.
+          </p>
+        </article>
+
+        <article class="cuvee-card">
+          <figure class="cuvee-visual">
+            <img src="assets/clos-des-loyeres.png" alt="끌로 데 루아예르 와인 병">
+          </figure>
+          <span class="tag">완성도 강조</span>
+          <h3>Clos des Loyères <span class="ko-name">끌로 데 루아예르 · 균형의 밭</span></h3>
+          <p>
+            구조감과 우아함의 균형이 좋아 도멘의 대표 퀴베로 제안하기 좋습니다. 여러 시행착오 끝에 다다른 완성형이라는 뉘앙스를 담을 수 있습니다.
+          </p>
+        </article>
+      </div>
+
+      <div class="decision">
+        <h3>하라고지페의 1순위 제안은 끌로 데 루아</h3>
+        <p>
+          어려운 일을 해결해주신 분께 드리는 감사 선물이라면 끌로 데 루아가 가장 자연스럽습니다. “오래 버틴 것이 결국 보호받고 결실을 맺었다”는 이야기가, 받는 분의 도움으로 일이 풀렸다는 감사와 부드럽게 이어집니다.
+        </p>
+      </div>
+    </section>
+
+    <section class="section wrap" id="message">
+      <div class="message-band">
+        <h2>선물 카드 문구 <span class="ko-name">Gift Message</span></h2>
+        <p class="message">
+          오래 버틴 뿌리가 마침내 좋은 결실을 맺듯,<br>
+          어려운 과정 속에서도 길을 만들어주신 덕분에<br>
+          저희도 중요한 한 걸음을 내디딜 수 있었습니다.<br><br>
+          돌아와 끝내 자기 자리에 뿌리내린 이 도멘의 이야기처럼,<br>
+          보내주신 배려와 신뢰를 오래 기억하겠습니다.<br><br>
+          깊은 도움에 진심으로 감사드립니다.
+        </p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
