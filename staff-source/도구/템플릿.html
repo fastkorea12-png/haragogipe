@@ -116,8 +116,8 @@ function wineFactAnswer(q){
 function wineInfoAnswer(q){
   var n=norm(q);if(/추천|골라/.test(n))return null;
   var fields=[['품종','품종|포도종|포도종류|무슨포도|어떤포도|variet|grape'],['국가','국가|나라|어느나라|어디나라|country'],['지역','지역|산지|생산지|어디서만|어디와인|region'],['도수','도수|알코올|알콜|alcohol|abv'],['가격','가격|얼마|price'],['영문명','영문명|영어이름|영어명']];
-  var requested=fields.filter(function(f){return new RegExp(f[1]).test(n);});if(!requested.length)return null;
-  var hits=namedWineMatches(q);
+  var hits=namedWineMatches(q),intent=n;hits.slice().sort(function(a,b){return b.start-a.start;}).forEach(function(h){intent=intent.slice(0,h.start)+intent.slice(h.start+h.length);});
+  var requested=fields.filter(function(f){return new RegExp(f[1]).test(intent);});if(!requested.length)return null;
   if(!hits.length&&/^(그럼|그러면|그중|그것|그와인|이와인|그리고)/.test(n))aiConversation.slice(-2).reverse().some(function(m){hits=namedWineMatches(m.text);return hits.length>0;});
   if(!hits.length)return null;
   function name(e){return e.title.replace(/\s*\([^)]*\)$/,'');}
