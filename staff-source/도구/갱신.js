@@ -4,3 +4,5 @@ for(const file of ['설명_반영.js','빌드.js','시험.js','전반_점검.js'
   const result=spawnSync(process.execPath,[path.join(__dirname,file)],{stdio:'inherit'});
   if(result.status!==0)process.exit(result.status||1);
 }
+const api=spawnSync(process.execPath,[path.join(__dirname,'..','서버','test.js')],{stdio:'inherit'});
+if(api.status!==0)process.exit(api.status||1);

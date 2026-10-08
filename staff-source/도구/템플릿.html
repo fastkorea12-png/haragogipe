@@ -14,6 +14,12 @@ body{background:var(--paper);color:var(--ink);font:16px/1.55 -apple-system,"Appl
 header{padding:12px 16px;border-bottom:1px solid var(--rule)}
 header h1{margin:0;font-size:17px;color:var(--wine);font-family:"Nanum Myeongjo",serif}
 header p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+header #ai-controls{font-family:inherit;font-size:12px;color:var(--muted)}
+header #ai-status{display:flex;align-items:flex-start;gap:10px;margin-top:8px}
+header #ai-status label{display:flex;align-items:center;gap:6px;white-space:nowrap}
+header #ai-status input{flex:none;width:17px;height:17px;accent-color:var(--wine)}
+header #ai-status small{line-height:1.4}
+header #record-status{min-height:0;margin:0;padding:0 16px;color:var(--muted);font-size:12px}
 #log{flex:1;min-height:0;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .m{max-width:88%;padding:9px 13px;border-radius:16px;word-break:keep-all;overflow-wrap:anywhere;white-space:pre-wrap}
 .bot{align-self:flex-start;background:var(--bot);border:1px solid var(--rule);border-bottom-left-radius:4px}
@@ -78,6 +84,8 @@ form button{border:0;background:var(--wine);color:var(--paper);border-radius:10p
 <body>
 <div id="app">
 <header><h1>하라고지페 근무 도움 챗봇</h1><p>오픈 · 손님 응대 · POS · 서빙 · 주방 · 마감</p></header>
+<div id="ai-status" hidden><label><input id="ai-mode" type="checkbox">Gemini 대화</label><small>켜면 질문, 최근 대화와 관련 매장 자료 일부가 Gemini로 전송됩니다. 손님·직원 개인정보는 입력하지 마세요.</small></div>
+<p id="record-status" aria-live="polite"></p>
 <nav id="departments" aria-label="업무 선택"></nav>
 <div id="chips"></div>
 <div id="log" aria-live="polite"></div>
@@ -103,6 +111,8 @@ form button{border:0;background:var(--wine);color:var(--paper);border-radius:10p
 var KB = /*KB_JSON*/[];
 var WINE_DATA = /*WINE_JSON*/[];
 var KB_VERSION = /*VERSION_JSON*/{};
+var AI_ENDPOINT = /*AI_ENDPOINT_JSON*/"";
+var aiConversation=[];
 var FALLBACK = "아직 정해진 게 없어요. 사장님께 확인해 주세요.";
 var FAQ = [
  ["오픈 준비","오픈 순서 알려줘"],
@@ -301,6 +311,11 @@ function answer(q){
   if(e.status==="확인") return {text:FALLBACK+"\n"+formatKnowledge(e.body,e.title), src:e.file+" · "+e.title,title:e.title};
   return {text:formatKnowledge(e.body,e.title), src:e.file+" · "+e.title,title:e.title};
 }
+function relevantContext(q){
+  var queries=[q].concat(aiConversation.slice(-4).filter(function(m){return m.role==='user';}).map(function(m){return m.text;}));
+  var scored=KB.map(function(e){var points=0;queries.forEach(function(query){var n=norm(query);e.kw.forEach(function(k){var nk=norm(k);if(nk.length>=2&&n.indexOf(nk)>=0)points+=nk.length;});if(n.indexOf(norm(e.title))>=0)points+=8;});return {entry:e,points:points};}).filter(function(x){return x.points>0;}).sort(function(a,b){return b.points-a.points;});
+  return scored.slice(0,3).map(function(x){return '## '+x.entry.title+'\n'+x.entry.body;}).join('\n\n').slice(0,4600);
+}
 if(typeof document!=="undefined"){
   var log=document.getElementById("log");
   function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
@@ -368,7 +383,10 @@ if(typeof document!=="undefined"){
     if(src){var source=document.createElement('details');source.className='answer-details';var summary=document.createElement('summary');summary.textContent='출처 보기';var s=document.createElement('span');s.className='src';s.textContent=src;source.appendChild(summary);source.appendChild(s);d.appendChild(source);}
     log.appendChild(d);if(cls==='bot'&&(wines||meta&&meta.checklist))d.scrollIntoView({block:'start'});else log.scrollTop=log.scrollHeight;
   }
-  function ask(q){q=q.trim(); if(!q)return; add("me",q); var a=answer(q); add("bot",a.text,a.src,a.wines,a.stockNote,a.title,a);}
+  function setRecordStatus(message){var status=document.getElementById('record-status');status.textContent=message;clearTimeout(status._timer);if(message)status._timer=setTimeout(function(){status.textContent='';},5000);}
+  function recordQuestion(q){if(!AI_ENDPOINT)return;var endpoint=AI_ENDPOINT.replace(/\/api\/chat$/,'/api/questions'),found=search(q);fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,category:found?found.title:'자유 질문',consent:true})}).then(function(r){return r.json();}).then(function(d){setRecordStatus(d.saved?'질문을 개선 기록에 남겼습니다. 90일 뒤 삭제됩니다.':(d.reason||d.error||'질문을 기록하지 못했습니다.'));}).catch(function(){setRecordStatus('질문 기록에 연결하지 못했습니다.');});}
+  function askWithAi(q){var a=answer(q);if(a.wines||a.src==='와인 추천 데이터'||(/추천|골라|어울리/.test(norm(q))&&/와인|레드|화이트|로제|스파클링|포트|초보|처음|육포/.test(norm(q))))return Promise.resolve(a);var messages=aiConversation.slice(-6).concat([{role:'user',text:q}]);return fetch(AI_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,context:relevantContext(q),messages:messages})}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'AI 연결 오류');return d;});}).then(function(d){aiConversation.push({role:'user',text:q},{role:'model',text:d.text});return{text:d.text,src:'Gemini · 매장 지식 검색',title:'직원 업무 안내'};}).catch(function(){setRecordStatus('Gemini 연결에 실패해 기존 매장 자료 답변을 표시합니다.');return a;});}
+  function ask(q){q=q.trim();if(!q)return;add('me',q);var record=document.getElementById('record-question');if(record&&record.checked){recordQuestion(q);record.checked=false;}var useAi=document.getElementById('ai-mode');if(useAi&&useAi.checked){askWithAi(q).then(function(a){add('bot',a.text,a.src,a.wines,a.stockNote,a.title,a);});return;}var a=answer(q);add('bot',a.text,a.src,a.wines,a.stockNote,a.title,a);}
   add("bot","안녕하세요. 근무 중 필요한 오픈 준비, 손님 응대, POS, 와인·안주 서빙, 주방 준비와 마감을 찾아볼 수 있어요. 와인 취향은 위에서 조절해 추천받고, 모르는 내용은 지어내지 않고 확인이 필요하다고 안내할게요.");
   var chips=document.getElementById("chips");
   var departments=[['오픈',[0]],['손님 응대',[1,6]],['주문·서빙',[2,3,4,5,7,9,10]],['주방',[]],['마감',[8]]];
@@ -380,6 +398,7 @@ if(typeof document!=="undefined"){
     document.getElementById('taste').hidden=index!==2;
   }
   departments.forEach(function(group,index){var b=document.createElement('button');b.type='button';b.textContent=group[0];b.onclick=function(){selectDepartment(index);};document.getElementById('departments').appendChild(b);});selectDepartment(0);
+  if(AI_ENDPOINT){document.getElementById('ai-status').hidden=false;var clear=document.createElement('button');clear.type='button';clear.textContent='대화 지우기';clear.onclick=function(){aiConversation=[];log.replaceChildren();add('bot','대화를 지웠어요. 매장 업무 질문을 입력해 주세요.');};document.getElementById('ai-status').appendChild(clear);var consent=document.createElement('label');consent.title='체크한 질문 문장과 매뉴얼 분류만 개선 기록에 저장합니다. 답변이나 직원 식별 정보는 저장하지 않습니다.';consent.style.cssText='display:flex;align-items:center;gap:6px;padding:3px 16px;color:var(--muted);font-size:12px';var recordBox=document.createElement('input');recordBox.type='checkbox';recordBox.id='record-question';recordBox.style.cssText='flex:none;width:15px;height:15px;accent-color:var(--wine)';consent.appendChild(recordBox);consent.appendChild(document.createTextNode('이 질문만 개선 기록에 남기기 · 질문만 저장, 90일 후 삭제'));document.getElementById('f').before(consent);}
   var version=document.createElement('p');version.textContent='자료 버전 · '+(KB_VERSION.sourceHash||'시안');document.querySelector('header').appendChild(version);
   document.querySelectorAll('#taste input[type=range]').forEach(function(el){el.oninput=function(){el.nextElementSibling.value=['낮음','중간','높음'][Number(el.value)-1];};});
   document.getElementById('tasteGo').onclick=function(){

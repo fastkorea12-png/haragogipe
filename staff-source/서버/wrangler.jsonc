@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "haragogipe-staff-ai",
+  "main": "index.js",
+  "compatibility_date": "2026-10-08",
+  "workers_dev": true,
+  "triggers": { "crons": ["0 18 * * *"] },
+  "secrets": { "required": ["GEMINI_API_KEY"] },
+  "ratelimits": [{ "name": "AI_LIMITER", "namespace_id": "87342011", "simple": { "limit": 30, "period": 60 } }],
+  "d1_databases": [{ "binding": "QUESTION_LOG", "database_name": "haragogipe-staff-question-log", "database_id": "CREATE_D1_DATABASE_AND_REPLACE_THIS_ID", "migrations_dir": "마이그레이션" }]
+}
