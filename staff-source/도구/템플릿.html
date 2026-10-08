@@ -15,10 +15,9 @@ header{padding:12px 16px;border-bottom:1px solid var(--rule)}
 header h1{margin:0;font-size:17px;color:var(--wine);font-family:"Nanum Myeongjo",serif}
 header p{margin:2px 0 0;font-size:12px;color:var(--muted)}
 header #ai-controls{font-family:inherit;font-size:12px;color:var(--muted)}
-header #ai-status{display:flex;align-items:flex-start;gap:10px;margin-top:8px}
-header #ai-status label{display:flex;align-items:center;gap:6px;white-space:nowrap}
-header #ai-status input{flex:none;width:17px;height:17px;accent-color:var(--wine)}
-header #ai-status small{line-height:1.4}
+#ai-status:not([hidden]){display:flex;align-items:center;gap:10px;padding:8px 16px;color:var(--muted);border-bottom:1px solid var(--rule)}
+#ai-status small{flex:1;font-size:12px;line-height:1.4}
+#ai-status button{flex:none;border:1px solid var(--rule);border-radius:6px;background:var(--bot);color:var(--muted);padding:6px 9px;font-size:12px}
 header #record-status{min-height:0;margin:0;padding:0 16px;color:var(--muted);font-size:12px}
 #log{flex:1;min-height:0;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .m{max-width:88%;padding:9px 13px;border-radius:16px;word-break:keep-all;overflow-wrap:anywhere;white-space:pre-wrap}
@@ -84,7 +83,7 @@ form button{border:0;background:var(--wine);color:var(--paper);border-radius:10p
 <body>
 <div id="app">
 <header><h1>하라고지페 근무 도움 챗봇</h1><p>오픈 · 손님 응대 · POS · 서빙 · 주방 · 마감</p></header>
-<div id="ai-status" hidden><label><input id="ai-mode" type="checkbox">Gemini 대화</label><small>켜면 질문, 최근 대화와 관련 매장 자료 일부가 Gemini로 전송됩니다. 손님·직원 개인정보는 입력하지 마세요.</small></div>
+<div id="ai-status" hidden><small>질문·최근 대화·관련 매장 자료가 Gemini로 전송됩니다. 개인정보는 입력하지 마세요.</small></div>
 <p id="record-status" aria-live="polite"></p>
 <nav id="departments" aria-label="업무 선택"></nav>
 <div id="chips"></div>
@@ -387,7 +386,7 @@ if(typeof document!=="undefined"){
   function setRecordStatus(message){var status=document.getElementById('record-status');status.textContent=message;clearTimeout(status._timer);if(message)status._timer=setTimeout(function(){status.textContent='';},5000);}
   function recordQuestion(q){if(!AI_ENDPOINT||!QUESTION_LOG_ENABLED)return;var endpoint=AI_ENDPOINT.replace(/\/api\/chat$/,'/api/questions'),found=search(q);fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,category:found?found.title:'자유 질문',consent:true})}).then(function(r){return r.json();}).then(function(d){setRecordStatus(d.saved?'질문을 개선 기록에 남겼습니다. 90일 뒤 삭제됩니다.':(d.reason||d.error||'질문을 기록하지 못했습니다.'));}).catch(function(){setRecordStatus('질문 기록에 연결하지 못했습니다.');});}
   function askWithAi(q){var a=answer(q);if(a.wines||a.src==='와인 추천 데이터'||(/추천|골라|어울리/.test(norm(q))&&/와인|레드|화이트|로제|스파클링|포트|초보|처음|육포/.test(norm(q))))return Promise.resolve(a);var messages=aiConversation.slice(-6).concat([{role:'user',text:q}]);return fetch(AI_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,context:relevantContext(q),messages:messages})}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'AI 연결 오류');return d;});}).then(function(d){aiConversation.push({role:'user',text:q},{role:'model',text:d.text});return{text:d.text.replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^[-*]\s+/gm,'• '),src:'Gemini · 매장 지식 검색',title:'직원 업무 안내'};}).catch(function(error){setRecordStatus((error.message||'Gemini 연결에 실패했습니다.')+' 관련 매장 자료를 표시합니다.');if(a.src==='지식 문서에 없음'){var previous=aiConversation.slice().reverse().find(function(m){return m.role==='user';});if(previous)a=answer(previous.text);}return a;});}
-  function ask(q){q=q.trim();if(!q)return;add('me',q);var record=document.getElementById('record-question');if(record&&record.checked){recordQuestion(q);record.checked=false;}var useAi=document.getElementById('ai-mode');if(useAi&&useAi.checked){askWithAi(q).then(function(a){add('bot',a.text,a.src,a.wines,a.stockNote,a.title,a);});return;}var a=answer(q);add('bot',a.text,a.src,a.wines,a.stockNote,a.title,a);}
+  function ask(q,preferManual){q=q.trim();if(!q)return;add('me',q);var record=document.getElementById('record-question');if(record&&record.checked){recordQuestion(q);record.checked=false;}if(AI_ENDPOINT&&!preferManual){askWithAi(q).then(function(a){add('bot',a.text,a.src,a.wines,a.stockNote,a.title,a);});return;}var a=answer(q);add('bot',a.text,a.src,a.wines,a.stockNote,a.title,a);}
   add("bot","안녕하세요. 근무 중 필요한 오픈 준비, 손님 응대, POS, 와인·안주 서빙, 주방 준비와 마감을 찾아볼 수 있어요. 와인 취향은 위에서 조절해 추천받고, 모르는 내용은 지어내지 않고 확인이 필요하다고 안내할게요.");
   var chips=document.getElementById("chips");
   var departments=[['오픈',[0]],['손님 응대',[1,6]],['주문·서빙',[2,3,4,5,7,9,10]],['주방',[]],['마감',[8]]];
@@ -395,7 +394,7 @@ if(typeof document!=="undefined"){
     document.querySelectorAll('#departments button').forEach(function(button,i){button.setAttribute('aria-pressed',String(i===index));});chips.replaceChildren();
     var choices=departments[index][1].map(function(i){return FAQ[i];});
     if(index===3)choices=[['안주 식기','안주별 식기 안내'],['피자·파스타','짜파게티 만드는 순서']];
-    choices.forEach(function(f){var b=document.createElement('button');b.type='button';b.textContent=f[0];b.onclick=function(){if(f[0]==='와인 추천'){document.getElementById('taste').hidden=false;document.getElementById('taste').open=true;}else ask(f[1]);};chips.appendChild(b);});
+    choices.forEach(function(f){var b=document.createElement('button');b.type='button';b.textContent=f[0];b.onclick=function(){if(f[0]==='와인 추천'){document.getElementById('taste').hidden=false;document.getElementById('taste').open=true;}else ask(f[1],true);};chips.appendChild(b);});
     document.getElementById('taste').hidden=index!==2;
   }
   departments.forEach(function(group,index){var b=document.createElement('button');b.type='button';b.textContent=group[0];b.onclick=function(){selectDepartment(index);};document.getElementById('departments').appendChild(b);});selectDepartment(0);

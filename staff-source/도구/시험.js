@@ -164,5 +164,5 @@ ${opsRows.map((x,i)=>`| ${i+1} | ${x.q} | ${x.pass?'통과':'실패'} | ${x.a.sr
 fs.writeFileSync(path.join(root,'시험질문.md'),md);
 console.log(md);
 
-const apiEndpointTest=template.includes('AI_ENDPOINT')&&template.includes('record-question')&&template.includes('Gemini 대화')&&template.includes('최근 대화');
+const apiEndpointTest=template.includes('AI_ENDPOINT')&&template.includes('record-question')&&!template.includes('id="ai-mode"')&&template.includes('최근 대화');
 if(bad||winePass!==10||opsPass!==10||!integrity||!menuPitchTest||!levelTest||!kindTest||!selectedFoodTest||!rotationTest||!apiEndpointTest)process.exitCode=1;
