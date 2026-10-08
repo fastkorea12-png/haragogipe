@@ -399,18 +399,30 @@ function relevantContext(q){
 if(typeof document!=="undefined"){
   var log=document.getElementById("log");
   function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-  var SHIFT_FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSe7ffhjdmKiyTq_oxiP35bOg1b_FsbERBj6t9kvaSQTMhyImw/viewform';
   function reviewShift(title,day,entries,state){
     var tasks=entries.filter(function(e){return e.task;}),done=0,skipped=0;
     var lines=tasks.map(function(e,i){var value=state[norm(e.group+e.text)];if(value===true)done++;if(value==='na')skipped++;return (i+1)+'. ['+(value===true?'완료':value==='na'?'해당 없음':'미완료')+'] '+(e.group&&e.group!=='기본 준비'?e.group+' · ':'')+e.text;});
     var report=['업무: '+title,'업무일: '+day,'완료: '+done+'/'+tasks.length+' · 해당 없음: '+skipped+' · 미완료: '+(tasks.length-done-skipped),'자료 버전: '+(KB_VERSION.sourceHash||'시안'),'기록 생성: '+new Date().toLocaleString('ko-KR',{timeZone:'Asia/Seoul'})+' (한국 시간)',''].concat(lines).join('\n');
     var dialog=document.createElement('dialog');dialog.className='submit-dialog';
     var heading=document.createElement('h2');heading.textContent='제출 내용 확인';dialog.appendChild(heading);
-    var notice=document.createElement('p');notice.textContent='미완료 '+(tasks.length-done-skipped)+'개 · 해당 없음 '+skipped+'개. 내용을 확인한 뒤 구글 폼에서 마지막으로 제출해 주세요.';dialog.appendChild(notice);
+    var notice=document.createElement('p');notice.textContent='미완료 '+(tasks.length-done-skipped)+'개 · 해당 없음 '+skipped+'개. 근무일과 체크 내용을 확인한 뒤 제출해 주세요.';dialog.appendChild(notice);
     var dateLabel=document.createElement('label');dateLabel.className='check-help';dateLabel.textContent='근무일 · 자정 이후 마감은 해당 근무일을 선택해 주세요';var dateInput=document.createElement('input');dateInput.type='date';dateInput.value=day;dateInput.style.cssText='display:block;margin:8px 0 14px;padding:9px;border:1px solid var(--rule);border-radius:8px;background:var(--bot);color:var(--ink)';dateLabel.appendChild(dateInput);dialog.appendChild(dateLabel);var pre=document.createElement('pre');pre.textContent=report;dialog.appendChild(pre);
-    var actions=document.createElement('div');actions.className='submit-actions';var link=document.createElement('a');link.textContent='제출 양식 열기 ↗';link.target='_blank';link.rel='noopener noreferrer';link.href=SHIFT_FORM_URL+'?usp=pp_url&entry.392373588='+encodeURIComponent(report);dateInput.onchange=function(){if(!dateInput.value){link.removeAttribute('href');return;}var dated=report.replace('업무일: '+day,'업무일: '+dateInput.value);pre.textContent=dated;link.href=SHIFT_FORM_URL+'?usp=pp_url&entry.392373588='+encodeURIComponent(dated);};actions.appendChild(link);
-    var back=document.createElement('button');back.type='button';back.textContent='체크 수정하기';back.onclick=function(){dialog.close();};actions.appendChild(back);dialog.appendChild(actions);
-    var help=document.createElement('p');help.className='check-help';help.textContent='폼을 여는 것만으로 제출되지 않아요. 폼의 제출 버튼을 눌러야 비공개 시트에 저장됩니다. 이름·연락처 입력 없이 저장해요.';dialog.appendChild(help);
+    var statuses=tasks.map(function(e){var value=state[norm(e.group+e.text)];return value===true?'done':value==='na'?'na':'missing';});
+    var payload={kind:title,workDay:day,version:KB_VERSION.checklistHash,sourceVersion:KB_VERSION.sourceHash,statuses:statuses};
+    var receiptKey='',receipt={},busy=false;
+    function getReceipt(){delete payload.submissionId;payload.workDay=dateInput.value;receiptKey='harago-shift:'+JSON.stringify({kind:payload.kind,workDay:payload.workDay,version:payload.version,statuses:payload.statuses});try{receipt=JSON.parse(localStorage.getItem(receiptKey)||'{}');}catch(err){receipt={};}if(!receipt.id)receipt.id=crypto.randomUUID();try{localStorage.setItem(receiptKey,JSON.stringify(receipt));}catch(err){}}
+    var actions=document.createElement('div');actions.className='submit-actions';var submit=document.createElement('button');submit.type='button';submit.textContent='스프레드시트에 제출';actions.appendChild(submit);
+    var back=document.createElement('button');back.type='button';back.textContent='체크 수정하기';back.onclick=function(){if(!busy)dialog.close();};actions.appendChild(back);dialog.appendChild(actions);
+    var help=document.createElement('p');help.className='check-help';help.setAttribute('role','status');help.setAttribute('aria-live','polite');dialog.appendChild(help);
+    function ready(){getReceipt();submit.disabled=!AI_ENDPOINT||!dateInput.value||receipt.saved;submit.textContent=receipt.saved?'제출 완료':receipt.uncertain?'저장 상태 확인':'스프레드시트에 제출';help.textContent=receipt.saved?'비공개 스프레드시트에 저장됐어요. 같은 체크 내용은 이미 제출됐습니다.':receipt.uncertain?'이전 제출 결과를 확인할 수 있어요. 같은 내용은 다시 저장하지 않습니다.':'이름·연락처 없이 근무일과 체크 상태를 비공개 스프레드시트에 저장해요.';if(!AI_ENDPOINT)help.textContent='제출 연결이 준비되지 않았습니다. 관리자에게 확인해 주세요.';}
+    dateInput.onchange=function(){pre.textContent=report.replace('업무일: '+day,'업무일: '+dateInput.value);ready();};
+    dialog.addEventListener('cancel',function(e){if(busy)e.preventDefault();});
+    submit.onclick=function(){if(busy||!dateInput.value||receipt.saved)return;busy=true;submit.disabled=true;dateInput.disabled=true;back.disabled=true;submit.textContent='저장 중…';help.textContent='체크리스트를 저장하고 있어요.';payload.submissionId=receipt.id;
+      fetch(AI_ENDPOINT.replace(/\/api\/chat$/,'/api/shifts'),{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}).then(function(r){return r.json().then(function(d){if(!r.ok&&!d.uncertain)throw new Error(d.error||'제출 연결에 실패했습니다.');return d;});}).then(function(d){
+        if(d.saved){receipt.saved=true;receipt.savedAt=d.savedAt;receipt.uncertain=false;submit.textContent='제출 완료';help.textContent='스프레드시트에 저장됐어요 · '+new Date(d.savedAt).toLocaleString('ko-KR',{timeZone:'Asia/Seoul'});back.textContent='닫기';}
+        else{receipt.uncertain=Boolean(d.uncertain);submit.textContent='저장 상태 확인';help.textContent=(d.error||'저장 완료를 확인하지 못했습니다.')+' 제출 번호: '+receipt.id;}
+      }).catch(function(error){receipt.uncertain=true;help.textContent=(error.message||'연결이 끊겼습니다.')+' 저장 상태 확인을 누르면 중복 저장 없이 결과를 확인합니다.';submit.textContent='저장 상태 확인';}).finally(function(){busy=false;dateInput.disabled=false;back.disabled=false;submit.disabled=Boolean(receipt.saved);try{localStorage.setItem(receiptKey,JSON.stringify(receipt));}catch(err){}});
+    };ready();
     dialog.addEventListener('close',function(){dialog.remove();});document.body.appendChild(dialog);dialog.showModal();
   }
   function showAnswers(){document.getElementById("home").hidden=true;log.hidden=false;}

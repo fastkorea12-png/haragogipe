@@ -4,6 +4,26 @@
   "main": "index.js",
   "compatibility_date": "2026-10-08",
   "workers_dev": true,
-  "triggers": { "crons": ["0 18 * * *"] },
-  "ratelimits": [{ "name": "AI_LIMITER", "namespace_id": "87342011", "simple": { "limit": 30, "period": 60 } }]
+  "triggers": {
+    "crons": [
+      "0 18 * * *"
+    ]
+  },
+  "ratelimits": [
+    {
+      "name": "AI_LIMITER",
+      "namespace_id": "87342011",
+      "simple": {
+        "limit": 30,
+        "period": 60
+      }
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "SHIFTS_DB",
+      "database_name": "haragogipe-staff-shifts",
+      "database_id": "5cf8d3bf-4046-4300-a319-768f7cdfa07c"
+    }
+  ]
 }
