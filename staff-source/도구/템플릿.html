@@ -32,10 +32,10 @@ form{display:flex;gap:8px;margin-top:auto;padding:14px 0;background:var(--paper)
 <details id="taste">
 <summary>와인 취향 &amp; 안주 페어링</summary><p class="taste-help">취향은 3단계로 선택하고, 와인의 맛은 5칸 막대로 비교해요.</p>
 <div class="sliders">
-<div class="taste-row">당도 <input type="range" aria-hidden="true" tabindex="-1" min="1" max="3" value="2" data-score="sweetness"><output>중간</output></div>
-<div class="taste-row">산도 <input type="range" aria-hidden="true" tabindex="-1" min="1" max="3" value="2" data-score="acidity"><output>중간</output></div>
-<div class="taste-row">타닌 <input type="range" aria-hidden="true" tabindex="-1" min="1" max="3" value="2" data-score="tannin"><output>중간</output></div>
-<div class="taste-row">바디 <input type="range" aria-hidden="true" tabindex="-1" min="1" max="3" value="2" data-score="body"><output>중간</output></div>
+<div class="taste-row">당도 <input type="range" min="1" max="3" aria-hidden="true" tabindex="-1" value="2" data-score="sweetness"><output>중간</output></div>
+<div class="taste-row">산도 <input type="range" min="1" max="3" aria-hidden="true" tabindex="-1" value="2" data-score="acidity"><output>중간</output></div>
+<div class="taste-row">타닌 <input type="range" min="1" max="3" aria-hidden="true" tabindex="-1" value="2" data-score="tannin"><output>중간</output></div>
+<div class="taste-row">바디 <input type="range" min="1" max="3" aria-hidden="true" tabindex="-1" value="2" data-score="body"><output>중간</output></div>
 </div>
 <label class="wine-kind">와인 종류
 <select id="wineKind"><option value="all">전체</option><option value="red">레드</option><option value="white">화이트</option><option value="rose">로제</option><option value="sparkling">스파클링</option><option value="port">포트</option></select>
