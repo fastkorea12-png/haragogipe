@@ -133,7 +133,7 @@ function wineInfoAnswer(q){
       if(source&&menu&&wineNameNorm(menu)!==wineNameNorm(source))lines.push('• 두 자료의 품종 표기가 달라요. 정확한 구성·혼합 비율은 병 라벨이나 관리자 확인이 필요해요.');
     }else{var label=f[0]==='국가'||f[0]==='영문명'?f[0]:f[0]==='가격'?'가격 원문 (메뉴판)':f[0]+' (메뉴판)';var value=field(e,label);lines.push('• '+f[0]+': '+(value||'자료에 기재되어 있지 않아 관리자 확인이 필요해요.'));}
   });return (hits.length>1?name(e)+'\n':'')+lines.join('\n');}).join('\n\n');
-  return {wineFact:true,allowAi:requested.some(function(f){return /품종|국가|지역/.test(f[0]);}),title:hits.length===1?name(hits[0].entry):'와인 기본 정보 비교',text:text,src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List · 허용 열'};
+  return {wineFact:true,allowAi:requested.some(function(f){return f[0]!=='가격';}),title:hits.length===1?name(hits[0].entry):'와인 기본 정보 비교',text:text,src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List · 허용 열'};
 }
 function search(q){
   var n=norm(q), best=null, bs=0;

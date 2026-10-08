@@ -66,7 +66,7 @@ const handler={async fetch(request,env){
     const text=(data.candidates||[]).flatMap(c=>c.content?.parts||[]).map(p=>p.text||"").join("\n").trim();
     const grounding=data.candidates?.[0]?.groundingMetadata;
     const sources=(grounding?.groundingChunks||[]).filter(c=>c.web?.uri&&/^https:\/\//.test(c.web.uri)).map(c=>({url:c.web.uri,title:c.web.title||'웹 출처'}));
-    const searched=Boolean(grounding?.webSearchQueries?.length||sources.length);
+    const searched=sources.length>0;
     if(useSearch&&!searched)return response({text:'웹 검색에서 이 제품의 정보를 확인하지 못했어요. 병 라벨의 영문명이나 빈티지를 알려 주세요.',model,searchUnavailable:true});
     return text?response({text,model,searched,sources,searchSuggestions:searched?grounding?.searchEntryPoint?.renderedContent||'':''}):response({error:"확인된 답변을 만들지 못했습니다. 매장 자료 검색으로 안내합니다."},502);
   }catch{return response({error:"Gemini 연결에 실패했습니다. 잠시 후 다시 시도해 주세요."},502);}
