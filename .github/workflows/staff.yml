@@ -1,0 +1,42 @@
+name: Update staff assistant
+on:
+  push:
+    branches: [main]
+    paths: ['staff-source/**', '.github/workflows/staff.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: staff-assistant
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: source
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build and check manual and wine list
+        working-directory: source/staff-source
+        run: npm run update
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: site
+      - name: Update staff page
+        run: |
+          mkdir -p site/staff
+          cp source/staff-source/챗봇_시안.html site/staff/index.html
+          cd site
+          git add staff/index.html
+          if git diff --cached --quiet; then exit 0; fi
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Update staff assistant from manual and wine list'
+          git push origin gh-pages
+      - name: Request Pages publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api "repos/$GITHUB_REPOSITORY/pages/builds" --method POST

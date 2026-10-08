@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>하라고지페 근무 도움 챗봇</title>
+<style>
+:root{--wine:#702632;--paper:#F8F3EA;--ink:#302923;--muted:#776B61;--rule:#D8CDBE;--gold:#B8862F;--bot:#fff;--me:#702632}
+@media (prefers-color-scheme:dark){:root{--wine:#eda1af;--paper:#1c1715;--ink:#efe7dc;--muted:#b8aca0;--rule:#51453f;--bot:#2a2320;--me:#8a3342}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+#app{max-width:480px;height:100%;margin:0 auto;display:flex;flex-direction:column}
+header{padding:12px 16px;border-bottom:1px solid var(--rule)}
+header h1{margin:0;font-size:17px;color:var(--wine);font-family:"Nanum Myeongjo",serif}
+header p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+#log{flex:1;min-height:0;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:88%;padding:9px 13px;border-radius:16px;word-break:keep-all;overflow-wrap:anywhere;white-space:pre-wrap}
+.bot{align-self:flex-start;background:var(--bot);border:1px solid var(--rule);border-bottom-left-radius:4px}
+.wine-answer{align-self:stretch;width:100%;max-width:100%;padding:8px}
+.info-answer{align-self:stretch;width:100%;max-width:100%;padding:8px;background:transparent;border:0}
+.info-results{display:grid;gap:8px}
+.info-heading{font-size:15px;font-weight:800;color:var(--wine);padding:2px 3px}
+.info-item{background:var(--bot);border:1px solid var(--rule);border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.55;white-space:pre-wrap}
+.info-item.quote{border-left:3px solid var(--gold)}
+.info-item.confirm{background:color-mix(in srgb,var(--bot) 88%,#FFE45C 12%)}
+.wine-results{display:grid;gap:9px}
+.wine-results-heading{font-size:14px;font-weight:750;color:var(--wine);padding:1px 2px}
+.wine-card{border:1px solid var(--rule);border-radius:13px;padding:11px;background:color-mix(in srgb,var(--bot) 92%,var(--gold) 8%)}
+.wine-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.wine-title{font-size:15px;font-weight:750;line-height:1.35}
+.wine-category{flex:none;border-radius:999px;background:var(--paper);color:var(--wine);padding:2px 8px;font-size:10px}
+.wine-price{margin-top:4px;color:var(--muted);font-size:11px}
+.wine-nuance{margin-top:7px;font-size:13px;font-weight:650;color:var(--wine)}
+.wine-description{margin-top:8px;font-size:13px;white-space:normal}
+.wine-description summary{cursor:pointer;color:var(--muted)}
+.wine-description p{margin:6px 0;line-height:1.65}
+.info-label{display:block;color:var(--wine);font-size:13px;margin-bottom:4px}
+.wine-scores{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;margin:9px 0}
+.wine-score{display:grid;grid-template-columns:28px 1fr 23px;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.score-track{display:flex;gap:2px}
+.score-cell{height:6px;flex:1;border-radius:3px;background:var(--rule)}
+.score-cell.on{background:var(--wine)}
+.wine-pitch{margin:8px 0;padding:6px 8px;border-left:3px solid var(--gold);font-size:13px;line-height:1.5}
+.wine-facts{font-size:11px;line-height:1.5;color:var(--muted)}
+.stock-note{padding:6px 3px 0;font-size:12px;font-weight:700;color:var(--wine)}
+.me{align-self:flex-end;background:var(--me);color:#fff;border-bottom-right-radius:4px}
+.src{display:block;margin-top:6px;font-size:11px;color:var(--muted);white-space:normal}
+.tbd{background:#FFE45C;color:#302923;border-radius:3px;padding:0 3px;font-weight:700;font-size:.85em}
+#departments{display:flex;gap:4px;padding:8px 12px 0}
+#departments button{flex:1;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:12px;padding:9px 2px;cursor:pointer}
+#departments button[aria-pressed=true]{background:var(--wine);color:var(--paper);font-weight:700}
+#chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 16px;border-bottom:1px solid var(--rule)}
+#chips button{border:1px solid var(--wine);background:transparent;color:var(--wine);border-radius:999px;padding:7px 12px;font-size:13px;cursor:pointer;min-height:36px}
+#taste{padding:7px 16px;border-top:1px solid var(--rule);font-size:13px}
+#taste summary{cursor:pointer;color:var(--wine);font-weight:700}
+#taste .sliders{display:grid;grid-template-columns:1fr 1fr;gap:5px 12px;padding:8px 0}
+#taste label{display:grid;grid-template-columns:48px 1fr 20px;align-items:center;gap:5px}
+#taste input[type=range]{width:100%;accent-color:var(--wine)}
+#taste .wine-kind{display:flex;align-items:center;gap:8px;margin:4px 0 9px}
+#taste select{flex:1;padding:7px;border:1px solid var(--rule);border-radius:7px;background:var(--bot);color:var(--ink)}
+#taste button{border:0;background:var(--wine);color:var(--paper);border-radius:8px;padding:8px 12px}
+.check-row{display:flex;align-items:flex-start;gap:10px}
+.check-row input{flex:none;width:19px;height:19px;min-width:19px;margin:3px 0;accent-color:var(--wine)}
+.check-row span{flex:1}
+.check-row:has(input:checked) span{opacity:.55;text-decoration:line-through}
+.check-tools{display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted)}
+.check-tools button{border:1px solid var(--rule);border-radius:6px;background:var(--bot);color:var(--muted);padding:4px 9px}
+.answer-details{font-size:13px;color:var(--muted)}
+.answer-details summary{padding:8px 2px;cursor:pointer}
+.wine-tier{font-size:12px;color:var(--wine);font-weight:700;margin:4px 0}
+.pairing-note{font-size:12px;color:var(--muted);margin-top:6px}
+form{display:flex;gap:8px;padding:8px 16px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--rule)}
+input{flex:1;font-size:16px;padding:10px 12px;border:1px solid var(--rule);border-radius:10px;background:var(--bot);color:var(--ink);min-width:0}
+form button{border:0;background:var(--wine);color:var(--paper);border-radius:10px;padding:0 16px;font-size:15px}
+</style>
+</head>
+<body>
+<div id="app">
+<header><h1>하라고지페 근무 도움 챗봇</h1><p>오픈 · 손님 응대 · POS · 서빙 · 주방 · 마감</p></header>
+<nav id="departments" aria-label="업무 선택"></nav>
+<div id="chips"></div>
+<div id="log" aria-live="polite"></div>
+<details id="taste">
+<summary>와인 종류 · 안주 · 취향 선택</summary>
+<div class="sliders">
+<label>당도 <input type="range" min="1" max="3" value="2" data-score="sweetness"><output>중간</output></label>
+<label>산도 <input type="range" min="1" max="3" value="2" data-score="acidity"><output>중간</output></label>
+<label>타닌 <input type="range" min="1" max="3" value="2" data-score="tannin"><output>중간</output></label>
+<label>바디 <input type="range" min="1" max="3" value="2" data-score="body"><output>중간</output></label>
+</div>
+<label class="wine-kind">와인 종류
+<select id="wineKind"><option value="all">전체</option><option value="red">레드</option><option value="white">화이트</option><option value="rose">로제</option><option value="sparkling">스파클링</option><option value="port">포트</option></select>
+</label>
+<label class="wine-kind">안주 궁합
+<select id="foodKind"><option value="">전체</option><option value="치즈">치즈</option><option value="샐러드">샐러드</option><option value="육류">육류</option><option value="과일">과일</option><option value="아이스크림">아이스크림</option><option value="초콜릿">초콜릿</option></select>
+</label>
+<button id="tasteGo" type="button">이 취향으로 와인 추천</button>
+</details>
+<form id="f"><input id="q" placeholder="오픈·응대·POS·서빙·마감 질문" autocomplete="off"><button>보내기</button></form>
+</div>
+<script>
+var KB = /*KB_JSON*/[];
+var WINE_DATA = /*WINE_JSON*/[];
+var KB_VERSION = /*VERSION_JSON*/{};
+var FALLBACK = "아직 정해진 게 없어요. 사장님께 확인해 주세요.";
+var FAQ = [
+ ["오픈 준비","오픈 순서 알려줘"],
+ ["손님 첫 안내","손님 입장 첫 안내 순서"],
+ ["POS 주문","POS 주문 입력 방법"],
+ ["추가 주문","POS 추가 주문 입력 방법"],
+ ["테이블 이동","손님 테이블 이동 방법"],
+ ["와인 서빙","와인 주문 후 서빙 순서"],
+ ["잔 파손·쏟음","손님이 와인잔 깨뜨리고 와인을 쏟았어요"],
+ ["안주 식기","안주별 식기 안내"],
+ ["마감","마감 순서 알려줘"],
+ ["와인 추천","와인 추천"],
+ ["칵테일 안내","칵테일 전환 가격이 얼마예요?"]
+];
+function norm(s){return String(s).toLowerCase().replace(/[^0-9a-z가-힣]/g,"");}
+function search(q){
+  var n=norm(q), best=null, bs=0;
+  if(!n) return null;
+  if(!/이야기|와이너리|역사/.test(n)){
+    var latest=KB.filter(function(e){return e.file==='12_와인_추가_설명'&&e.kw.some(function(k){return norm(k).length>=4&&n.indexOf(norm(k))>=0;});})
+      .sort(function(a,b){return b.kw[0].length-a.kw[0].length;});
+    if(latest.length)return latest[0];
+  }
+  KB.forEach(function(e){
+    var s=0;
+    e.kw.forEach(function(k){var nk=norm(k); if(nk.length>=2 && n.indexOf(nk)>=0) s+=nk.length;});
+    if(s>bs){bs=s;best=e;}
+  });
+  return bs>=2?best:null;
+}
+function wineRecommend(q){
+  var n=norm(q);
+  if(/응대|멘트|여쭤|추천을원하는손님/.test(n))return null;
+  var wineIntent=/추천|골라|어울리/.test(n)&&/와인|레드|화이트|스파클링|포트|초보|처음|육포/.test(n);
+  if(!wineIntent) return null;
+  var lowSweet=/단맛적|덜달|드라이/.test(n), sweet=/달콤|스위트|단맛/.test(n)&&!lowSweet, jerky=/육포/.test(n);
+  var white=/화이트/.test(n), red=/레드/.test(n), port=/포트/.test(n), full=/묵직|풀바디|바디감/.test(n), sparkling=/스파클링|탄산/.test(n);
+  var novice=/초보|처음/.test(n), fresh=/산뜻|상큼|신선/.test(n);
+  var foodTerms=['육포','치즈','샐러드','육류','과일','아이스크림','소고기','고기','파스타','피자','해산물','디저트','초콜릿','하몽','올리브'];
+  var food=Array.from(new Set(foodTerms.filter(function(term){return n.indexOf(norm(term))>=0;})));
+  var targets={},weights={};
+  if(sweet){targets.sweetness=4;weights.sweetness=2;}
+  if(lowSweet){targets.sweetness=1;weights.sweetness=2;}
+  if(jerky){targets.body=4;weights.body=1;targets.tannin=4;weights.tannin=1;}
+  if(white||fresh){targets.acidity=4;weights.acidity=1.5;targets.body=2;weights.body=1;}
+  if(full){targets.body=5;weights.body=2;targets.tannin=4;weights.tannin=1;}
+  if(sparkling){targets.acidity=3;weights.acidity=1;targets.sweetness=3;weights.sweetness=1;}
+  if(novice){targets.body=2;weights.body=1;targets.tannin=2;weights.tannin=1;targets.sweetness=3;weights.sweetness=.5;}
+  var explicit={};
+  [['acidity','산도|산미|신맛'],['tannin','타닌|탄닌|떫은맛'],['body','바디|바디감']].forEach(function(pair){
+    var low=new RegExp('('+pair[1]+')(가|이|은|는)?(낮|적|약|부드럽)').test(n);
+    var high=new RegExp('('+pair[1]+')(가|이|은|는)?(높|강|많)').test(n);
+    if(low||high){explicit[pair[0]]=low?'low':'high';targets[pair[0]]=low?1:5;weights[pair[0]]=2;}
+  });
+  if(!Object.keys(targets).length){targets={sweetness:3,acidity:3,tannin:3,body:3};weights={sweetness:.5,acidity:.5,tannin:.5,body:.5};}
+  var criteria={targets:targets,weights:weights,food:food,kind:{red:red,white:white,port:port,sparkling:sparkling}};
+  var candidates=WINE_DATA.filter(function(w){
+    var cat=String(w.category||''), kind=(cat+' '+w.variety+' '+w.name+' '+w.english).toLowerCase();
+    if(Object.keys(explicit).some(function(k){return explicit[k]==='low'?w[k]>2:w[k]<4;}))return false;
+    if(port&&!isPort(w)) return false;
+    if(sweet && w.sweetness<3) return false;
+    if(lowSweet && w.sweetness>2) return false;
+    if(red && !matchesWineKind(w,'red')) return false;
+    if(jerky && (!/레드/i.test(cat) || !/육포|소고기|쇠고기|비프/i.test(w.pairing))) return false;
+    if(white && !matchesWineKind(w,'white')) return false;
+    if(full && (!/레드|red/i.test(cat) || w.body<4 || w.tannin<3)) return false;
+    if(sparkling && !isSparkling(w)) return false;
+    if(fresh && !white && (w.acidity<3 || w.body>3)) return false;
+    if(novice && (w.body>3 || w.tannin>3)) return false;
+    if(food.length&&!food.some(function(term){return matchesFood(w,term);})) return false;
+    return true;
+  });
+  if(!candidates.length) return {text:FALLBACK,src:'와인 추천 데이터'};
+  var key='text:'+JSON.stringify(criteria);
+  var picked=rankDiverse(candidates,criteria,key);
+  var lines=picked.map(function(w){
+    return '• '+w.name+' ('+w.category+') · 가격 원문 '+(w.price||'미기재')+
+      '\n  당도 '+bar(w.sweetness)+' · 산도 '+bar(w.acidity)+' · 타닌 '+bar(w.tannin)+' · 바디 '+bar(w.body)+
+      '\n  손님께 추천 멘트: “'+winePitch(w)+'”'+
+      '\n  선택 이유: 아로마 '+(w.aromas||'정보 없음')+'; 안주 '+(w.pairing||'정보 없음')+'.';
+  });
+  lines.push('재고는 직접 확인.');
+  var note=picked.length<6?'메뉴판의 해당 조건에서 확인되는 '+picked.length+'종을 보여 드려요. 재고는 직접 확인.':'재고는 직접 확인.';
+  return {text:lines.join('\n\n'),wines:picked,stockNote:note,src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
+}
+function bar(v){return '■'.repeat(v)+'□'.repeat(5-v)+' '+v+'/5';}
+var recommendationTurns={};
+function wineFit(w,criteria){
+  var keys=Object.keys(criteria.targets), loss=0,total=0;
+  keys.forEach(function(k){var weight=criteria.weights[k];loss+=Math.abs(w[k]-criteria.targets[k])*weight;total+=4*weight;});
+  var fit=total?100-(loss/total*100):50;
+  if(criteria.food.length){
+    var matched=criteria.food.some(function(f){return matchesFood(w,f);});
+    fit+=matched?12:-10;
+  }
+  return fit;
+}
+function matchesFood(w,food){
+  var pairing=String(w.pairing||'');
+  var patterns={
+    '육포':/육포|소고기|쇠고기|비프|고기|육류/i,
+    '치즈':/치즈|cheese/i,
+    '샐러드':/샐러드|salad/i,
+    '아이스크림':/아이스크림|디저트|케이크|과일 타르트|초콜릿|비스킷|dessert|ice cream/i,
+    '육류':/육류|육포|고기|소고기|쇠고기|비프|사냥육|햄|하몽|프로슈토|가금류|치킨|돼지고기|양고기|오리고기|meat|beef|lamb|pork/i,
+    '고기':/고기|육류|소고기|쇠고기|비프|사냥육|meat/i,
+    '과일':/과일|fruit|베리|berry/i,
+    '파스타':/파스타|라자냐|pasta/i,
+    '피자':/피자|pizza/i,
+    '해산물':/해산물|생선|조개|굴|새우|seafood|fish/i,
+    '디저트':/디저트|케이크|과일타르트|초콜릿|비스킷|dessert/i,
+    '초콜릿':/초콜릿|chocolate/i,
+    '하몽':/하몽|햄|프로슈토|숙성햄|ham/i
+  };
+  return patterns[food]?patterns[food].test(pairing):norm(pairing).indexOf(norm(food))>=0;
+}
+function rankDiverse(candidates,criteria,key){
+  var ranked=candidates.map(function(w){return {wine:w,fit:wineFit(w,criteria)};})
+    .sort(function(a,b){return b.fit-a.fit||a.wine.name.localeCompare(b.wine.name,'ko');});
+  var desired=Math.min(6,ranked.length);
+  if(!desired)return [];
+  // 가장 가까운 3종을 유지하고, 나머지는 근접한 대안 안에서만 순환한다.
+  var primary=ranked.slice(0,Math.min(3,desired));
+  var remaining=ranked.slice(primary.length);
+  var cutoff=remaining.length?remaining[0].fit-12:0;
+  var pool=remaining.filter(function(x){return x.fit>=cutoff;}).slice(0,9);
+  var turn=recommendationTurns[key]||0;
+  recommendationTurns[key]=turn+1;
+  var alternatives=[];
+  if(pool.length){
+    var offset=(turn*3)%pool.length;
+    for(var i=0;i<pool.length&&alternatives.length<desired-primary.length;i++)alternatives.push(pool[(offset+i)%pool.length]);
+  }
+  // 근접 후보가 적을 때 6종을 채울 수 있도록 차순위도 제시한다.
+  remaining.forEach(function(x){if(alternatives.length<desired-primary.length&&alternatives.indexOf(x)<0)alternatives.push(x);});
+  return primary.concat(alternatives).map(function(x){return x.wine;});
+}
+
+function winePitch(w){
+  var text=String(w.serviceDescription||w.description||'').replace(/\s+/g,' ').trim();
+  var end=text.search(/[.!?](?:\s|$)/);
+  if(end>=0) text=text.slice(0,end+1);
+  if(text.length>115) text=text.slice(0,111).replace(/\s+\S*$/,'')+'…';
+  return text||('당도 '+w.sweetness+'/5, 산도 '+w.acidity+'/5의 와인이에요.');
+}
+function tasteLevel(v){return [1,3,5][v-1];}
+function isPort(w){return /포트|port/i.test(w.name+' '+w.english);}
+function isSparkling(w){if(w.wineKind)return w.wineKind==='sparkling';return /스파클링|brut|moscato|brachetto|asti|champagne/i.test(w.category+' '+w.variety+' '+w.name+' '+w.english)&&!isPort(w);}
+function matchesWineKind(w,kind){
+  if(w.wineKind)return kind==='all'||!kind||w.wineKind===kind;
+  if(kind==='red')return /레드|red/i.test(w.category);
+  if(kind==='white')return /화이트|white/i.test(w.category);
+  if(kind==='sparkling')return isSparkling(w);
+  if(kind==='port')return isPort(w);
+  return true;
+}
+function tasteRecommend(values,kind,food){
+  var candidates=WINE_DATA.filter(function(w){return matchesWineKind(w,kind||'all')&&(!food||matchesFood(w,food));});
+  var weights={sweetness:1,acidity:1,tannin:1,body:1};
+  var criteria={targets:values,weights:weights,food:food?[food]:[],kind:{selected:kind||'all'}};
+  var sorted=rankDiverse(candidates,criteria,'slider:'+JSON.stringify(criteria));
+  if(!sorted.length)return {text:'선택한 와인 종류와 안주에 맞는 조합을 찾지 못했어요. 안주나 와인 종류를 바꿔 보세요.',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
+  return {text:sorted.map(function(w){
+    return '• '+w.name+' ('+w.category+') · 가격 원문 '+(w.price||'미기재')+
+      '\n  당도 '+bar(w.sweetness)+' · 산도 '+bar(w.acidity)+' · 타닌 '+bar(w.tannin)+' · 바디 '+bar(w.body)+
+      '\n  손님께 추천 멘트: “'+winePitch(w)+'”'+
+      '\n  아로마: '+(w.aromas||'정보 없음')+' · 어울리는 안주: '+(w.pairing||'정보 없음')+'.';
+  }).join('\n\n')+'\n\n재고는 직접 확인.',wines:sorted,stockNote:sorted.length<6?'메뉴판의 해당 조건에서 확인되는 '+sorted.length+'종을 보여 드려요. 재고는 직접 확인.':'재고는 직접 확인.',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
+}
+function formatKnowledge(body,title){
+  var text=String(body||'').trim().replace(/\s+(?=\d+[)]\s)/g,'\n');
+  if(/멘트|말할 문장|자주 쓰는 표현|손님 응대 문장/.test(title||'')) return text;
+  return text.split('\n').map(function(line){
+    var s=line.trim(); if(!s)return '';
+    if(/^[-•*]\s*/.test(s)) return s.replace(/^[-•*]\s*/,'').trim()? '• '+s.replace(/^[-•*]\s*/,'').trim():'';
+    if(/^\d+[.)]\s*/.test(s)) return s;
+    if(/[“”"‘’]/.test(s)) return '• '+s;
+    return s.split(/(?<=[.!?])\s+/).filter(Boolean).map(function(part){return '• '+part;}).join('\n');
+  }).filter(Boolean).join('\n');
+}
+function checklistItems(body){
+  var group='기본 준비';
+  return String(body).split('\n').filter(function(line){return line.trim();}).map(function(line){
+    var s=line.trim(),task=/^-\s/.test(s);s=s.replace(/^-\s*/,'');
+    if(/홀 준비 후|주간 업무는/.test(s)){group=/주간/.test(s)?'주간 업무 · 해당 요일만':'홀 준비 후 · 18:30';return {text:group,section:true};}
+    var colon=s.indexOf(':');
+    if(task&&colon>0&&/시|퇴근 전/.test(s.slice(0,colon)))return {group:s.slice(0,colon),text:s.slice(colon+1).trim(),task:true};
+    return {group:group,text:s,task:task};
+  });
+}
+function answer(q){
+  var wine=wineRecommend(q); if(wine) return wine;
+  var e=search(q);
+  if(!e) return {text:FALLBACK, src:"지식 문서에 없음"};
+  if(e.title==='오픈 순서'||e.title==='마감 순서')return {text:formatKnowledge(e.body,e.title),src:e.file+' · '+e.title,title:e.title,checklist:checklistItems(e.body)};
+  if(e.status==="확인") return {text:FALLBACK+"\n"+formatKnowledge(e.body,e.title), src:e.file+" · "+e.title,title:e.title};
+  return {text:formatKnowledge(e.body,e.title), src:e.file+" · "+e.title,title:e.title};
+}
+if(typeof document!=="undefined"){
+  var log=document.getElementById("log");
+  function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function add(cls,text,src,wines,stockNote,title,meta){
+    var isInfo=cls==='bot'&&src&&src.indexOf('지식 문서에 없음')<0&&!wines;
+    var d=document.createElement("div"); d.className="m "+cls+(wines&&wines.length?' wine-answer':isInfo?' info-answer':'');
+    if(wines&&wines.length){
+      var cards=document.createElement('div');cards.className='wine-results';
+      var heading=document.createElement('div');heading.className='wine-results-heading';heading.textContent='추천 '+wines.length+'종';cards.appendChild(heading);
+      wines.forEach(function(w,index){
+        if(index===0||index===3){var tier=document.createElement('div');tier.className='wine-tier';tier.textContent=index===0?'우선 추천 · 취향 점수 순':'함께 볼 대안';cards.appendChild(tier);}
+        var card=document.createElement('article');card.className='wine-card';
+        var head=document.createElement('div');head.className='wine-card-head';
+        var title=document.createElement('div');title.className='wine-title';title.textContent=w.name;
+        var category=document.createElement('span');category.className='wine-category';category.textContent=({red:'레드',white:'화이트',rose:'로제',sparkling:'스파클링',port:'포트'}[w.wineKind]||w.category)+(w.volumeLabel?' · '+w.volumeLabel:'');
+        head.appendChild(title);head.appendChild(category);card.appendChild(head);
+        var price=document.createElement('div');price.className='wine-price';price.textContent='메뉴판 가격 원문 · '+(w.price||'미기재')+' · 현재 가격 확인 필요';card.appendChild(price);
+        if(w.nuance){var nuance=document.createElement('div');nuance.className='wine-nuance';nuance.textContent=w.nuance;card.appendChild(nuance);}
+        var scores=document.createElement('div');scores.className='wine-scores';
+        [['당도',w.sweetness],['산도',w.acidity],['타닌',w.tannin],['바디',w.body]].forEach(function(pair){
+          var row=document.createElement('div');row.className='wine-score';row.setAttribute('aria-label',pair[0]+' '+pair[1]+'점 / 5점');
+          var label=document.createElement('span');label.textContent=pair[0];row.appendChild(label);
+          var track=document.createElement('span');track.className='score-track';
+          for(var i=1;i<=5;i++){var cell=document.createElement('span');cell.className='score-cell'+(i<=pair[1]?' on':'');track.appendChild(cell);}
+          row.appendChild(track);var value=document.createElement('span');value.textContent=pair[1]+'/5';row.appendChild(value);scores.appendChild(row);
+        });card.appendChild(scores);
+        var pitch=document.createElement('div');pitch.className='wine-pitch';pitch.textContent='손님께 추천 멘트: “'+winePitch(w)+'”';card.appendChild(pitch);
+        if(w.serviceDescription){var detail=document.createElement('details');detail.className='wine-description';var summary=document.createElement('summary');summary.textContent='전체 설명 보기';var description=document.createElement('p');description.textContent=w.serviceDescription;detail.appendChild(summary);detail.appendChild(description);card.appendChild(detail);}
+        var facts=document.createElement('div');facts.className='wine-facts';facts.textContent='아로마 · '+(w.aromas||'정보 없음')+'\n어울리는 안주 · '+(w.pairing||'정보 없음');card.appendChild(facts);
+        if(meta&&meta.food){var pairing=document.createElement('div');pairing.className='pairing-note';pairing.textContent=meta.food==='아이스크림'&&!/아이스크림|ice cream/i.test(w.pairing)?'아이스크림 · 디저트 페어링을 참고한 조합':'선택 안주 · '+meta.food;card.appendChild(pairing);}
+        cards.appendChild(card);
+      });
+      d.appendChild(cards);
+      if(stockNote){var note=document.createElement('div');note.className='stock-note';note.textContent=stockNote;d.appendChild(note);}
+    }else if(meta&&meta.checklist){
+      var panel=document.createElement('div');panel.className='info-results';
+      var heading=document.createElement('div');heading.className='info-heading';heading.textContent=title;panel.appendChild(heading);
+      var now=new Date(),day=now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate(),storageKey='harago-check:'+day+':'+title;
+      var state={};try{state=JSON.parse(localStorage.getItem(storageKey)||'{}');}catch(err){}
+      var tools=document.createElement('div');tools.className='check-tools';var count=document.createElement('span');var reset=document.createElement('button');reset.textContent='체크 초기화';reset.type='button';tools.appendChild(count);tools.appendChild(reset);panel.appendChild(tools);
+      var inputs=[];
+      function update(){count.textContent='오늘 · '+inputs.filter(function(x){return x.checked;}).length+'/'+inputs.length+' 완료';try{localStorage.setItem(storageKey,JSON.stringify(state));}catch(err){count.textContent+=' · 이 화면에서만 저장';}}
+      meta.checklist.forEach(function(entry){
+        if(entry.section){var section=document.createElement('div');section.className='info-heading';section.textContent=entry.text;panel.appendChild(section);return;}
+        var item=document.createElement('div');item.className='info-item'+(/\[확인\]/.test(entry.text)?' confirm':'');
+        if(entry.task){var label=document.createElement('label');label.className='check-row';var input=document.createElement('input');input.type='checkbox';var key=norm(entry.group+entry.text);input.checked=!!state[key];inputs.push(input);input.onchange=function(){state[key]=input.checked;update();};var span=document.createElement('span');
+          if(entry.group&&entry.group!=='기본 준비'){var group=document.createElement('strong');group.className='info-label';group.textContent=entry.group;span.appendChild(group);}
+          span.appendChild(document.createTextNode(entry.text));label.appendChild(input);label.appendChild(span);item.appendChild(label);
+        }else item.textContent=entry.text;
+        panel.appendChild(item);
+      });
+      reset.onclick=function(){state={};inputs.forEach(function(input){input.checked=false;});update();};update();d.appendChild(panel);
+    }else if(isInfo){
+      var panel=document.createElement('div');panel.className='info-results';
+      var heading=document.createElement('div');heading.className='info-heading';heading.textContent=title||'근무 안내';panel.appendChild(heading);
+      String(text).split('\n').map(function(line){return line.trim();}).filter(Boolean).forEach(function(line){
+        var item=document.createElement('div');item.className='info-item'+(/[“”"‘’]/.test(line)?' quote':'')+(/\[확인\]/.test(line)?' confirm':'');
+        var content=line.replace(/^•\s*/, '');var colon=content.indexOf(':');
+        if(colon>0&&colon<=24){var label=document.createElement('strong');label.className='info-label';label.textContent=content.slice(0,colon);item.appendChild(label);item.appendChild(document.createTextNode(content.slice(colon+1).trim()));}
+        else item.textContent=content;
+        panel.appendChild(item);
+      });
+      d.appendChild(panel);
+    }else d.innerHTML=esc(text).replace(/\[확인\]/g,'<span class="tbd">[확인]</span>');
+    if(src){var source=document.createElement('details');source.className='answer-details';var summary=document.createElement('summary');summary.textContent='출처 보기';var s=document.createElement('span');s.className='src';s.textContent=src;source.appendChild(summary);source.appendChild(s);d.appendChild(source);}
+    log.appendChild(d);if(cls==='bot'&&(wines||meta&&meta.checklist))d.scrollIntoView({block:'start'});else log.scrollTop=log.scrollHeight;
+  }
+  function ask(q){q=q.trim(); if(!q)return; add("me",q); var a=answer(q); add("bot",a.text,a.src,a.wines,a.stockNote,a.title,a);}
+  add("bot","안녕하세요. 근무 중 필요한 오픈 준비, 손님 응대, POS, 와인·안주 서빙, 주방 준비와 마감을 찾아볼 수 있어요. 와인 취향은 위에서 조절해 추천받고, 모르는 내용은 지어내지 않고 확인이 필요하다고 안내할게요.");
+  var chips=document.getElementById("chips");
+  var departments=[['오픈',[0]],['손님 응대',[1,6]],['주문·서빙',[2,3,4,5,7,9,10]],['주방',[]],['마감',[8]]];
+  function selectDepartment(index){
+    document.querySelectorAll('#departments button').forEach(function(button,i){button.setAttribute('aria-pressed',String(i===index));});chips.replaceChildren();
+    var choices=departments[index][1].map(function(i){return FAQ[i];});
+    if(index===3)choices=[['안주 식기','안주별 식기 안내'],['피자·파스타','짜파게티 만드는 순서']];
+    choices.forEach(function(f){var b=document.createElement('button');b.type='button';b.textContent=f[0];b.onclick=function(){if(f[0]==='와인 추천'){document.getElementById('taste').hidden=false;document.getElementById('taste').open=true;}else ask(f[1]);};chips.appendChild(b);});
+    document.getElementById('taste').hidden=index!==2;
+  }
+  departments.forEach(function(group,index){var b=document.createElement('button');b.type='button';b.textContent=group[0];b.onclick=function(){selectDepartment(index);};document.getElementById('departments').appendChild(b);});selectDepartment(0);
+  var version=document.createElement('p');version.textContent='자료 버전 · '+(KB_VERSION.sourceHash||'시안');document.querySelector('header').appendChild(version);
+  document.querySelectorAll('#taste input[type=range]').forEach(function(el){el.oninput=function(){el.nextElementSibling.value=['낮음','중간','높음'][Number(el.value)-1];};});
+  document.getElementById('tasteGo').onclick=function(){
+    var values={};document.querySelectorAll('#taste input[type=range]').forEach(function(el){values[el.dataset.score]=tasteLevel(Number(el.value));});
+    var kind=document.getElementById('wineKind').value,food=document.getElementById('foodKind').value;
+    add('me','와인 종류·안주·3단계 취향으로 추천');var a=tasteRecommend(values,kind,food);a.food=food;add('bot',a.text,a.src,a.wines,a.stockNote,a.title,a);
+  };
+  document.getElementById("f").onsubmit=function(ev){ev.preventDefault();var i=document.getElementById("q");ask(i.value);i.value="";};
+}
+</script>
+</body>
+</html>

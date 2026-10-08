@@ -1,0 +1,224 @@
+[
+  {
+    "menuName": "올드 핸즈 호벤",
+    "sourceName": "올드 핸즈 호벤",
+    "english": "Old Hands Joven",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "라 푸리시마 모나스트렐",
+    "sourceName": "라 푸리시마 모나스트렐",
+    "english": "Bodegas La Purisima",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "후안길 옐로우 라벨",
+    "sourceName": "후안길 옐로 라벨",
+    "english": "Juan Gil Yellow Label",
+    "method": "유일한 영문명 일치"
+  },
+  {
+    "menuName": "후안길 실버 라벨",
+    "sourceName": "후안길 실버 라벨",
+    "english": "Juan Gil Silver Label",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "샤또 오뜨 브랑드",
+    "sourceName": "샤또 오뜨 브랑드",
+    "english": "Château Haute Brande",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "롱반 멀롯",
+    "sourceName": "롱반 멀롯",
+    "english": "Long Barn Merlot",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "디킨 쉬라즈",
+    "sourceName": "디킨 쉬라즈",
+    "english": "Deakin shiraz",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "레 자르젤리에르 멜롯-쉬라",
+    "sourceName": "레 자르젤리에르 멜롯-쉬라",
+    "english": "Les Argelieres Merlot , Syrah",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "르 뷔우 트루폴리에",
+    "sourceName": "르 뷔우 트루폴리에",
+    "english": "Le Vieux Truffolier",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "폼비스 런 쉬라즈",
+    "sourceName": "폼비스 런 쉬라즈",
+    "english": "Fornby's Run",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "소모스 크리안자",
+    "sourceName": "소모스 크리안자",
+    "english": "Sommos, Crianza",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "날리헤드 올드바인 진판델",
+    "sourceName": "날리헤드 올드바인 진판델",
+    "english": "Gnarly Head Old Vine Zinfandel",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "퍼르시모",
+    "sourceName": "퍼르시모",
+    "english": "Vallepicciola Persimo",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "프리마 산지오베제 루비네코",
+    "sourceName": "프리마 산지오베제 루비코네",
+    "english": "Prima Pietra Sangiovese Rubicone",
+    "method": "유일한 영문명 일치"
+  },
+  {
+    "menuName": "세파 비헤아스 보발",
+    "sourceName": "세파 비헤아스 보발",
+    "english": "Cepas Viejas BoBal",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "아라우카노 까르미네르 리제르바",
+    "sourceName": "아라우카노 까르미네르 리제르바",
+    "english": "Araucano Carmenere Reserva",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "그랑 아라우카노",
+    "sourceName": "그랑 아라우카노",
+    "english": "Grand Araucano Reserva",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "라로쉬 샤르도네 리저브",
+    "sourceName": "라로쉬 샤르도네 리저브",
+    "english": "Laroche Chardonnay Reserve",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "롱반 샤도네이",
+    "sourceName": "롱반 샤도네이",
+    "english": "Long Barn Chardonnay",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "상쎄르 도멘 블랑",
+    "sourceName": "상쎄르 도멘 블랑",
+    "english": "Sancerre Domaine Balland",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "레 자르 젤리에르 비오니에",
+    "sourceName": "레 자르 젤리에르 비오니에",
+    "english": "Les Argelieres",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "마틴 코닥스",
+    "sourceName": "마틴 코닥스",
+    "english": "Martin Codax",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "카룬도 펄스 오브 로제",
+    "sourceName": "카룬도 펄스 오브 로제",
+    "english": "Carundo Pearls of Rose",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "그라모나 제사미",
+    "sourceName": "그라모나 제사미",
+    "english": "Gramona Gessami",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "발레벨보 브라께토",
+    "sourceName": "발레벨보 브라께토",
+    "english": "Vallebelbo, Brachetto",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "핑크 모스카토 스푸만테",
+    "sourceName": "핑크 모스카토 스푸만테",
+    "english": "Miravento, Pink Moscato Spumante",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "미라벤토 모스카토 스트로베리",
+    "sourceName": "미라벤토 모스카토 스트로베리",
+    "english": "Miravento, Moscato & strawberry",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "데코디 프라골리노 로쏘",
+    "sourceName": "데코디 프라골리노 로쏘",
+    "english": "Fragolino Rosso",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "세구라 비우다스 레세르바 에레다드 브뤼",
+    "sourceName": "세구라 비우다스 레세르바 에레다드 브뤼",
+    "english": "Segura Viudas Reserva Heredad Brut",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "톨라스코 모스카토 다스티",
+    "sourceName": "톨라스코 모스카토 다스티",
+    "english": "Torlasco Moscato d'Asti",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "발레벨보 모스카토 다스티",
+    "sourceName": "발레벨보 모스카토 다스티",
+    "english": "MIRAVENTO MOSCATO D'Asti",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "간치아 아스티",
+    "sourceName": "간치아 아스티",
+    "english": "Gancia, Asti",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "샤를 도떼일 샴페인 브륏",
+    "sourceName": "샤를 도떼일 샴페인 브뤼",
+    "english": "Charles Dauteuil, Champagne Brut",
+    "method": "유일한 영문명 일치"
+  },
+  {
+    "menuName": "콥케 파인 타우니 포트",
+    "sourceName": "콥케 파인 타우니 포트",
+    "english": "Fine Tawny Porto",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "버메스터 타우니 포트",
+    "sourceName": "버메스터 타우니 포트",
+    "english": "Burmester, Tawny Port",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "버메스터 화이트 포트",
+    "sourceName": "버메스터 화이트 포트",
+    "english": "Burmester, White Port",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "카룬도 로제",
+    "sourceName": "카룬도 로제",
+    "english": "Carundo Rose",
+    "method": "한글명 일치"
+  }
+]

@@ -1,0 +1,1274 @@
+{
+  "readAt": "2026-10-08",
+  "source": "List",
+  "ranges": [
+    "A3:H99",
+    "K3:K99"
+  ],
+  "rows": [
+    {
+      "row": 3,
+      "values": [
+        "Red Wine 1",
+        "Red Wine 1.",
+        "올드 핸즈 호벤",
+        "alc 13.5%",
+        "Old Hands Joven",
+        "Yecla, Spain",
+        "Monastrell 100% ",
+        "39,"
+      ],
+      "description": "정말 갓성비 한 친구 가져왔어요. 신선하고 꾸밈없어요. 정말 드링커블 호로록호로록. 호벤이라는 이름 자체가 젊은 남자 라는 뜻이에요 힘과 생명력 넘치는 와인!"
+    },
+    {
+      "row": 4,
+      "values": [
+        "Red Wine 2",
+        "Red Wine 2.",
+        "라 푸리시마 모나스트렐",
+        "alc 11-12%",
+        "Bodegas La Purisima",
+        "Yecla, Spain",
+        "Monastrell 100% ",
+        "39,"
+      ],
+      "description": "스페인 예끌라 지역의 모나스트렐 품종의 특징인 블랙베리, 계피, 자두향과 장미 꽃잎 향이 가득 퍼져요. 젊고 힘이 넘치는 친구예요. "
+    },
+    {
+      "row": 5,
+      "values": [
+        "Red Wine 3",
+        "Red Wine 3.",
+        "후안길 옐로우 라벨",
+        "alc 15%",
+        "Juan Gil Yellow Label",
+        "Spain",
+        "Monastrell 100% ",
+        "49,"
+      ],
+      "description": "체리, 라즈베리, 블랙베리, 바닐라, 초콜렛, 장미의 향이 어우러지면서 농축된 과실향이 나는 친구예요. 적당히 달고 산도도 있어서 밸런스가 좋은 와인이예요. "
+    },
+    {
+      "row": 6,
+      "values": [
+        "Red Wine 4",
+        "Red Wine 4.",
+        "후안길 실버 라벨",
+        "alc 15%",
+        "Juan Gil Silver Label",
+        "Spain",
+        "Mourvedre",
+        "66,"
+      ],
+      "description": "체리, 라즈베리, 블랙베리, 바닐라, 초콜렛, 장미향 속에서 스쳐가는 타닌감이 여러 향들의 조화를 연결해주는 친구예요. 여러 와인 애호가에게 사랑받는 와인이예요."
+    },
+    {
+      "row": 7,
+      "values": [
+        "Red Wine 5",
+        "Red Wine 5.",
+        "샤또 오뜨 브랑드",
+        "alc 13%",
+        "Château Haute Brande ",
+        "France",
+        "Blend",
+        "47,"
+      ],
+      "description": "높은 지대에 있는 포도로 만들었어요. 1980년대 파리콩쿠르에서 메달을 땄다고 해요. 나무뿌리 향으로 시작해서 치즈향이 은은하게 퍼지며 부드러운 바디감과 바닐라향이 두 번 미소 짓게 만들어요. 가성비 좋은 보르도 맛을 느낄 수 있어요.\r"
+    },
+    {
+      "row": 8,
+      "values": [
+        "Red Wine 6",
+        "Red Wine 6.",
+        "롱반 멀롯",
+        "alc 13.5%",
+        "Long Barn Merlot ",
+        "U.S.A",
+        "Melort 100%",
+        "59,"
+      ],
+      "description": "과실과 오크의 풍미가 조화로운 와인이에요. 블랙베리, 라즈배리 달콤한 향신료의 향이 나고 입에서는 과실의 풍미와 함께 스모키함과 삼나무의 풍미를 느낄 수 있어요. 복합적이고 다층적이어서 한 모금 한 모금이 즐거운 친구예요. \r"
+    },
+    {
+      "row": 9,
+      "values": [
+        "Red Wine 7",
+        "Red Wine 7.",
+        "미스터 피에르 피노누아",
+        "alc 12%",
+        "M. Pierre Pinot Noir",
+        "France",
+        "Pinot Noir",
+        "49,"
+      ],
+      "description": "섬세하고 우아한 체리빛이 매력적인 와인. 딸기와 신선한 과일 향이 퍼지며, 부드러운 타닌이 입안을 감싸고 산뜻한 산미가 여운을 남겨줘요."
+    },
+    {
+      "row": 10,
+      "values": [
+        "Red Wine 8",
+        "Red Wine 8.",
+        "블랙 베레 피노 누아",
+        "alc13.5%",
+        "Black Beret Pinot Noir",
+        "France",
+        "Pinot Noir",
+        "43,"
+      ],
+      "description": "첫 잔에서 라즈베리와 딸기의 달콤한 과실 향이 피어나며, 뒤따르는 부드러운 목넘김이 마음을 편안하게 해줘요."
+    },
+    {
+      "row": 11,
+      "values": [
+        "Red Wine 9",
+        "Red Wine 9.",
+        "으젠느 르블랑 바케라스",
+        "alc 14%",
+        "Eugene Le Vacqueras",
+        "Rhone, France",
+        "Grenache Syrah Cinsault",
+        "69,"
+      ],
+      "description": "샵이든 바든 맛있는 론 찾기 참 어려운 요즘인데 바께라스 쪽 퀄리티 좋은 와인들이 많이 소개되고 있어요 내년이면 또 비싸질게 분명한 와인… 보이면 드세요 부드러운 과실미에 꽉찬 타닌 , 길고 훌륭한 여운 . 좋은 와인입니다 "
+    },
+    {
+      "row": 12,
+      "values": [
+        "Red Wine 10",
+        "Red Wine 10.",
+        "디킨 쉬라즈",
+        "alc 13-14%",
+        "Deakin shiraz",
+        "Australia",
+        "Syrah",
+        "39,"
+      ],
+      "description": "적당한 타닌감을 원하신다면 이 친구를 추천드려요. 블랙베리 등의 풍부한 베리 과일향이 나면서 입에서는 아몬드와 모카향이 잘 어우러지는 친구예요. \r"
+    },
+    {
+      "row": 13,
+      "values": [
+        "Red Wine 11",
+        "Red Wine 11.",
+        "바인션 그르나슈",
+        "alc 14-15% ",
+        "Haselgrove, Vine Sean",
+        "Haselgrove, Vine Sean ",
+        "Grenache 100%",
+        "59,"
+      ],
+      "description": "감성이 촉촉한 저녁에 잘 어울리는 와인이에요. 달콤한 향이 코와 입안을 가득 매워줘요. 여기서 감성을 자극해 주는 부드러운 타닌감이 깊고 풍부하게 저녁을 채워 줄 거예요."
+    },
+    {
+      "row": 14,
+      "values": [
+        "Red Wine 12",
+        "Red Wine 12.",
+        "레 자르젤리에르 멜롯-쉬라",
+        "alc 13-14%",
+        "Les Argelieres Merlot , Syrah",
+        "Languedoc Roussillon , France",
+        "Merlot , Syrah",
+        "49,"
+      ],
+      "description": "달콤한 베리류, 후추, 삼나무향이 느껴지는 와인이에요. 입안에서는 부드러운 질감으로 목 넘김이 좋고 바닐라, 농익은 자두의 과실 밸런스가 좋습니다! 적당히 가벼운 바디감과 타닌감이 좋아요!\r"
+    },
+    {
+      "row": 15,
+      "values": [
+        "Red Wine 13",
+        "Red Wine 13.",
+        "르 뷔우 트루폴리에",
+        "alc 14-15%",
+        "Le Vieux Truffolier",
+        "France",
+        "Blend",
+        "47,"
+      ],
+      "description": "지중해성 기후가 빚은 최고의 포도 숙성도를 자랑하는 와인이에요. 월등한 밸런스와 딸기, 다크체리, 밀크 바닐라, 장미 등의 향과 부드럽게 응축된 타닌감이 여운을 오래 남겨줘요. "
+    },
+    {
+      "row": 16,
+      "values": [
+        "Red Wine 14",
+        "Red Wine 14.",
+        "폼비스 런 쉬라즈",
+        "alc 14-15%",
+        "Fornby's Run",
+        "lanfhome Chreek, Australia",
+        "Syrah",
+        "47,"
+      ],
+      "description": "붉은 베리의 향기과 바닐라의 풍미가 마시기전 코를 즐겁게 해줘요. 입안에 들어오면 과일의 풍미가 감싸주는 동시에 향신료의 향이 톡톡 장식해 주는 것을 느낄 수 있어요."
+    },
+    {
+      "row": 17,
+      "values": [
+        "Red Wine 15",
+        "Red Wine 15.",
+        " 소모스 크리안자",
+        "alc 14-15%",
+        "Sommos, Crianza",
+        "Somontano, Spain",
+        "Blend",
+        "59,"
+      ],
+      "description": "익은 체리의 향과 약간의 오크향이 향기로운 와인이에요. 부드러우면서도 짜임새 있는 탄탄한 느낌을 주면서 튀지 않는 산도에 적당하게 묵직한 바디감을 주는 균형감이 인상적이에요. "
+    },
+    {
+      "row": 18,
+      "values": [
+        "Red Wine 16",
+        "Red Wine 16.",
+        "뷰 마넨 레세르바",
+        "alc 13.5%",
+        "Viu manent Reserva",
+        "Chile",
+        "Malbec",
+        "39,"
+      ],
+      "description": "신선한 맛을 주는 레드와인이에요. 블루베리, 블랙체리, 바이올렛 향으로 즐거워 지고, 입안에서는 초콜릿, 모카향이 은은하게 남아서 부담 없이 즐길 수 있는 친구예요!\n"
+    },
+    {
+      "row": 19,
+      "values": [
+        "Red Wine 17",
+        "Red Wine 17.",
+        "날리헤드 올드바인 진판델",
+        "alc 14-15%",
+        "Gnarly Head Old Vine Zinfandel",
+        "California, U.S.A",
+        "Zinfandel 100%",
+        "79,"
+      ],
+      "description": "블랙베리, 블랙체리, 블랙페퍼의 향기로 기선제압을 해버리는 친구예요. 입안에서는 강렬하고 풍부한 풍미와 오크향의 밸런스가 어울어져서 복합미를 즐길 수 있는 와인이예요."
+    },
+    {
+      "row": 20,
+      "values": [
+        "Red Wine 18",
+        "Red Wine 18.",
+        "퍼르시모",
+        "alc 14%",
+        "Vallepicciola Persimo",
+        "Toscana, Italy",
+        "Cabernet Sauvignon 60% Cabernet Fracnc 20%, Sangiovese 20%",
+        "59,"
+      ],
+      "description": "자기관리 잘하는 신사가 생각나요. 바이올렛 , 제비꽃에 오크터치 풍미가 섞여 정말 스타일리쉬해요 부담스러운 풀바디가 아니라 힘을 적당히 뺀 세련된 구조감이 돋보였습니다. "
+    },
+    {
+      "row": 21,
+      "values": [
+        "Red Wine 19",
+        "Red Wine 19.",
+        "프리마 산지오베제 루비네코",
+        "alc 12-13%",
+        "Prima Pietra Sangiovese Rubicone",
+        "Emilia-Romagna, ltaly",
+        "Sangiovese",
+        "39,"
+      ],
+      "description": "진한 루비색에 한 번 홀리고, 바이올렛, 오레노, 발사믹의 아로마에 반하는 친구예요. 가볍게 마시기에 좋아서 질리지 않게 즐길 수 있는 와인이예요. "
+    },
+    {
+      "row": 22,
+      "values": [
+        "Red Wine 20",
+        "Red Wine 20.",
+        "키안티 루피나 리제르바",
+        "alc 14%",
+        "Chianti Rufina Riserva",
+        "Chianti, Italy",
+        "Sangiovese",
+        "63,"
+      ],
+      "description": "강렬한 루비 컬러로 잔을 채우면 블랙체리향과 덤블의 향으로 잔이 가득해져요. 입 안에서는 바이올렛 꽃 향기와 감초의 맛과 함께 부드러운 타닌감으로 조화를 이루는 와인이예요."
+    },
+    {
+      "row": 23,
+      "values": [
+        "Red Wine 21",
+        "Red Wine 21.",
+        "그랑 띠에라 비노 틴토\t",
+        "alc 11.5%",
+        "Gran Tierra Vino Tinto",
+        "Spain",
+        "Blend",
+        "39,"
+      ],
+      "description": "와인이 생소하신 분과 함께 오셨다면 이 와인을 추천 드려요. 신선한 과일의 향과 부드러운 타닌감의 밸런스가 인상적인 와인이예요. 달콤한 맛이 잘 살아 있어서 와인을 처음 드시는 분들도 부담 없이 즐기실 수 있어요."
+    },
+    {
+      "row": 24,
+      "values": [
+        "Red Wine 22",
+        "Red Wine 22.",
+        "세파 비헤아스 보발",
+        "alc 13%",
+        "Cepas Viejas BoBal",
+        "Spain",
+        "Bobal",
+        "59,"
+      ],
+      "description": "깔끔한 와인을 먹고 싶을 때 생각나는 친구 중 하나예요. 잘 읽은 과일향과 부드러운 목 넘김이 즐겁고, 바닐라향으로 여운을 남기는 매력적인 와인이예요. "
+    },
+    {
+      "row": 25,
+      "values": [
+        "Red Wine 23",
+        "Red Wine 23.",
+        "아라우카노 까르미네르 리제르바",
+        "alc 13.5%",
+        "Araucano Carmenere Reserva",
+        "Chile",
+        "Carmenere",
+        "59,"
+      ],
+      "description": "따뜻한 분위기를 만들고 싶다면 이 친구와 함께 해 보는 것을 추천 드려요. 조밀조밀하고 둥근 맛을 내면서 부드럽게 넘어가는 와인이예요. 둥글 둥글 부드럽지만 적당한 타닌감으로 지루하지 않게 마실 수 있어요."
+    },
+    {
+      "row": 26,
+      "values": [
+        "Red Wine 24",
+        "Red Wine 24.",
+        "그랑 아라우카노",
+        "alc 13.5%",
+        "Grand Araucano Reserva",
+        "Chile",
+        "Cabernet Sauvignon",
+        "159,"
+      ],
+      "description": "이 친구를 입안에 머금었을 때 '팔방미인'이라는 말이 떠올랐어요. 구조감이면 구조감, 향이면 향, 입에 안에서 머무르는 피니시가지 모든 면에서 만족감을 주는 친구예요. "
+    },
+    {
+      "row": 27,
+      "values": [],
+      "description": ""
+    },
+    {
+      "row": 28,
+      "values": [
+        "White Wine 1",
+        "White Wine 1.",
+        "미션 리즐링",
+        "alc 11-12%",
+        "Mission, Riesling",
+        "Hawke's Bay, New Zealand",
+        "Riesling",
+        "43,"
+      ],
+      "description": "미네랄 느낌이 물씬나는 레몬, 라임등의 시트러스 향과 복숭아, 살구 등의 스톤 푸릇의 향이 매력적이에요.\r\n적당한 산도와 당도의 균형감이 일품인 와인으로 매우 깨끗하게 마무리되는 끝 맛을 보여줘요. "
+    },
+    {
+      "row": 29,
+      "values": [
+        "White Wine 2",
+        "White Wine 2.",
+        "군터록 리즐링 ",
+        "alc 11%",
+        "GunderLoch",
+        "Rheinhessen, Germany",
+        "Riesling",
+        "59,"
+      ],
+      "description": "드라이한 것도 달달한것도 모두 당겨서 고민이시라면 이 친구를 추천 드려요. 시트러스 향과 함께 느낄 수 있는 인상적인 산도와 열대과일의 달콤한 향이 적절한 밸런스를 보여주는 와인이예요. "
+    },
+    {
+      "row": 30,
+      "values": [
+        "White Wine 3",
+        "White Wine 3.",
+        "라로쉬 샤르도네 리저브",
+        "alc 12.5%",
+        "Laroche Chardonnay Reserve",
+        "France",
+        "Chardonnay",
+        "69,"
+      ],
+      "description": "약간의 벌꿀향과 버터향과 함께 풍부하고 짙은 향이 뛰어난 친구예요. 농익은 과일맛이 향과 잘 어우러져 강력한 맛을 만들어줘요. 길게 지속되는 여운까지 좋은 와인이예요."
+    },
+    {
+      "row": 31,
+      "values": [
+        "White Wine 4",
+        "White Wine 4.",
+        "롱반 샤도네이",
+        "alc 13.5%",
+        "Long Barn Chardonnay",
+        "U.S.A",
+        "Chardonnay",
+        "59,"
+      ],
+      "description": "향긋한 오크향을 머금은 화이트 와인이에요. 사과와 밝은 시트러스의 달콤한 향과 동시에 입안에서는 크리미한 버터, 바닐라, 구운 아몬드의 풍미도 느껴져요. 조화로운 맛 밑에서 묵직하게 받쳐주는 오크의 향이 인상적이에요. "
+    },
+    {
+      "row": 32,
+      "values": [
+        "White Wine 5",
+        "White Wine 5.",
+        "킬리빙빙 스윗 하트 샤도네이",
+        "alc 13-14%",
+        "Killibinbin, Sweet Hart",
+        "Australia",
+        "Chardonnay",
+        "49,"
+      ],
+      "description": "달달한 화이트 와인을 찾으신다면 이 친구가 좋아요. 달큰함과 함께 오는 다양한 향들이 가볍게 와인을 즐기기에 충분한 맛과 향을 선물해 주는 와인이에요."
+    },
+    {
+      "row": 33,
+      "values": [
+        "White Wine 6",
+        "White Wine 6.",
+        "상쎄르 도멘 블랑",
+        "alc 13%",
+        "Sancerre Domaine Balland",
+        "Frace",
+        "Sauvinon",
+        "89,"
+      ],
+      "description": "은은한 꿀향, 배향등 풍부한 과실향이 넘실거려요. 페퍼민트를 연상시키는 레몬 향미의 과일맛, 부드러움, 실키함이 반겨줍니다. "
+    },
+    {
+      "row": 34,
+      "values": [
+        "White Wine 7",
+        "White Wine 7.",
+        "레 자르 젤리에르 비오니에",
+        "alc 13-14%",
+        "Les Argelieres",
+        "Languedoc Roussillon, France",
+        "Veognier",
+        "49,"
+      ],
+      "description": "부드러움과 상큼함을 함께 느낄 수 있는 친구예요. 레몬 그라스, 스톤 프루츠, 복숭아, 살구 등의 열대과일 아로마가 느껴져요. 입 안에서는 진한 아로마와 미네랄, 흰 꽃, 허브향과 크리미한 풍미가 인상적인 와인이에요. "
+    },
+    {
+      "row": 35,
+      "values": [
+        "White Wine 8",
+        "White Wine 8.",
+        "마틴 코닥스",
+        "alc 13%",
+        "Martin Codax",
+        "Rias Baixs, Spain",
+        "Albarino",
+        "59,"
+      ],
+      "description": "그린 애플의 신선함과, 청량감이 좋은 시트러스 향이 일품이에요. 입안에서 약간의 소금 터치와 미네랄의 좋은 질감이 있는 화이트 와인예요. \r"
+    },
+    {
+      "row": 36,
+      "values": [
+        "White & Rose Wine 9",
+        "White & Rose Wine 9.",
+        "피터 바인바흐 미디움 스위트",
+        "alc 9.5%",
+        "Peter",
+        "Germany",
+        "Riesling",
+        "49,"
+      ],
+      "description": "화이트 와인 중 적당한 바디감을 찾는다면 이 친구를 추천 드려요. 시트러스, 사과의 맛과 파인애플의 향을 느낄 수 있는 세미 스위트 와인으로 유명하기도 해요  시원하게 와인을 즐기고 싶다면 망설이지 마세요!"
+    },
+    {
+      "row": 37,
+      "values": [
+        "White & Rose Wine 10",
+        "White & Rose Wine 10.",
+        "카룬도 펄스 오브 로제",
+        "alc 12.5%",
+        "Carundo Pearls of Rose",
+        "Australia",
+        "Shiraz",
+        "49,"
+      ],
+      "description": "말괄량이 삐삐를 연상케 하는 다양한 텍스처를 느낄 수 있어요. 새콤 달콤한 딸기의 과실향과 잔잔한 탄산이 어우러져 질리지 않고 계속 즐길 수 있는 와인이에요. 처음 와인을 접하시는 분께 추천드려요. \r"
+    },
+    {
+      "row": 38,
+      "values": [
+        "White & Rose Wine 11",
+        "White & Rose Wine 11.",
+        "킬리빙빙 스윗 립스 로제",
+        "alc 14.5%",
+        "Killibinbin, Sweet Lips",
+        "Australia",
+        "Shiraz",
+        "49,"
+      ],
+      "description": "달콤한 레드를 찾으신다면 이 로제 와인을 추천드려요. 풍부한 레드의 과실향이 느껴지면서도. 달콤함이 입안에 감돈 후에 적당한 산도가 지겹지 않게 해줘요. 여러 겹의 맛을 느낄 수 있는 친구예요."
+    },
+    {
+      "row": 39,
+      "values": [
+        "White & Rose Wine 12",
+        "White & Rose Wine 12.",
+        "그라모나 제사미",
+        "alc 11.2%",
+        "Gramona Gessami",
+        "Penedes, Spain",
+        "Muscat 40%, Sauvignon Blanc 40%, Gewurztraminer 20%",
+        "69,"
+      ],
+      "description": "실키한 터치와 터질 듯 입안을 감싸는 꽃내음의 조화로 환상적인 신선함을 만끽할 수 있는 아름다운 와인이에요. 자스민, 오렌지 꽃을 머금은 시원한 봄의 숲 속을 걷는 상상을 하게 돼요.\r"
+    },
+    {
+      "row": 40,
+      "values": [
+        "Sparkling Wine 1",
+        "Sparkling Wine 1.",
+        "시드르 부쉐 바이오",
+        "alc 4%",
+        "Cidre De Bretagne Bio",
+        "France",
+        "apple",
+        "39,"
+      ],
+      "description": "사과 발효주로 설탕의 단맛이 아니라 사과즙의 달달함에 통통 튀는 탄산이 가득해 먹는 내내 기분이 좋아져요."
+    },
+    {
+      "row": 41,
+      "values": [
+        "Sparkling Wine 2",
+        "Sparkling Wine 2.",
+        "발레벨보 브라께토",
+        "alc 6%",
+        "Vallebelbo, Brachetto",
+        "Italy",
+        "Brachetto 100%",
+        "49,"
+      ],
+      "description": "따르자 마자 잔을 채우는 섬세한 장미향과 무스크 향으로 한 번 즐겁고, 달콤하고 진한 과일향과 맛이 두 번 즐겁게 되는 친구예요. 낮은 도수와 부드러운 스파클링, 달콤하고 향긋한 맛이 조화를 이루어 와인을 자주 접하지 못한 분들도 즐겁게 즐길 수 있는 와인이예요."
+    },
+    {
+      "row": 42,
+      "values": [
+        "Sparkling Wine 3",
+        "Sparkling Wine 3.",
+        "핑크 모스카토 스푸만테",
+        "alc 6-7%",
+        "Miravento, Pink Moscato Spumante",
+        "Asti, Italy",
+        "Moscato 100%",
+        "49,"
+      ],
+      "description": "밝고 연한 핑크색이 잔을 채우면 산뜻한 여름 꽃들의 향이가 피어나요. 기분 좋은 당도와 함께 깔끔한 산도가 받쳐주는 밸런스도 인상적이에요. 과일의 향이 입안을 가득 채우고 버블이 부드러운 벨벳처럼 쓰다듬어줘서 기분좋게 마실 수 있는 와인이예요. "
+    },
+    {
+      "row": 43,
+      "values": [
+        "Sparkling Wine 4",
+        "Sparkling Wine 4.",
+        "미라벤토 모스카토 스트로베리",
+        "alc 5.5%",
+        "Miravento, Moscato & strawberry",
+        "Italy",
+        "Moscato",
+        "49,"
+      ],
+      "description": "신선한 딸기 향이 잔을 넘어서 코로 흘러들어오면 벌써부터 기분이 좋아져요. 달콤한 모스카토 맛 위에 딸기 향이 은은하게 맛을 완성시켜 주는게 인상적이예요. 달콤한 향과 맛을 느끼다보면 어느새 부드러운 버블이 입안을 씻어주면서 편안한 목넘김을 선사해요."
+    },
+    {
+      "row": 44,
+      "values": [
+        "Sparkling Wine 5",
+        "Sparkling Wine 5.",
+        "데코디 프라골리노 로쏘",
+        "alc 7.5%",
+        "Fragolino Rosso",
+        "Lombardia, Italy",
+        "Vitis Lambrusca, Isabella",
+        "39,"
+      ],
+      "description": "부드러운 거품과 상큼달콤한 향이 지친 하루를 가볍고 행복하게 마무리해 줄 수 있는 친구 같은 와인이예요. 한 잔을 따르는 순간, 눈길을 사로잡는 붉은 색과 상큼한 딸기와 라즈베리의 향기가 퍼져요. 단맛이 강하지만 너무 무겁지 않고 산뜻한 산미가 조화로워 부담 없이 즐기기 좋아요."
+    },
+    {
+      "row": 45,
+      "values": [
+        "Sparkling Wine 6",
+        "Sparkling Wine 6.",
+        "세구라 비우다스 레세르바 에레다드 브뤼",
+        "alc 12.5%",
+        "Segura Viudas Reserva Heredad Brut ",
+        "Spain",
+        "Macabeo 67%, Parellada 33% ",
+        "97,"
+      ],
+      "description": "오랜 숙성의 맛과 신선한 맛을 동시에 느낄 수 있는 스파클링 와인이에요. 달달한 맛이 입을 감싸주면서도 적절한 산도가 질리지 않게 해줘요. 병도 예뻐서 소장하기 위해 가져가시는 분도 많은 친구예요."
+    },
+    {
+      "row": 46,
+      "values": [
+        "Sparkling Wine 7",
+        "Sparkling Wine 7.",
+        "톨라스코 모스카토 다스티",
+        "alc 5.5%",
+        "Torlasco Moscato d'Asti",
+        "Italy",
+        "Moscato 100%",
+        "59,"
+      ],
+      "description": "부드러우면서 달콤한 향이 오래도록 남는 친구예요. 모스카토 특유의 달콤함과 함께 향긋한 오렌지꽃향이 퍼져서 달달한 분위기를 누리고 싶을 때 추천드려요. 와인잔에 채워진 밝은 골드빛의 와인과 함께 달달하고 따뜻한 분위기를 만들어보세요."
+    },
+    {
+      "row": 47,
+      "values": [
+        "Sparkling Wine 8",
+        "Sparkling Wine 8.",
+        "발레벨보 모스카토 다스티",
+        "alc 5%",
+        "MIRAVENTO MOSCATO D'Asti",
+        "ltaly",
+        "Moscato 100%",
+        "49,"
+      ],
+      "description": "달콤한 꿀향, 복숭아 향 등 싱그러운 향들이 섬세하게 퍼져요. 버블은 우아하고 미세해서 실키한 느낌이 나는 와인이예요."
+    },
+    {
+      "row": 48,
+      "values": [
+        "Sparkling Wine 9",
+        "Sparkling Wine 9.",
+        "간치아 아스티",
+        "alc 9%",
+        "Gancia, Asti ",
+        "Asti, Italy",
+        "MoscatoBianco",
+        "59,"
+      ],
+      "description": "과일향을 섬세하게 느끼고 싶다면 이 친구를 추천 드려요. 한 모금 머금으면 꽃 향기, 바닐라향, 과일향이 지속적으로 섬세하게 피어나는 와인이에요. 섬세한 향들이 길게 느껴지면서 부드러운 달콤함으로 입 안을 감싸줘요."
+    },
+    {
+      "row": 49,
+      "values": [
+        "Sparkling Wine 10",
+        "Sparkling Wine 10.",
+        "루이 부요 크레망 드 부르고 그랑 리저브 ",
+        "alc 12%",
+        "Perle de Vigne Louis Bouillot Cremant de Bourgogne Grand Reserve Brut",
+        "France",
+        "Chardonnay, Pinot Noir, Aligote, Gamay",
+        "79,"
+      ],
+      "description": "아름다운 버블과 함께, 꽃, 허브, 오렌지 향이 풍부하게 올라오는 친구예요. 미국 슈퍼볼 우승 축하 와인으로 선택되면서 많은 사람들의 인정과 사랑을 받는 와인이예요."
+    },
+    {
+      "row": 50,
+      "values": [
+        "Sparkling Wine 11",
+        "Sparkling Wine 11.",
+        "투렌 크레망 드 루아르",
+        "alc 12.5%",
+        "Domaine Pre Cremant de Loire Blanc",
+        "France",
+        "Chardonnay60%, Orbois40%",
+        "79,"
+      ],
+      "description": "산뜻한 과실 풍미와 크리미한 질감, 신선하면서도 생기 넘치는 부드럽고 섬세한 기포가 입안을 산뜻하고 깔끔하게 해주는 매력적인 와인이예요."
+    },
+    {
+      "row": 51,
+      "values": [
+        "Sparkling Wine 12",
+        "Sparkling Wine 12.",
+        "폴 당장 뀌베 카르트 누와",
+        "alc 12%",
+        "PAUL DANGIN CUVEE CARTE NOIRE",
+        "Champagne, France",
+        "Pinot Noir 100%",
+        "139,"
+      ],
+      "description": "피노누아 품종 특유의 품격 높은 향이 느껴지는 친구예요. 과일향과 바삭한 페스츄리향을 음미하면서 풍부한 버블감을 느낄 수 있어요. 버블 뒤에 감귤향의 피니시도 일품이예요. 영국 황실에서 납품을 받았을 정도로 많은 사람들의 인정을 받은 샴페인이예요. "
+    },
+    {
+      "row": 52,
+      "values": [
+        "Sparkling Wine 13",
+        "Sparkling Wine 13.",
+        "샤를 도떼일 샴페인 브륏",
+        "alc 12-13%",
+        "Charles Dauteuil, Champagne Brut",
+        "France",
+        "Chardonnay, Pinot Noir, Pinot Blanc",
+        "139,"
+      ],
+      "description": "옅은 금빛을 잔에 채우면, 코에는 진저브레드, 아몬드, 사과, 레몬, 감귤 향이 차올라요. 입안에서는 짙은 청사과, 감귤, 배의 향이 버블과 함께 톡톡 터지는 와인이예요."
+    },
+    {
+      "row": 53,
+      "values": [],
+      "description": ""
+    },
+    {
+      "row": 54,
+      "values": [
+        "Port Wine 1",
+        "Port Wine 1.",
+        "콥케 파인 타우니 포트",
+        "alc 19.5%",
+        "Fine Tawny Porto",
+        "Portgal",
+        "Muscat 40%, Sauvignon Blanc 40%, Gewurztraminer 20% \r",
+        "49,"
+      ],
+      "description": "잘익은 달콤한 과일,향기로운 바닐라 노트의 결합된 아로마가 코끝을 맴도는 와인이에요. 풍부한 맛과 포근한 향으로 가득한 매끄럽고 세련된 풍미를 주는 친구입니다."
+    },
+    {
+      "row": 55,
+      "values": [
+        "Port Wine 2",
+        "Port Wine 2.",
+        "버메스터 타우니 포트",
+        "alc 19-20% ",
+        "Burmester, Tawny Port",
+        "Portgal",
+        "Blend\r",
+        "59,"
+      ],
+      "description": "바디감과 당도가 강한 와인이에요. 강렬하면서 잘 익은 과일 바닐라의 아로마가 느껴져요. 입 안에서는 토치, 초콜릿, 캐러멜, 넛트, 설탕에 절인 체리 등 달콤함과 벨벳처럼 부드러운 질감의 농축미가 가득차요! \r"
+    },
+    {
+      "row": 56,
+      "values": [
+        "Port Wine 3",
+        "Port Wine 3.",
+        "버메스터 화이트 포트",
+        "alc 19-20% ",
+        "Burmester, White Port",
+        "Portgal",
+        "Blend\r",
+        "59,"
+      ],
+      "description": "아카시아 꿀 향, 진한 흰 꽃 아로마가 인상적인 와인이에요. 입안에서는 적당한 산미와 당도가 부드러운 목 넘김으로 이어지며 레드 포트에 비해 덜 부담스러워서 포트와인 입문으로 추천드려요."
+    },
+    {
+      "row": 57,
+      "values": [
+        "Port Wine 4",
+        "Port Wine 4.",
+        "민친버리 포트",
+        "alc 19-20% ",
+        "Minchinbury, Tawny Porto",
+        "Portgal",
+        "Blend\r",
+        "39,"
+      ],
+      "description": "카라멜, 토피넛의 아로마와 붉은 과실의 풍미가 당돌하리만큼 강렬한 인상을 심어주어요. 보다 합리적인 가격으로 포트와인을 즐겨보세요!"
+    },
+    {
+      "row": 58,
+      "values": [
+        "Natural Wine 1",
+        "Natural Wine 1.",
+        "빠르다렛 오렌지",
+        "alc 11.9%",
+        "Pardalet",
+        "Spain",
+        "Chenin Blanc, Xarel-Lo",
+        "69,"
+      ],
+      "description": "이 와인의 원산지인 슈냉블랑에 많이 살고 있는 새끼 제비(빠르다렛)들의 날렵한 모습이 빠르다렛 와인의 크리스피하고 샤프한 산도와 닮아 이런 이름을 얻게 되었다고해요. 풍부한 과실향과 함께 기분 좋은 산도를 즐실 수 있는 와인이예요."
+    },
+    {
+      "row": 59,
+      "values": [
+        "Natural Wine 2",
+        "Natural Wine 2.",
+        "푼도 라 우니온",
+        "alc 12%",
+        "Fundo La Union",
+        "Chile",
+        "Pais",
+        "89,"
+      ],
+      "description": "칠레 네츄럴 와인에서 가장 대중적인 PAIS품종을 품고있는 친구예요. 붉은 과실류의 향이 은은하게 퍼지며, 입 안에서는 미네랄의 개성이 돋보이는 와인이예요. "
+    },
+    {
+      "row": 60,
+      "values": [
+        "Natural Wine 3",
+        "Natural Wine 3.",
+        "띠에라 데 푸마스",
+        "alc 12.5%",
+        "Tierra De Pumas",
+        "Chile",
+        "Pais",
+        "69,"
+      ],
+      "description": "200살 먹은 포도나무에서 수확해 깊은 맛이 나는 친구예요. 오렌지 껍질과 베리류의 향이 향긋하게 미각을 사로잡으면서 풀내음의 싱그러움이 묵직한 타닌감과 조화를 이루은 와인이예요. "
+    },
+    {
+      "row": 61,
+      "values": [
+        "Natural Wine 4",
+        "Natural Wine 4.",
+        "카스케일 레드 배이라 인테리어",
+        "alc 13%",
+        "Cascale Red Beira",
+        "Portgal",
+        "Unkown",
+        "69,"
+      ],
+      "description": "견고한 밸런스를 가졌지만 활기 넘치는 향을 느낄 수 있는 친구예요. 잘익을 체리, 자두 등의 풍성한 향과 함께 우아한 바디감을 선보이는 와인이예요. 요란하지 않고 우아한 맛을 즐길 수 있어요.\r"
+    },
+    {
+      "row": 62,
+      "values": [
+        "Natural Wine 5",
+        "Natural Wine 5.",
+        "1808 콜헤이타 배이라 인테리어",
+        "alc 13%",
+        "1808 Beira",
+        "Portgal",
+        "Tinta Roriz, Rufete",
+        "69,"
+      ],
+      "description": "라즈베리와 바닐라 향이 부드럽게 감싸주면서 그 사이에서 톡 쏘는 스파이시한 향이 재미를 주는 네추럴 – 비건 와인이에요. 균형감이 잘 정돈되어 있으면서 기분 좋은 여운을 남겨주는 친구예요.\r"
+    },
+    {
+      "row": 63,
+      "values": [
+        "Half Wine 1",
+        "Half Wine 1.",
+        "카룬도 코나라 (레드)",
+        "alc 14.5%",
+        "Carundo Conara",
+        "Austraila",
+        "Shiraz",
+        "29,"
+      ],
+      "description": "톡 쏘는 매력이 있지만, 섬세한 터치로 배려해주는 친구예요. 잘 읽은 과일향과 모카, 초콜릿 향이 조화를 이루어요. 약간의 향신료 향이 마시는 재미를 주면서도 부담스럽지 않게 여운을 남겨주는 와인이예요. "
+    },
+    {
+      "row": 64,
+      "values": [
+        "Half Wine 2",
+        "Half Wine 2.",
+        "싱글 이스테이트 까베르네 쇼비뇽 (레드)",
+        "alc 13.5%",
+        "Single Estate Cabrnet Sauvignon",
+        "Chile",
+        "Cabrnet Sauvignon",
+        "29,"
+      ],
+      "description": "달콤한 향으로 부드럽게 유혹하지만, 다가서면 의외의 카리스마를 보여주는 친구예요. 부드러운 타닌감과 깔끔한 여운을 남겨요. 전반적으로 편안하게 즐길 수 있는 가성비 좋은 와인이예요."
+    },
+    {
+      "row": 65,
+      "values": [
+        "Half Wine 3",
+        "Half Wine 3.",
+        "카룬도 로제",
+        "alc 12.5%",
+        "Carundo Rose",
+        "Australia",
+        "Shiraz",
+        "29,"
+      ],
+      "description": "말괄량이 삐삐를 연상케 하는 다양한 텍스처를 느낄 수 있어요. 새콤 달콤한 딸기의 과실향과 잔잔한 탄산이 어우러져 질리지 않고 계속 즐길 수 있는 와인이에요. 처음 와인을 접하시는 분께 추천드려요. "
+    },
+    {
+      "row": 66,
+      "values": [
+        "Half Wine 4",
+        "Half Wine 4.",
+        "미션 레이트 하비스트 (화이트)",
+        "alc 11.5%",
+        "Mission, Estate Late Harvest",
+        "New Zealand",
+        "Blend",
+        "39,"
+      ],
+      "description": "산뜻하고 달달한 3가지 품종의 포도를 블랜딩해서 폭팔적인 달콤한 향과 꽃 향기가 매력적인 친구예요. 달콤하지만 시트러스 향도 함께 있어서 질리지 않고 끝까지 즐길 수 있는 와인이예요."
+    },
+    {
+      "row": 67,
+      "values": [
+        "Half Wine 5",
+        "Half Wine 5.",
+        "싱글 이스테이트 소비뇽 블랑 (화이트)",
+        "alc 13%",
+        "Single Estate Sauvignon Blanc",
+        "Chile",
+        "Sauvignon blanc",
+        "29,"
+      ],
+      "description": "상큼한 과실향과 함께 오는 달달함을 원하지 않으신다면 이 친구를 추천 드려요. 적당한 청량감과 적당한 산미로 입안을 채우고 부드러운 목 넘김을 선사하는 와인이예요."
+    },
+    {
+      "row": 68,
+      "values": [
+        "Half Wine 6",
+        "Half Wine 6.",
+        "카룬도 샤도네이 (화이트)",
+        "alc 13.5%",
+        "Carundo Chardonnay",
+        "Australia",
+        "Chardonnay",
+        "29,"
+      ],
+      "description": "오크향과 열대과일의 콜라보를 느낄 수 있는 친구예요. 신선한 열대과일의 향과 함께 적당한 바디감으로 코와 입을 즐겁게 해주고, 목 넘김 후에 오크의 잔향이 아늑하게 퍼지는 와인이예요. "
+    },
+    {
+      "row": 69,
+      "values": [
+        "MENU 1",
+        "MENU 1.",
+        "올리브(씨앗주의!)",
+        "",
+        "Olive 8pc",
+        "",
+        "",
+        "7,"
+      ],
+      "description": "올리브 위에 브라운 치즈와 견과류를 올려 부담 없이 즐기기 좋아요. "
+    },
+    {
+      "row": 70,
+      "values": [
+        "MENU 2",
+        "MENU 2.",
+        "아이스크림 (트러플 오일 or 초코시럽)",
+        "",
+        "Ice Cream",
+        "",
+        "",
+        "8,"
+      ],
+      "description": "아이스크림은 언제나 옳습니다! 트러플 오일의 향긋함이냐, 초코시럽의 달콤함이냐 그 선택이 고민될 뿐..!"
+    },
+    {
+      "row": 71,
+      "values": [
+        "MENU 3",
+        "MENU 3.",
+        "생 초콜릿 8pc",
+        "",
+        "raw chocolate",
+        "",
+        "",
+        "8, "
+      ],
+      "description": "입 안 가득 퍼지는 부드러운 텍스처와 풍부한 초콜릿의 향이 와인의 풍미를 한층 더 깊고 풍성하게 만들어줍니다. 와인과 완벽하게 어울리는 디저트로, 특별한 순간을 더 달콤하게 채워보세요.\n\n\n\n\n\n\n"
+    },
+    {
+      "row": 72,
+      "values": [
+        "MENU 4",
+        "MENU 4.",
+        "하몽 덮은 모짜",
+        "",
+        "jamon on the Mozzalela",
+        "",
+        "",
+        "15,"
+      ],
+      "description": "바질 페스토의 향기가 미각을 깨우고, 폭신한 모짜와 고소한 하몽의 조화가 햇살을 맛보게 해줘요. 쨍쨍한 햇살 아래 자란 토마토와 올리브까지 더해져 상큼하고 쨍쨍한 맛!"
+    },
+    {
+      "row": 73,
+      "values": [
+        "MENU 5",
+        "MENU 5.",
+        "브리 치즈 구이",
+        "",
+        "Brie Cheese",
+        "",
+        "",
+        "15,"
+      ],
+      "description": "달콤, 푹신, 고소한 친구예요. 달콤한 메이플 시럽과 고소하게 구원진 브리치즈의 궁합이 좋아요."
+    },
+    {
+      "row": 74,
+      "values": [
+        "MENU 6",
+        "MENU 6.",
+        "그릴드 소세지",
+        "",
+        "Grilled Sausage",
+        "",
+        "",
+        "15,"
+      ],
+      "description": "입안에 터지는 소시지의 육즙과 발사믹이 곁들인 샐러드가 입안에서 스텝을 밟아요."
+    },
+    {
+      "row": 75,
+      "values": [
+        "MENU 7",
+        "MENU 7.",
+        "방울 카프레제 샐러드",
+        "",
+        "Caprese Salad",
+        "",
+        "",
+        "15,"
+      ],
+      "description": "방울토마토와 미니 생모짜렐라 치즈로 카프레제 샐러드를 만들었어요. 발사믹과 한 입, 메이플 시럽과 한 입을 즐길 수 있어요."
+    },
+    {
+      "row": 76,
+      "values": [
+        "MENU 8",
+        "MENU 8.",
+        "버터보드",
+        "",
+        "Butter Board ",
+        "",
+        "",
+        "17,"
+      ],
+      "description": "예쁘게 펴 바른 버터 위에 달콤한 잼과 크랜베리, 견과류, 사과가 올라가요.\n비스켓을 잘라 푹 떠서 먹으면 기분이 무척 좋아져요. "
+    },
+    {
+      "row": 77,
+      "values": [
+        "MENU 9",
+        "MENU 9.",
+        "후추 범벅 훈제 삼겹살 (140g)",
+        "",
+        "Smoked pork belly",
+        "",
+        "",
+        "17,"
+      ],
+      "description": "상큼한 후추향과 은은한 훈연의 조화가 인상적이에요. 게다가 부드러운 육질은 와인의 풍미를 더해 줘요."
+    },
+    {
+      "row": 78,
+      "values": [
+        "MENU 10",
+        "MENU 10.",
+        "하몽 멜론",
+        "",
+        "Melon Prosciutto",
+        "",
+        "",
+        "17,"
+      ],
+      "description": "멜론과 프로슈트의 단짠 단짠의 대결위에 브라운 치즈가 아름답게 마무리해 주네요. "
+    },
+    {
+      "row": 79,
+      "values": [
+        "MENU 11",
+        "MENU 11.",
+        "치즈&육포",
+        "",
+        "Cheese & Jerky",
+        "",
+        "",
+        "17,"
+      ],
+      "description": "짭짤하고 씹는 맛이 일품인 육포와 고소한 치즈의 만남! 기름장에 찍어 먹는 육포는 배신하지 않아요."
+    },
+    {
+      "row": 80,
+      "values": [
+        "MENU 12",
+        "MENU 12.",
+        "라자냐",
+        "",
+        "Lasagna",
+        "",
+        "",
+        "16,"
+      ],
+      "description": "고기 맛이 가득한 미트 토마소 소스, 적당히 잘 익은 치즈와 면의 조화가 좋아요. 한 입, 한 모금 하다 보면 기분이 좋아져요."
+    },
+    {
+      "row": 81,
+      "values": [
+        "MENU 13",
+        "MENU 13.",
+        "마르게리따 피자",
+        "",
+        "Margherita Pizza",
+        "",
+        "",
+        "16,"
+      ],
+      "description": "상큼한 마르게리따 피자 위에 샐러드를 올려보았어요. 상큼한 마리게리따의 풍미를 더하는 샐러드를 즐겨보세요."
+    },
+    {
+      "row": 82,
+      "values": [
+        "MENU 14",
+        "MENU 14.",
+        "치즈플레이트",
+        "",
+        "Cheese plate",
+        "",
+        "",
+        "20,"
+      ],
+      "description": "6가지 치즈와 2가지 과일, 생크림과 비스켓 그리고 견과류가 있어서 골라 먹는 맛이 있어요."
+    },
+    {
+      "row": 83,
+      "values": [
+        "MENU 15",
+        "MENU 15.",
+        "투움바 쌀 파스타",
+        "",
+        "Toowoomba rice pasta",
+        "",
+        "",
+        "9,"
+      ],
+      "description": "맛있는 투움바 소스에 쫄깃한 쌀 파스타 면이 꾸덕한 조화를 이루어요. 레드와인/ 화이트와인에 모두 잘 어울리는 탄수화물입니다! "
+    },
+    {
+      "row": 84,
+      "values": [
+        "MENU 16",
+        "MENU 16.",
+        "알리오 올리오",
+        "",
+        "",
+        "",
+        "",
+        "13,"
+      ],
+      "description": "신선한 마늘과 고급 올리브유가 만나 간결하지만 깊은 풍미를 선사해요. 화려함보다는 기본에 충실한 레시피로, 재료 본연의 맛이 돋보여요."
+    },
+    {
+      "row": 85,
+      "values": [
+        "MENU 17",
+        "MENU 17.",
+        "라구치즈 파스타",
+        "",
+        "",
+        "",
+        "",
+        "15,"
+      ],
+      "description": "고소한 치즈의 풍미와 진하게 끓인 라구 소스가 조화를 이루어 부드럽고 풍부한 맛! 정성스럽게 조리된 소스가 면에 고루 스며들어 있어요."
+    },
+    {
+      "row": 86,
+      "values": [
+        "MENU 18",
+        "MENU 18.",
+        "트치소 짜파게티 (트러플&치즈&소세지)",
+        "",
+        "Chapagetti",
+        "",
+        "",
+        "8,"
+      ],
+      "description": "아는 맛이 무서운 맛입니다. 거기에 향긋한 트러플과 고소한 치즈라니...! 와인과 페어링해서 즐기기 좋아요. 소세지는 덤입니다. "
+    },
+    {
+      "row": 87,
+      "values": [],
+      "description": ""
+    },
+    {
+      "row": 88,
+      "values": [
+        "Beverage 1",
+        "Beverage 1.",
+        "분다버그 핑크자몽",
+        "",
+        "BUNDABERG Pink Grapefuit",
+        "",
+        "",
+        "7,"
+      ],
+      "description": "달콤 쌉싸름한 자몽의 맛이 입과 목, 위장을 부드럽게 감싸줘요."
+    },
+    {
+      "row": 89,
+      "values": [
+        "Beverage 2",
+        "Beverage 2.",
+        "분다버그 진저비어",
+        "",
+        "BUNDABERG Ginger Beer",
+        "",
+        "",
+        "7,"
+      ],
+      "description": "무알콜 이지만 맥주의 청량감을 느끼고 싶다면!"
+    },
+    {
+      "row": 90,
+      "values": [],
+      "description": ""
+    },
+    {
+      "row": 91,
+      "values": [
+        "side dish 1"
+      ],
+      "description": ""
+    },
+    {
+      "row": 92,
+      "values": [
+        "side dish 2"
+      ],
+      "description": ""
+    },
+    {
+      "row": 93,
+      "values": [
+        "side dish 3"
+      ],
+      "description": ""
+    },
+    {
+      "row": 94,
+      "values": [
+        "side dish 4"
+      ],
+      "description": ""
+    },
+    {
+      "row": 95,
+      "values": [
+        "",
+        "."
+      ],
+      "description": ""
+    },
+    {
+      "row": 96,
+      "values": [
+        "",
+        "."
+      ],
+      "description": ""
+    },
+    {
+      "row": 97,
+      "values": [
+        "",
+        "."
+      ],
+      "description": ""
+    },
+    {
+      "row": 98,
+      "values": [
+        "",
+        "."
+      ],
+      "description": ""
+    },
+    {
+      "row": 99,
+      "values": [
+        "",
+        "."
+      ],
+      "description": ""
+    }
+  ]
+}
