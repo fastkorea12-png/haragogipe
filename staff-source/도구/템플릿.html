@@ -23,6 +23,7 @@ form{display:flex;gap:8px;margin-top:auto;padding:14px 0;background:var(--paper)
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 
 .submit-check{margin:12px 0 0;padding:14px 18px;border:0;border-radius:12px;background:var(--wine);color:white;font-weight:700;font-size:15px}.check-help{font-size:12px;color:var(--muted);margin:5px 0}.skip-check{align-self:flex-end;border:1px solid var(--rule);border-radius:7px;background:transparent;color:var(--muted);font-size:11px;min-height:44px;padding:4px 9px;margin:8px 0 0}.info-item.skip{background:var(--soft)}.info-item.skip .check-row span{opacity:.5}.submit-dialog{width:min(560px,calc(100vw - 28px));max-height:85dvh;border:1px solid var(--rule);border-radius:18px;padding:24px;background:var(--paper);color:var(--ink)}.submit-dialog::backdrop{background:#2b211b66}.submit-dialog h2{font-size:20px;color:var(--wine);margin:0 0 10px}.submit-dialog p{font-size:14px}.submit-dialog pre{white-space:pre-wrap;overflow-wrap:anywhere;font-family:inherit;font-size:13px;line-height:1.8;background:var(--bot);border:1px solid var(--rule);border-radius:10px;padding:14px;max-height:40dvh;overflow:auto}.submit-actions{display:flex;gap:10px;flex-wrap:wrap}.submit-actions a,.submit-actions button{display:flex;align-items:center;justify-content:center;padding:12px 16px;font-size:14px;min-height:44px;border-radius:9px;text-decoration:none}.submit-actions a{background:var(--wine);color:white}.submit-actions button{border:1px solid var(--rule);background:var(--bot);color:var(--muted)}
+.store-pairings{margin-top:18px;border-top:1px solid var(--rule);padding-top:16px;white-space:normal}.store-pairings>strong{color:var(--wine);font-size:14px}.store-pairing{margin-top:12px;padding:14px;background:var(--paper);border-radius:10px;font-size:14px}.store-pairing>strong{font-size:15px}.store-pairing p{font-size:12px;color:var(--muted);margin:7px 0}.store-pairing summary{font-size:12px;color:var(--wine)}.pairing-select{width:100%;padding:12px;border:1px solid var(--rule);border-radius:10px;background:var(--bot);color:var(--ink);font-size:16px;min-width:0}
 </style>
 </head>
 <body>
@@ -52,6 +53,7 @@ form{display:flex;gap:8px;margin-top:auto;padding:14px 0;background:var(--paper)
 <script>
 var KB = /*KB_JSON*/[];
 var WINE_DATA = /*WINE_JSON*/[];
+var FOOD_DATA = /*FOOD_JSON*/[];
 var KB_VERSION = /*VERSION_JSON*/{};
 var AI_ENDPOINT = /*AI_ENDPOINT_JSON*/"";
 var QUESTION_LOG_ENABLED = /*QUESTION_LOG_ENABLED*/false;
@@ -234,6 +236,41 @@ function rankDiverse(candidates,criteria,key){
   return primary.concat(alternatives).map(function(x){return x.wine;});
 }
 
+function menuPairings(w){
+  var pairing=String(w.pairing||'');
+  var rules=[
+    [/육포/i,/육포/,'육포'],
+    [/크림|cream/i,/투움바/,'크림 소스 요리'],
+    [/초콜릿|chocolate/i,/초콜릿/,'초콜릿'],
+    [/아이스크림|ice cream/i,/아이스크림/,'아이스크림'],
+    [/샐러드|salad/i,/샐러드|카프레제/,'샐러드'],
+    [/피자|pizza/i,/피자/,'피자'],
+    [/파스타|pasta/i,/파스타|알리오/,'파스타'],
+    [/돼지고기|pork|훈제육/i,/삼겹살/,'돼지고기·훈제육'],
+    [/햄|하몽|프로슈토|염장육|charcuterie|ham/i,/하몽|육포/,'햄·염장육'],
+    [/치즈|cheese/i,/치즈|모짜|카프레제/,'치즈'],
+    [/과일|fruit|멜론|베리/i,/멜론|치즈플레이트|버터보드/,'과일'],
+    [/육류|고기|소고기|쇠고기|비프|사냥육|바비큐|meat|beef|lamb/i,/삼겹살|소세지|소시지|육포|라자냐|라구/,'육류'],
+    [/디저트|케이크|타르트|비스킷|dessert/i,/아이스크림|초콜릿|버터보드/,'디저트'],
+    [/전채|애피타이저|appetizer/i,/올리브|하몽|카프레제/,'전채']
+  ];
+  var candidates=FOOD_DATA.map(function(food){var matches=[];rules.forEach(function(rule,i){if(rule[0].test(pairing)&&rule[1].test(food.name))matches.push({label:rule[2],score:30-i});});if(!matches.length)return null;matches.sort(function(a,b){return b.score-a.score;});return {name:food.name,description:food.description,sourceRow:food.sourceRow,score:matches[0].score+Math.min(2,matches.length-1),reason:'원문 궁합의 ‘'+matches[0].label+'’를 매장 메뉴에 연결한 제안'};}).filter(Boolean).sort(function(a,b){return b.score-a.score||a.sourceRow-b.sourceRow;});
+  if(!candidates.length){
+    var kind=w.wineKind||'';var pattern=kind==='white'?/피자|알리오/:kind==='red'?/라구|라자냐/:null;
+    if(pattern)candidates=FOOD_DATA.filter(function(f){return pattern.test(f.name);}).map(function(f){return {name:f.name,description:f.description,sourceRow:f.sourceRow,reason:'운영 매뉴얼의 '+(kind==='white'?'화이트 · 피자·오일 파스타':'레드 · 파스타·라자냐')+' 안내를 참고한 제안'};});
+  }
+  return candidates.slice(0,3);
+}
+function wineMenuAnswer(q){
+  var n=norm(q);if(!/페어링|안주|음식|같이먹|곁들|어울리는메뉴|매장메뉴/.test(n))return null;
+  var hits=namedWineMatches(q);
+  if(!hits.length&&/^(그럼|그와인|이와인|그건|그거|그러면|그리고)/.test(n))aiConversation.slice(-2).reverse().some(function(m){hits=namedWineMatches(m.text);return hits.length>0;});
+  if(!hits.length){if(!/와인/.test(n)||!/페어링|와인별|매장메뉴/.test(n))return null;return {menuPairing:true,title:'와인별 매장 메뉴 페어링',text:'와인을 선택하면 하라고지페 메뉴판의 안주를 최대 3종 제안해요.',pairingOptions:KB.filter(function(e){return e.file==='12_와인_추가_설명';}).map(function(e){return e.title.replace(/\s*\([^)]*\)$/,'');}),src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};}
+  var ambiguous=hits.some(function(hit){return hits.some(function(other){return other.entry!==hit.entry&&other.start===hit.start&&other.length===hit.length;});});
+  if(ambiguous)return {menuPairing:true,title:'와인 제품 선택',text:'같은 이름의 제품이 여러 개예요. 제품을 골라 주세요.',pairingOptions:hits.map(function(h){return h.entry.title.replace(/\s*\([^)]*\)$/,'');}),src:'와인추천 참고자료 최신화 · 제품명'};
+  var wines=hits.map(function(h){var e=h.entry,name=e.title.replace(/\s*\([^)]*\)$/,''),matched=WINE_DATA.find(function(w){return norm(w.sourceName||w.name)===norm(e.kw[0])||norm(w.name)===norm(name);});var pairing=(e.body.match(/^- 안주:\s*(.*)$/m)||[])[1]||'';var w=matched||{name:name,pairing:pairing,wineKind:/화이트/.test(e.title)?'white':/레드/.test(e.title)?'red':''};return {name:name,pairing:pairing,menus:menuPairings(w)};});
+  return {menuPairing:true,title:'하라고지페 메뉴 페어링',pairingWines:wines,text:wines.map(function(w){return w.name+'\n'+(w.menus.length?w.menus.map(function(m){return '• '+m.name+' — '+m.reason;}).join('\n'):'• 현재 자료에서 연결할 매장 메뉴가 없어요. 관리자에게 확인해 주세요.');}).join('\n\n'),src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List · 운영 매뉴얼'};
+}
 function winePitch(w){
   var text=String(w.serviceDescription||w.description||'').replace(/\s+/g,' ').trim();
   var end=text.search(/[.!?](?:\s|$)/);
@@ -316,6 +353,7 @@ function recipeAnswer(q){
   return {recipe:true,recipeOptions:options,title:'안주 레시피 선택',text:'매뉴얼에 있는 메뉴를 골라 주세요. 만드는 법과 조리 시간을 보여 드릴게요.',src:'10_안주_가이드 · 만드는 법'};
 }
 function answer(q){
+  var menu=wineMenuAnswer(q);if(menu)return menu;
   var recipe=recipeAnswer(q);if(recipe)return recipe;
   var fact=wineFactAnswer(q);if(fact)return fact;
   var wine=wineRecommend(q); if(wine) return wine;
@@ -329,9 +367,11 @@ function relevantContext(q){
   var queries=[q].concat(aiConversation.slice(-4).filter(function(m){return m.role==='user';}).map(function(m){return m.text;}));
   var named=queries.map(namedWineMatches);
   var recipes=recipeCatalog().filter(function(r){return queries.some(function(query){var n=norm(query);return r.aliases.some(function(alias){return n.indexOf(norm(alias))>=0;});});});
+  var contextWineHits=named.flat().filter(function(hit,i,all){return all.findIndex(function(x){return x.entry===hit.entry;})===i;}).slice(0,3);
+  var storeContext=contextWineHits.map(function(hit){var e=hit.entry;var pairing=(e.body.match(/^- 안주:\s*(.*)$/m)||[])[1]||'';var candidates=menuPairings({pairing:pairing});return '## '+e.title+' · 매장 메뉴 페어링 제안\n'+candidates.map(function(m){return m.name+': '+m.reason+'\n메뉴판 설명: '+m.description;}).join('\n');}).join('\n\n');
   var recipeContext=recipes.slice(0,3).map(function(r){return '## '+r.name+' · 만드는 법\n'+r.body+'\n출처: '+r.entry.file+' · '+r.entry.title;}).join('\n\n');
   var scored=KB.map(function(e){var points=0;queries.forEach(function(query,i){var n=norm(query);if(named[i].some(function(hit){return hit.entry===e;}))points+=100;e.kw.forEach(function(k){var nk=norm(k);if(nk.length>=2&&n.indexOf(nk)>=0)points+=nk.length;});if(n.indexOf(norm(e.title))>=0)points+=8;});return {entry:e,points:points};}).filter(function(x){return x.points>0;}).sort(function(a,b){return b.points-a.points;});
-  return [recipeContext,scored.slice(0,3).map(function(x){return '## '+x.entry.title+'\n'+x.entry.body;}).join('\n\n')].filter(Boolean).join('\n\n').slice(0,4600);
+  return [storeContext,recipeContext,scored.slice(0,3).map(function(x){return '## '+x.entry.title+'\n'+x.entry.body;}).join('\n\n')].filter(Boolean).join('\n\n').slice(0,4600);
 }
 if(typeof document!=="undefined"){
   var log=document.getElementById("log");
@@ -377,13 +417,13 @@ if(typeof document!=="undefined"){
         });card.appendChild(scores);
         var pitch=document.createElement('div');pitch.className='wine-pitch';pitch.textContent='손님께 추천 멘트: “'+winePitch(w)+'”';card.appendChild(pitch);addCopy(pitch,winePitch(w));
         if(w.serviceDescription){var detail=document.createElement('details');detail.className='wine-description';var summary=document.createElement('summary');summary.textContent='전체 설명 보기';var description=document.createElement('p');description.textContent=w.serviceDescription;detail.appendChild(summary);detail.appendChild(description);card.appendChild(detail);}
-        var facts=document.createElement('div');facts.className='wine-facts';facts.textContent='아로마 · '+(w.aromas||'정보 없음')+'\n어울리는 안주 · '+(w.pairing||'정보 없음');card.appendChild(facts);
+        var facts=document.createElement('div');facts.className='wine-facts';facts.textContent='아로마 · '+(w.aromas||'정보 없음')+'\n어울리는 안주 · '+(w.pairing||'정보 없음');card.appendChild(facts);var menus=menuPairings(w);if(menus.length)renderMenuPairings(card,menus);
         if(meta&&meta.food){var pairing=document.createElement('div');pairing.className='pairing-note';pairing.textContent=meta.food==='아이스크림'&&!/아이스크림|ice cream/i.test(w.pairing)?'아이스크림 · 디저트 페어링을 참고한 조합':'선택 안주 · '+meta.food;card.appendChild(pairing);}
         cards.appendChild(card);
       });
       d.appendChild(cards);
       if(stockNote){var note=document.createElement('div');note.className='stock-note';note.textContent=stockNote;d.appendChild(note);}
-    }else if(meta&&meta.recipeOptions){var recipes=document.createElement('div');recipes.className='info-results';var heading=document.createElement('div');heading.className='info-heading';heading.textContent=title;recipes.appendChild(heading);var hint=document.createElement('p');hint.className='check-help';hint.textContent=text;recipes.appendChild(hint);var options=document.createElement('div');options.className='filter-pills';meta.recipeOptions.forEach(function(name){var b=document.createElement('button');b.type='button';b.textContent=name;b.onclick=function(){ask(name+' 레시피',true);};options.appendChild(b);});recipes.appendChild(options);d.appendChild(recipes);}else if(meta&&meta.checklist){
+    }else if(meta&&meta.menuPairing){var panel=document.createElement('div');panel.className='info-results';var heading=document.createElement('div');heading.className='info-heading';heading.textContent=title;panel.appendChild(heading);if(meta.pairingOptions){var hint=document.createElement('p');hint.className='check-help';hint.textContent=text;panel.appendChild(hint);var select=document.createElement('select');select.className='pairing-select';select.setAttribute('aria-label','페어링할 와인');meta.pairingOptions.forEach(function(name){var option=document.createElement('option');option.value=name;option.textContent=name;select.appendChild(option);});panel.appendChild(select);var button=document.createElement('button');button.type='button';button.className='submit-check';button.textContent='이 와인의 매장 안주 추천';button.onclick=function(){ask(select.value+' 매장 메뉴 페어링',true);};panel.appendChild(button);}else meta.pairingWines.forEach(function(w){var item=document.createElement('article');item.className='info-item';var name=document.createElement('strong');name.className='info-heading';name.textContent=w.name;item.appendChild(name);var original=document.createElement('p');original.className='check-help';original.textContent='원문 궁합 · '+(w.pairing||'정보 없음');item.appendChild(original);renderMenuPairings(item,w.menus);panel.appendChild(item);});d.appendChild(panel);}else if(meta&&meta.recipeOptions){var recipes=document.createElement('div');recipes.className='info-results';var heading=document.createElement('div');heading.className='info-heading';heading.textContent=title;recipes.appendChild(heading);var hint=document.createElement('p');hint.className='check-help';hint.textContent=text;recipes.appendChild(hint);var options=document.createElement('div');options.className='filter-pills';meta.recipeOptions.forEach(function(name){var b=document.createElement('button');b.type='button';b.textContent=name;b.onclick=function(){ask(name+' 레시피',true);};options.appendChild(b);});recipes.appendChild(options);d.appendChild(recipes);}else if(meta&&meta.checklist){
       var panel=document.createElement('div');panel.className='info-results';
       var heading=document.createElement('div');heading.className='info-heading';heading.textContent=title;panel.appendChild(heading);
       var now=new Date(),day=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0'),storageKey='harago-check:'+now.getFullYear()+'-'+(now.getMonth()+1)+'-'+now.getDate()+':'+title;
@@ -418,7 +458,7 @@ if(typeof document!=="undefined"){
   }
   function setRecordStatus(message){var status=document.getElementById('record-status');status.textContent=message;clearTimeout(status._timer);if(message)status._timer=setTimeout(function(){status.textContent='';},5000);}
   function recordQuestion(q){if(!AI_ENDPOINT||!QUESTION_LOG_ENABLED)return;var endpoint=AI_ENDPOINT.replace(/\/api\/chat$/,'/api/questions'),found=search(q);fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,category:found?found.title:'자유 질문',consent:true})}).then(function(r){return r.json();}).then(function(d){setRecordStatus(d.saved?'질문을 개선 기록에 남겼습니다. 90일 뒤 삭제됩니다.':(d.reason||d.error||'질문을 기록하지 못했습니다.'));}).catch(function(){setRecordStatus('질문 기록에 연결하지 못했습니다.');});}
-  function askWithAi(q){var a=answer(q);if(a.recipe){if(a.recipeName)aiConversation.push({role:'user',text:q},{role:'model',text:a.recipeName+'\n'+a.text});return Promise.resolve(a);}if(a.wineFact){if(!a.wineAmbiguous)aiConversation.push({role:'user',text:q},{role:'model',text:a.title+'\n'+a.text});return Promise.resolve(a);}if(a.wines||a.src==='와인 추천 데이터'||(/추천|골라|어울리/.test(norm(q))&&/와인|레드|화이트|로제|스파클링|포트|초보|처음|육포/.test(norm(q))))return Promise.resolve(a);var requestEpoch=responseEpoch;var messages=aiConversation.slice(-6).concat([{role:'user',text:q}]);return fetch(AI_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,context:relevantContext(q),messages:messages})}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'AI 연결 오류');return d;});}).then(function(d){if(requestEpoch===responseEpoch)aiConversation.push({role:'user',text:q},{role:'model',text:d.text});return{text:d.text.replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^[-*]\s+/gm,'• '),src:'Gemini · 매장 지식 검색',title:'직원 업무 안내'};}).catch(function(error){if(requestEpoch!==responseEpoch)return a;setRecordStatus((error.message||'Gemini 연결에 실패했습니다.')+' 관련 매장 자료를 표시합니다.');if(a.src==='지식 문서에 없음'){var previous=aiConversation.slice().reverse().find(function(m){return m.role==='user';});if(previous)a=answer(previous.text);}return a;});}
+  function askWithAi(q){var a=answer(q);if(a.menuPairing){if(a.pairingWines)aiConversation.push({role:'user',text:q},{role:'model',text:a.text});return Promise.resolve(a);}if(a.recipe){if(a.recipeName)aiConversation.push({role:'user',text:q},{role:'model',text:a.recipeName+'\n'+a.text});return Promise.resolve(a);}if(a.wineFact){if(!a.wineAmbiguous)aiConversation.push({role:'user',text:q},{role:'model',text:a.title+'\n'+a.text});return Promise.resolve(a);}if(a.wines||a.src==='와인 추천 데이터'||(/추천|골라|어울리/.test(norm(q))&&/와인|레드|화이트|로제|스파클링|포트|초보|처음|육포/.test(norm(q))))return Promise.resolve(a);var requestEpoch=responseEpoch;var messages=aiConversation.slice(-6).concat([{role:'user',text:q}]);return fetch(AI_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,context:relevantContext(q),messages:messages})}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'AI 연결 오류');return d;});}).then(function(d){if(requestEpoch===responseEpoch)aiConversation.push({role:'user',text:q},{role:'model',text:d.text});return{text:d.text.replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^[-*]\s+/gm,'• '),src:'Gemini · 매장 지식 검색',title:'직원 업무 안내'};}).catch(function(error){if(requestEpoch!==responseEpoch)return a;setRecordStatus((error.message||'Gemini 연결에 실패했습니다.')+' 관련 매장 자료를 표시합니다.');if(a.src==='지식 문서에 없음'){var previous=aiConversation.slice().reverse().find(function(m){return m.role==='user';});if(previous)a=answer(previous.text);}return a;});}
   function setResponseBusy(busy){responseBusy=busy;var send=document.querySelector('#f button');send.disabled=busy;send.textContent=busy?'답변 중':'보내기';document.getElementById('q').setAttribute('aria-busy',String(busy));}
   function ask(q,preferManual){
     q=q.trim();if(!q)return false;
@@ -432,7 +472,7 @@ if(typeof document!=="undefined"){
       var delay=setTimeout(function(){if(epoch===responseEpoch&&pending.isConnected)pending.querySelector('small').textContent='답변을 기다리고 있어요. 조금만 더 기다려 주세요.';},7000);
       askWithAi(q).then(function(a){if(epoch!==responseEpoch)return;pending.remove();add('bot',a.text,a.src,a.wines,a.stockNote,a.title,a);}).finally(function(){clearTimeout(delay);pending.remove();if(epoch===responseEpoch)setResponseBusy(false);});return true;
     }
-    var a=answer(q);if(a.recipeName)aiConversation.push({role:'user',text:q},{role:'model',text:a.recipeName+'\n'+a.text});add('bot',a.text,a.src,a.wines,a.stockNote,a.title,a);return true;
+    var a=answer(q);if(a.pairingWines)aiConversation.push({role:'user',text:q},{role:'model',text:a.text});if(a.recipeName)aiConversation.push({role:'user',text:q},{role:'model',text:a.recipeName+'\n'+a.text});add('bot',a.text,a.src,a.wines,a.stockNote,a.title,a);return true;
   }
   var chips=document.getElementById("chips");
   var departments=[['오픈',[0]],['손님 응대',[1,6]],['주문·서빙',[2,3,4,5,7,9,10]],['주방',[]],['마감',[8]]];
@@ -454,6 +494,12 @@ if(typeof document!=="undefined"){
   };
 
   function icon(i){var paths=['<path d="M5 20V4h12v16M9 12h.01M3 20h18"/>','<path d="M3 16h18M5 16a7 7 0 0114 0M12 6V4M9 20h6"/>','<path d="M7 3h10v4a5 5 0 01-10 0V3M12 12v9M8 21h8"/>','<path d="M4 3v7a3 3 0 006 0V3M7 3v18M17 3v18M17 3c-4 4-4 9 0 9"/>','<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 018 0v4"/>'];return '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">'+paths[i]+'</svg>';}
+  function renderMenuPairings(container,menus){
+    var area=document.createElement('div');area.className='store-pairings';var label=document.createElement('strong');label.textContent='하라고지페 메뉴 추천';area.appendChild(label);
+    if(!menus.length){var empty=document.createElement('p');empty.textContent='자료에서 연결할 메뉴가 없어요. 관리자에게 확인해 주세요.';area.appendChild(empty);}
+    menus.forEach(function(menu){var item=document.createElement('div');item.className='store-pairing';var name=document.createElement('strong');name.textContent=menu.name;item.appendChild(name);var reason=document.createElement('p');reason.textContent=menu.reason;item.appendChild(reason);var description=document.createElement('details');var summary=document.createElement('summary');summary.textContent='메뉴판 설명';description.appendChild(summary);var text=document.createElement('p');text.textContent=menu.description;description.appendChild(text);item.appendChild(description);var b=document.createElement('button');b.type='button';b.className='copy-pitch';b.textContent='만드는 법 보기';b.onclick=function(){ask(menu.name+' 레시피',true);};item.appendChild(b);area.appendChild(item);});
+    var note=document.createElement('p');note.className='check-help';note.textContent='원문 궁합과 매장 메뉴를 연결한 제안입니다. 현재 주문 가능 여부는 직접 확인해 주세요.';area.appendChild(note);container.appendChild(area);
+  }
   function addCopy(container,text){var b=document.createElement('button');b.type='button';b.className='copy-pitch';b.textContent='멘트 복사';b.onclick=function(){navigator.clipboard.writeText(text).then(function(){b.textContent='복사했어요';setTimeout(function(){b.textContent='멘트 복사';},1800);}).catch(function(){b.textContent='길게 눌러 복사해 주세요';});};container.appendChild(b);}
   function showHome(){document.getElementById('app').classList.remove('wine-view');document.getElementById('home').hidden=false;log.hidden=true;document.getElementById('chips').hidden=true;window.scrollTo({top:0});}
   function openWine(){document.getElementById('app').classList.add('wine-view');document.getElementById('home').hidden=true;document.getElementById('taste').hidden=false;document.getElementById('taste').open=true;document.getElementById('taste').scrollIntoView({block:'start',behavior:'smooth'});}

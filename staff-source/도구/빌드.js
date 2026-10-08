@@ -18,11 +18,13 @@ for(const f of files){
 }
 const tpl=fs.readFileSync(path.join(__dirname,'템플릿.html'),'utf8');
 const wines=JSON.parse(fs.readFileSync(path.join(__dirname,'와인_추천_데이터.json'),'utf8'));
+const menuSource=JSON.parse(fs.readFileSync(path.join(__dirname,'메뉴판_허용자료_1008.json'),'utf8'));
+const foods=menuSource.rows.filter(r=>/^MENU\s+\d+/.test(r.values[0])&&r.values[2]).map(r=>({name:r.values[2],description:r.description||'',sourceRow:r.row}));
 const safe=s=>JSON.stringify(s).replace(/</g,'\\u003c');
-const sourceHash=crypto.createHash('sha256').update(JSON.stringify(kb)+JSON.stringify(wines)+tpl).digest('hex').slice(0,10);
+const sourceHash=crypto.createHash('sha256').update(JSON.stringify(kb)+JSON.stringify(wines)+JSON.stringify(foods)+tpl).digest('hex').slice(0,10);
 const endpoint=process.env.HARAGO_AI_ENDPOINT||'';
 if(endpoint&&!/^https:\/\/[a-z0-9-]+\.[a-z0-9-]+\.workers\.dev\/api\/chat$/.test(endpoint))throw new Error('AI endpoint must be an HTTPS Cloudflare Worker URL.');
 const logEnabled=process.env.HARAGO_QUESTION_LOG_ENABLED==='true';
-const built=tpl.replace('/*KB_JSON*/[]',safe(kb)).replace('/*WINE_JSON*/[]',safe(wines)).replace('/*VERSION_JSON*/{}',safe({sourceHash})).replace('/*AI_ENDPOINT_JSON*/""',safe(endpoint)).replace('/*QUESTION_LOG_ENABLED*/false',safe(logEnabled));
+const built=tpl.replace('/*KB_JSON*/[]',safe(kb)).replace('/*WINE_JSON*/[]',safe(wines)).replace('/*FOOD_JSON*/[]',safe(foods)).replace('/*VERSION_JSON*/{}',safe({sourceHash})).replace('/*AI_ENDPOINT_JSON*/""',safe(endpoint)).replace('/*QUESTION_LOG_ENABLED*/false',safe(logEnabled));
 fs.writeFileSync(path.join(root,'챗봇_시안.html'),built);
 console.log('항목',kb.length,'개 내장');
