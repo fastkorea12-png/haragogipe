@@ -1,1 +1,1 @@
-{"name":"haragogipe-staff-ai-worker","private":true,"scripts":{"test":"node test.js","deploy":"wrangler deploy","migrate":"wrangler d1 migrations apply QUESTION_LOG --remote"}}
+{"name":"haragogipe-staff-ai-worker","private":true,"scripts":{"test":"node test.js","deploy":"wrangler deploy"}}

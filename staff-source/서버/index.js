@@ -5,6 +5,19 @@ const MAX_BODY = 12000;
 function response(body,status){return new Response(JSON.stringify(body),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store","access-control-allow-origin":ORIGIN,"vary":"Origin"}});}
 function clean(text){return String(text||"").replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,"[이메일 제외]").replace(/01[016789][ -]?\d{3,4}[ -]?\d{4}/g,"[전화번호 제외]").replace(/\b\d{6}[ -]?[1-4]\d{6}\b/g,"[식별번호 제외]").replace(/\b\d{10,}\b/g,"[긴 숫자 제외]").trim().slice(0,1200);}
 function unsafeQuestion(q){return /급여|시급|계좌|통장|매입가|도매가|희망가|재고|발주량|직원.{0,5}(이름|연락처|전화)|전화번호|주민등록번호/i.test(q);}
+function hasPersonalData(q){
+  if(/\[(?:이메일|전화번호|식별번호|긴 숫자) 제외\]/.test(q))return true;
+  const generic=new Set(['손님','사장님','직원님','팀장님','부팀장님','매니저님','점장님','고객님','선생님']);
+  const names=Array.from(q.matchAll(/(?:^|[^가-힣])([가-힣]{2,4})\s?(님|씨)(?=은|는|이|가|께|에게|의|을|를|과|와|도|에게서|에서|[,.?!\s]|$)/g));
+  return names.some(match=>!generic.has(match[1]+match[2]));
+}
+async function logToSheet(env,payload){
+  if(!env.SHEETS_LOG_URL||!env.SHEETS_LOG_TOKEN)throw new Error("질문 기록 연결 설정이 없습니다.");
+  const upstream=await fetch(env.SHEETS_LOG_URL,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({...payload,token:env.SHEETS_LOG_TOKEN})});
+  const text=await upstream.text();let data;try{data=JSON.parse(text);}catch{throw new Error("질문 기록 시트 응답 형식이 올바르지 않습니다.");}
+  if(!upstream.ok||data.ok!==true)throw new Error("질문 기록 시트 저장에 실패했습니다.");
+  return data;
+}
 const handler={async fetch(request,env){
   const origin=request.headers.get("Origin");if(origin!==ORIGIN)return response({error:"허용되지 않은 출처입니다."},403);
   const url=new URL(request.url);
@@ -17,19 +30,18 @@ const handler={async fetch(request,env){
   const question=clean(body.question);if(!question)return response({error:"질문을 입력해 주세요."},400);
   if(url.pathname==="/api/questions"){
     if(body.consent!==true)return response({error:"질문 기록 동의가 필요합니다."},400);
-    if(unsafeQuestion(question)||/\[이메일 제외\]|\[전화번호 제외\]|\[식별번호 제외\]|\[긴 숫자 제외\]/.test(question))return response({saved:false,reason:"민감하거나 개인 정보가 포함돼 질문을 기록하지 않았습니다."},200);
-    if(!env.QUESTION_LOG)return response({error:"질문 기록을 아직 사용할 수 없습니다."},503);
+    if(unsafeQuestion(question)||hasPersonalData(question))return response({saved:false,reason:"개인정보 또는 제한된 주제가 포함돼 질문을 기록하지 않았습니다."},200);
     const normalized=question.toLowerCase().replace(/[^0-9a-z가-힣]/g,"").slice(0,240);
-    await env.QUESTION_LOG.prepare("INSERT INTO question_log(question, normalized, category, created_at) VALUES (?, ?, ?, datetime('now'))").bind(question,normalized,clean(body.category).slice(0,80)).run();
-    await env.QUESTION_LOG.prepare("DELETE FROM question_log WHERE created_at < datetime('now','-90 days')").run();
-    return response({saved:true,retentionDays:90},201);
+    try{await logToSheet(env,{action:"append",consent:true,question,normalized,category:clean(body.category).slice(0,80)});return response({saved:true,retentionDays:90},201);}
+    catch{return response({error:"질문 기록 시트에 연결하지 못했습니다."},503);}
   }
   if(unsafeQuestion(question))return response({text:"급여·계좌·매입가·도매가·희망가·재고 관련 내용은 AI로 전송하거나 안내하지 않습니다. 관리자에게 확인해 주세요."},200);
+  if(hasPersonalData(question))return response({text:"이름이나 연락처 같은 개인정보를 빼고 질문해 주세요."},200);
   if(!env.GEMINI_API_KEY)return response({error:"Gemini 키가 서버에 설정되지 않았습니다."},503);
   const context=clean(body.context).slice(0,4800);
   const messages=Array.isArray(body.messages)?body.messages.slice(-8):[];
   const contents=[];
-  for(let i=0;i+1<messages.length;i+=2){const user=messages[i],assistant=messages[i+1];if(user?.role==='user'&&assistant?.role==='model'&&typeof user.text==='string'&&typeof assistant.text==='string'&&user.text.trim()&&assistant.text.trim()&&!unsafeQuestion(user.text)&&!unsafeQuestion(assistant.text)){contents.push({role:'user',parts:[{text:clean(user.text).slice(0,900)}]},{role:'model',parts:[{text:clean(assistant.text).slice(0,900)}]});}}
+  for(let i=0;i+1<messages.length;i+=2){const user=messages[i],assistant=messages[i+1];if(user?.role==='user'&&assistant?.role==='model'&&typeof user.text==='string'&&typeof assistant.text==='string'&&user.text.trim()&&assistant.text.trim()&&!unsafeQuestion(user.text)&&!unsafeQuestion(assistant.text)&&!hasPersonalData(user.text)&&!hasPersonalData(assistant.text)){contents.push({role:'user',parts:[{text:clean(user.text).slice(0,900)}]},{role:'model',parts:[{text:clean(assistant.text).slice(0,900)}]});}}
   contents.push({role:'user',parts:[{text:question}]});
   try{
     const upstream=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+MODEL+":generateContent",{method:"POST",headers:{"content-type":"application/json","x-goog-api-key":env.GEMINI_API_KEY},body:JSON.stringify({systemInstruction:{parts:[{text:SYSTEM+"\n\n<매장 자료>\n"+context+"\n</매장 자료>"}]},contents,generationConfig:{maxOutputTokens:640}})});
@@ -37,5 +49,5 @@ const handler={async fetch(request,env){
     const text=(data.candidates||[]).flatMap(c=>c.content?.parts||[]).map(p=>p.text||"").join("\n").trim();
     return text?response({text,model:MODEL}):response({error:"확인된 답변을 만들지 못했습니다. 매장 자료 검색으로 안내합니다."},502);
   }catch{return response({error:"Gemini 연결에 실패했습니다. 잠시 후 다시 시도해 주세요."},502);}
-},async scheduled(controller,env){await env.QUESTION_LOG.prepare("DELETE FROM question_log WHERE created_at < datetime('now','-90 days')").run();}};
+},async scheduled(controller,env){if(!env.SHEETS_LOG_URL||!env.SHEETS_LOG_TOKEN)return;try{await logToSheet(env,{action:"cleanup"});}catch{}}};
 export default handler;

@@ -144,6 +144,12 @@
     "method": "한글명 일치"
   },
   {
+    "menuName": "시드르 부쉐 바이오",
+    "sourceName": "시드르 부쉐 바이오",
+    "english": "Cidre De Bretagne Bio",
+    "method": "한글명 일치"
+  },
+  {
     "menuName": "발레벨보 브라께토",
     "sourceName": "발레벨보 브라께토",
     "english": "Vallebelbo, Brachetto",

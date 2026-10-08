@@ -10,7 +10,7 @@
 - `도구/와인_이름_연결표.json`: 한글명 또는 유일한 영문명이 일치하는 제품 연결 근거. 자동 생성.
 - `지식/11~12_*.md`, `도구/와인_추천_데이터.json`, `챗봇_시안.html`, 시험 결과: 자동 생성. 원본을 먼저 고친다.
 
-Google 시트를 고친 것만으로 Git 자료가 바뀌지는 않는다. 허용한 탭·열만 다시 읽어 원본 JSON을 갱신한 뒤 아래 명령을 실행한다. 다른 탭이나 미허용 열을 내보내지 않는다. 이름 연결이 모호하거나 점수가 부족하면 확인 목록에 남기며 수치를 만들지 않는다.
+Google 시트가 와인 자료의 원본이고, Google 문서가 직원 운영 매뉴얼의 원본이다. 배포되는 챗봇에는 확인된 자료만 Git 버전으로 반영한다. 와인 시트는 지시서에서 허용한 탭·열만 읽고, 급여·계좌·매입가·도매가·재고 자료는 읽거나 복사하지 않는다. 이름 연결이 모호하거나 점수가 부족하면 확인 목록에 남기며 수치를 만들지 않는다.
 
 ```sh
 npm run update
@@ -20,28 +20,22 @@ npm run update
 
 ## Gemini AI와 개선 질문 기록
 
-GitHub Pages 앞에 비밀 API 키를 감추는 Cloudflare Worker를 둔다. Gemini 3.1 Flash-Lite가 관련 매뉴얼 조각과 짧은 대화 문맥을 받아 답하고, 와인 점수 추천은 현재 결정형 로직을 계속 쓴다. Worker 코드는 `서버/`에 있다. Gemini AI key is sent in a server-only header.
+GitHub Pages 앞에 비밀 API 키를 감추는 Cloudflare Worker를 둔다. Gemini 3.1 Flash-Lite가 배포된 매뉴얼 조각과 짧은 대화 문맥을 받아 답하고, 와인 점수 추천은 현재 결정형 로직을 계속 쓴다. Worker 코드는 `서버/`에 있다. 매 질문마다 시트를 통째로 보내지 않으며, 페이지 검색으로 찾은 관련 자료 일부만 보낸다.
 
 ### 최초 설정
 
-1. Cloudflare 계정에서 `cd 직원챗봇/서버 && npx wrangler login`으로 로그인한다.
-2. 같은 경로에서 `npx wrangler d1 create haragogipe-staff-question-log`을 실행하고 출력된 database ID를 `wrangler.jsonc`에 기록해 Git에 올린다.
-3. Gemini API 키를 만들고 GitHub 저장소 Settings → Secrets and variables → Actions에 `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `GEMINI_API_KEY` secrets를 설정한다. 세 값은 코드·채팅·일반 변수로 두지 않는다.
-4. 같은 설정에서 Actions variable `HARAGO_GEMINI_ENABLED=true`를 추가한다. 직원 챗봇 Git 업데이트 workflow가 D1 스키마와 Worker를 배포한 뒤 Pages HTML에 Worker URL을 연결한다.
+1. 질문 기록용 비공개 스프레드시트([하라고지페 챗봇 개선 질문 기록](https://docs.google.com/spreadsheets/d/1da2YXUWc6qpaIr1i0KANGp3ZwdBu1DL2gpSktBPkVWk/edit))를 연다. 자료 원본 시트는 링크 공개 상태이므로 질문 기록을 저장하지 않는다. 기록 파일은 소유자만 접근할 수 있게 유지한다. 이 파일의 **확장 프로그램 → Apps Script**에서 저장소의 `AppsScript/Code.gs`를 붙여 넣는다. 스크립트는 기록 파일 안의 `챗봇 개선 질문` 탭만 연다.
+2. Apps Script **프로젝트 설정 → 스크립트 속성**에 `SHEETS_LOG_TOKEN`을 추가한다. 충분히 긴 임의 값을 만든 뒤 비밀로 보관한다. 그다음 **배포 → 새 배포 → 웹 앱**, 실행 사용자는 본인, 접근 권한은 **모든 사용자**로 설정하고 `/exec` URL을 복사한다. 공개 URL에는 비밀 토큰이 없으면 질문을 저장할 수 없고, 토큰은 Worker에만 보관한다. Workspace 정책에서 이 공개 설정이 막혀 있으면 이 방식을 배포할 수 없다.
+3. GitHub 저장소 **Settings → Secrets and variables → Actions**의 Secrets에 `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `GEMINI_API_KEY`, `SHEETS_LOG_TOKEN`을 등록한다. Gemini 키와 토큰은 코드·시트·채팅에 붙여 넣지 않는다. `SHEETS_LOG_TOKEN`은 Apps Script 속성과 같은 값이다.
+4. 같은 곳의 Variables에 `SHEETS_LOG_URL`(웹 앱 `/exec` URL)과 `HARAGO_GEMINI_ENABLED=true`를 등록한다. 변경 뒤 **Actions → Update staff assistant → Run workflow**를 실행하면 Worker를 배포하고 Pages에 연결한다.
 
 Gemini 대화는 직원이 `Gemini 대화`를 켜야 전송된다. 질문, 최근 몇 턴, 일치한 매뉴얼 항목이 Google Gemini API에 전달된다. 제한한 급여·계좌·매입가·도매가·희망가·재고 질문은 Worker에서 차단한다. 고객·직원 이름, 연락처, 결제 정보나 개인 사정을 프롬프트에 적지 않는다. `대화 지우기`는 화면과 세션 문맥을 지운다.
 
 ### 질문 개선 기록
 
-개별 질문마다 체크박스를 켠 경우에만 질문 문장과 매뉴얼 분류를 저장한다. 답변과 직원 식별자는 저장하지 않고, 이메일·전화·식별번호 패턴과 제한된 업무 주제는 자동 제외한다. 90일이 지나면 매일 자동 삭제한다. Cloudflare D1에서 최근 질문 빈도는 다음과 같이 확인할 수 있다.
+비공개 질문 기록 스프레드시트의 `챗봇 개선 질문` 탭에 직원이 개별 질문마다 체크박스를 켠 경우에만 질문 문장과 분류를 저장한다. 답변이나 로그인·직원 식별자는 저장하지 않는다. 이메일·전화·식별번호 등 알려진 개인정보 패턴과 제한된 업무 주제는 자동 제외한다. Worker의 매일 실행이 90일 지난 행을 삭제한다. 반복되는 질문은 `중복 묶음` 열을 기준으로 세어 안내 자료에 반영할 수 있다.
 
-```sql
-SELECT category, normalized, MIN(question) AS example, COUNT(*) AS count
-FROM question_log
-WHERE created_at >= datetime('now', '-30 days')
-GROUP BY category, normalized
-ORDER BY count DESC, category;
-```
+질문 분류·중복 묶음 열로 필터링하거나 피벗 테이블을 만들어 최근 자주 나온 질문을 확인한다. 이 비공개 탭에는 질문 문장만 있으며 답변·직원 계정·대화 기록은 수집하지 않는다. 자료 원본 시트와 분리해 운영한다.
 
 질문 기록은 직원이 매 턴 직접 선택한다. Gemini를 꺼도 기존 자료 기반 검색과 와인 추천은 계속 사용할 수 있다.
 

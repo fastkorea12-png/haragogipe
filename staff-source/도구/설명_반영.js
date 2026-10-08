@@ -2,7 +2,7 @@
 const fs=require('fs'),path=require('path');const root=path.join(__dirname,'..');
 const source=JSON.parse(fs.readFileSync(path.join(__dirname,'와인_설명_원본_1008.json'),'utf8'));
 const menu=JSON.parse(fs.readFileSync(path.join(__dirname,'메뉴판_허용자료_1008.json'),'utf8'));
-const clean=v=>String(v||'').replace(/[\u0000-\u001f]/g,'').trim();
+const clean=v=>String(v||'').replace(/[\u0000-\u0009\u000b-\u001f]/g,' ').replace(/[ \t]+\n/g,'\n').replace(/\n[ \t]+/g,'\n').trim();
 const english=v=>clean(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
 const rows=source.values.slice(1).filter(r=>r[1]).map(r=>r.map(clean));
 const wines=[],excluded=[],links=[];
