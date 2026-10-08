@@ -1,0 +1,28 @@
+name: Check Gemini connection
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check multi-turn API response
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, json, urllib.request, urllib.error
+          key = os.environ['GEMINI_API_KEY']
+          body = {'contents':[{'role':'user','parts':[{'text':'Say ready.'}]},{'role':'model','parts':[{'text':'Ready.'}]},{'role':'user','parts':[{'text':'Now say done.'}]}],'generationConfig':{'maxOutputTokens':640}}
+          request = urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent',data=json.dumps(body).encode(),headers={'Content-Type':'application/json','x-goog-api-key':key})
+          try:
+              with urllib.request.urlopen(request,timeout=30) as response:
+                  result = json.load(response)
+                  print(json.dumps({'status':response.status,'hasResponse':bool(result.get('candidates'))}))
+          except urllib.error.HTTPError as err:
+              result = json.load(err)
+              message = str(result.get('error',{}).get('message','')).replace(key,'[redacted]')
+              print(json.dumps({'status':err.code,'error':result.get('error',{}).get('status'),'diagnostic':message[:700]}))
+              raise SystemExit(1)
+          PY
