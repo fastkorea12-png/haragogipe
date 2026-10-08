@@ -254,7 +254,7 @@ function menuPairings(w){
     [/디저트|케이크|타르트|비스킷|dessert/i,/아이스크림|초콜릿|버터보드/,'디저트'],
     [/전채|애피타이저|appetizer/i,/올리브|하몽|카프레제/,'전채']
   ];
-  var candidates=FOOD_DATA.map(function(food){var matches=[];rules.forEach(function(rule,i){if(rule[0].test(pairing)&&rule[1].test(food.name))matches.push({label:rule[2],score:30-i});});if(!matches.length)return null;matches.sort(function(a,b){return b.score-a.score;});return {name:food.name,description:food.description,sourceRow:food.sourceRow,score:matches[0].score+Math.min(2,matches.length-1),reason:'원문 궁합의 ‘'+matches[0].label+'’를 매장 메뉴에 연결한 제안'};}).filter(Boolean).sort(function(a,b){return b.score-a.score||a.sourceRow-b.sourceRow;});
+  var candidates=FOOD_DATA.map(function(food){var matches=[];rules.forEach(function(rule,i){if(rule[0].test(i===1?pairing.replace(/아이스\s*크림|ice\s*cream/gi,''):pairing)&&rule[1].test(food.name))matches.push({label:rule[2],score:30-i});});if(!matches.length)return null;matches.sort(function(a,b){return b.score-a.score;});return {name:food.name,description:food.description,sourceRow:food.sourceRow,score:matches[0].score+Math.min(2,matches.length-1),reason:'원문 궁합의 ‘'+matches[0].label+'’를 매장 메뉴에 연결한 제안'};}).filter(Boolean).sort(function(a,b){return b.score-a.score||a.sourceRow-b.sourceRow;});
   if(!candidates.length){
     var kind=w.wineKind||'';var pattern=kind==='white'?/피자|알리오/:kind==='red'?/라구|라자냐/:null;
     if(pattern)candidates=FOOD_DATA.filter(function(f){return pattern.test(f.name);}).map(function(f){return {name:f.name,description:f.description,sourceRow:f.sourceRow,reason:'운영 매뉴얼의 '+(kind==='white'?'화이트 · 피자·오일 파스타':'레드 · 파스타·라자냐')+' 안내를 참고한 제안'};});
