@@ -5,6 +5,5 @@
   "compatibility_date": "2026-10-08",
   "workers_dev": true,
   "triggers": { "crons": ["0 18 * * *"] },
-  "secrets": { "required": ["GEMINI_API_KEY", "SHEETS_LOG_TOKEN"] },
   "ratelimits": [{ "name": "AI_LIMITER", "namespace_id": "87342011", "simple": { "limit": 30, "period": 60 } }]
 }

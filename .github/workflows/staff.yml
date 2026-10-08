@@ -20,14 +20,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Check Sheets log endpoint
-        if: vars.HARAGO_GEMINI_ENABLED == 'true'
-        env:
-          SHEETS_LOG_URL: ${{ vars.SHEETS_LOG_URL }}
-        run: test -n "$SHEETS_LOG_URL"
       - name: Deploy Gemini Worker
         id: worker
-        if: vars.HARAGO_GEMINI_ENABLED == 'true'
+        if: vars.HARAGO_AUTO_DEPLOY_WORKER == 'true'
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -36,14 +31,14 @@ jobs:
           command: deploy --var SHEETS_LOG_URL:${{ vars.SHEETS_LOG_URL }}
           secrets: |
             GEMINI_API_KEY
-            SHEETS_LOG_TOKEN
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          SHEETS_LOG_TOKEN: ${{ secrets.SHEETS_LOG_TOKEN }}
       - name: Build and check manual and wine list
         working-directory: source/staff-source
         env:
           WORKER_URL: ${{ steps.worker.outputs.deployment-url }}
+          HARAGO_AI_ENDPOINT: ${{ vars.HARAGO_AI_ENDPOINT }}
+          HARAGO_QUESTION_LOG_ENABLED: ${{ vars.HARAGO_QUESTION_LOG_ENABLED }}
         run: |
           if [ -n "$WORKER_URL" ]; then export HARAGO_AI_ENDPOINT="${WORKER_URL%/}/api/chat"; fi
           npm run update

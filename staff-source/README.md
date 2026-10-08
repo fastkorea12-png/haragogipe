@@ -22,14 +22,20 @@ npm run update
 
 GitHub Pages 앞에 비밀 API 키를 감추는 Cloudflare Worker를 둔다. Gemini 3.1 Flash-Lite가 배포된 매뉴얼 조각과 짧은 대화 문맥을 받아 답하고, 와인 점수 추천은 현재 결정형 로직을 계속 쓴다. Worker 코드는 `서버/`에 있다. 매 질문마다 시트를 통째로 보내지 않으며, 페이지 검색으로 찾은 관련 자료 일부만 보낸다.
 
-### 최초 설정
+### AI 연결
+
+서버 주소는 `https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev/api/chat`이다. 키는 GitHub Actions의 `GEMINI_API_KEY`와 Cloudflare Worker의 비밀 저장소에만 등록한다. `Sync Gemini key to Worker` 워크플로는 서버 설정용 임시 자격 증명으로 키를 등록하며, 완료 뒤 임시 `HARAGO_CF_SETUP_TOKEN`은 삭제한다. 키 값은 로그나 배포 HTML에 포함하지 않는다.
+
+GitHub Actions 변수 `HARAGO_AI_ENDPOINT`에 위 주소를 등록하면 `Update staff assistant`가 이 서버에 연결한 페이지를 배포한다. 서버 코드를 수정할 때는 로그인한 로컬 환경에서 `서버/`의 `wrangler deploy`로 배포한다. 지속적인 서버 자동 배포가 필요한 경우에만 별도 Cloudflare API 토큰과 `CLOUDFLARE_ACCOUNT_ID`를 Secrets에 설정하고 `HARAGO_AUTO_DEPLOY_WORKER=true`를 등록한다.
+
+Gemini 대화는 직원이 `Gemini 대화`를 켜야 전송된다. 질문, 최근 몇 턴, 일치한 매뉴얼 항목이 Google Gemini API에 전달된다. 제한한 급여·계좌·매입가·도매가·희망가·재고 질문은 Worker에서 차단한다. 고객·직원 이름, 연락처, 결제 정보나 개인 사정을 프롬프트에 적지 않는다. `대화 지우기`는 화면과 세션 문맥을 지운다.
+
+### 질문 기록 연결
 
 1. 질문 기록용 비공개 스프레드시트([하라고지페 챗봇 개선 질문 기록](https://docs.google.com/spreadsheets/d/1da2YXUWc6qpaIr1i0KANGp3ZwdBu1DL2gpSktBPkVWk/edit))를 연다. 자료 원본 시트는 링크 공개 상태이므로 질문 기록을 저장하지 않는다. 기록 파일은 소유자만 접근할 수 있게 유지한다. 이 파일의 **확장 프로그램 → Apps Script**에서 저장소의 `AppsScript/Code.gs`를 붙여 넣는다. 스크립트는 기록 파일 안의 `챗봇 개선 질문` 탭만 연다.
 2. Apps Script **프로젝트 설정 → 스크립트 속성**에 `SHEETS_LOG_TOKEN`을 추가한다. 충분히 긴 임의 값을 만든 뒤 비밀로 보관한다. 그다음 **배포 → 새 배포 → 웹 앱**, 실행 사용자는 본인, 접근 권한은 **모든 사용자**로 설정하고 `/exec` URL을 복사한다. 공개 URL에는 비밀 토큰이 없으면 질문을 저장할 수 없고, 토큰은 Worker에만 보관한다. Workspace 정책에서 이 공개 설정이 막혀 있으면 이 방식을 배포할 수 없다.
-3. GitHub 저장소 **Settings → Secrets and variables → Actions**의 Secrets에 `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `GEMINI_API_KEY`, `SHEETS_LOG_TOKEN`을 등록한다. Gemini 키와 토큰은 코드·시트·채팅에 붙여 넣지 않는다. `SHEETS_LOG_TOKEN`은 Apps Script 속성과 같은 값이다.
-4. 같은 곳의 Variables에 `SHEETS_LOG_URL`(웹 앱 `/exec` URL)과 `HARAGO_GEMINI_ENABLED=true`를 등록한다. 변경 뒤 **Actions → Update staff assistant → Run workflow**를 실행하면 Worker를 배포하고 Pages에 연결한다.
-
-Gemini 대화는 직원이 `Gemini 대화`를 켜야 전송된다. 질문, 최근 몇 턴, 일치한 매뉴얼 항목이 Google Gemini API에 전달된다. 제한한 급여·계좌·매입가·도매가·희망가·재고 질문은 Worker에서 차단한다. 고객·직원 이름, 연락처, 결제 정보나 개인 사정을 프롬프트에 적지 않는다. `대화 지우기`는 화면과 세션 문맥을 지운다.
+3. Worker의 비밀 설정 `SHEETS_LOG_TOKEN`에 Apps Script 속성과 같은 값을 등록한다. `SHEETS_LOG_URL` 변수에 웹 앱 `/exec` URL을 등록하고 서버를 배포한다. 토큰은 코드·시트·채팅에 붙여 넣지 않는다.
+4. 기록 저장을 확인한 뒤 GitHub Actions 변수 `HARAGO_QUESTION_LOG_ENABLED=true`를 등록하고 **Actions → Update staff assistant → Run workflow**를 실행한다. 설정 전에는 기록 체크박스를 표시하지 않으며, AI 대화만 사용할 수 있다.
 
 ### 질문 개선 기록
 

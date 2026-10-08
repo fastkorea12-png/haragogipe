@@ -22,6 +22,7 @@ const safe=s=>JSON.stringify(s).replace(/</g,'\\u003c');
 const sourceHash=crypto.createHash('sha256').update(JSON.stringify(kb)+JSON.stringify(wines)+tpl).digest('hex').slice(0,10);
 const endpoint=process.env.HARAGO_AI_ENDPOINT||'';
 if(endpoint&&!/^https:\/\/[a-z0-9-]+\.[a-z0-9-]+\.workers\.dev\/api\/chat$/.test(endpoint))throw new Error('AI endpoint must be an HTTPS Cloudflare Worker URL.');
-const built=tpl.replace('/*KB_JSON*/[]',safe(kb)).replace('/*WINE_JSON*/[]',safe(wines)).replace('/*VERSION_JSON*/{}',safe({sourceHash})).replace('/*AI_ENDPOINT_JSON*/""',safe(endpoint));
+const logEnabled=process.env.HARAGO_QUESTION_LOG_ENABLED==='true';
+const built=tpl.replace('/*KB_JSON*/[]',safe(kb)).replace('/*WINE_JSON*/[]',safe(wines)).replace('/*VERSION_JSON*/{}',safe({sourceHash})).replace('/*AI_ENDPOINT_JSON*/""',safe(endpoint)).replace('/*QUESTION_LOG_ENABLED*/false',safe(logEnabled));
 fs.writeFileSync(path.join(root,'챗봇_시안.html'),built);
 console.log('항목',kb.length,'개 내장');

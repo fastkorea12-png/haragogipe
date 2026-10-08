@@ -1,0 +1,34 @@
+name: Sync Gemini key to Worker
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Register Gemini key in server secrets
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CF_SETUP_TOKEN: ${{ secrets.HARAGO_CF_SETUP_TOKEN }}
+          CF_ACCOUNT_ID: ${{ vars.HARAGO_CF_ACCOUNT_ID }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.error
+          key = os.environ['GEMINI_API_KEY']
+          token = os.environ['CF_SETUP_TOKEN']
+          account = os.environ['CF_ACCOUNT_ID']
+          if not all((key, token, account)):
+              raise SystemExit('Required server setup values are missing.')
+          url = f'https://api.cloudflare.com/client/v4/accounts/{account}/workers/scripts/haragogipe-staff-ai/secrets'
+          body = json.dumps({'name':'GEMINI_API_KEY','type':'secret_text','text':key}).encode()
+          request = urllib.request.Request(url, data=body, method='PUT', headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'})
+          try:
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  result = json.load(response)
+          except urllib.error.HTTPError as err:
+              raise SystemExit(f'Cloudflare secret registration failed: HTTP {err.code}')
+          if not result.get('success'):
+              raise SystemExit('Cloudflare rejected secret registration.')
+          print('Gemini key registered in Worker secret storage.')
+          PY
