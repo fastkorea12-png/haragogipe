@@ -29,7 +29,7 @@ form{display:flex;gap:8px;margin-top:auto;padding:14px 0;background:var(--paper)
 <body>
 <div id="app">
 <header><div class="brand"><span class="brand-mark" aria-hidden="true">♧</span><div><h1>하라고지페 근무 도움</h1><p>직원을 위한 매장 업무 가이드</p></div></div><button class="home-button" id="homeGo" type="button">업무 홈</button></header>
-<div id="ai-status" hidden><small>질문·최근 대화·관련 매장 자료가 Gemini로 전송됩니다. 개인정보는 입력하지 마세요.</small></div>
+<div id="ai-status" hidden><small>질문·최근 대화·관련 매장 자료가 Gemini로 전송됩니다. 공개 와인 정보는 Google 검색으로 보완합니다. 개인정보는 입력하지 마세요.</small></div>
 <p id="record-status" aria-live="polite"></p>
 <div class="workspace"><aside class="sidebar"><p class="eyebrow">근무 단계</p><nav id="departments" aria-label="업무 선택"></nav><p class="sidebar-note">매장 매뉴얼과 메뉴판을 바탕으로 안내합니다.<br>확인되지 않은 내용은 관리자에게 확인해 주세요.</p></aside><main class="main-panel"><section id="home"><p class="eyebrow">STAFF GUIDE</p><h2 class="section-title">지금 필요한 업무를 찾아보세요</h2><p class="section-sub">준비부터 마감까지, 자주 찾는 안내를 한눈에.</p><div class="home-grid" id="homeCards"></div><p class="home-footer">체크리스트는 오늘 날짜 기준으로 이 기기에 저장돼요.</p></section><div id="chips" hidden></div><div id="log" aria-live="polite" hidden></div><form id="f"><input id="q" aria-label="매장 업무 질문" placeholder="궁금한 업무를 물어보세요" autocomplete="off"><button>보내기</button></form></main>
 <details id="taste">
@@ -112,6 +112,28 @@ function wineFactAnswer(q){
     return (hits.length>1?name(hit.entry)+'\n':'')+lines.join('\n');
   }).join('\n\n');
   return {wineFact:true,title:hits.length===1?name(hits[0].entry):'와인 맛 점수 비교',text:text,src:'와인추천 참고자료 최신화 · 맛 점수'};
+}
+function wineInfoAnswer(q){
+  var n=norm(q);if(/추천|골라/.test(n))return null;
+  var fields=[['품종','품종|포도종|포도종류|무슨포도|어떤포도|variet|grape'],['국가','국가|나라|어느나라|어디나라|country'],['지역','지역|산지|생산지|어디서만|어디와인|region'],['도수','도수|알코올|알콜|alcohol|abv'],['가격','가격|얼마|price'],['영문명','영문명|영어이름|영어명']];
+  var requested=fields.filter(function(f){return new RegExp(f[1]).test(n);});if(!requested.length)return null;
+  var hits=namedWineMatches(q);
+  if(!hits.length&&/^(그럼|그러면|그중|그것|그와인|이와인|그리고)/.test(n))aiConversation.slice(-2).reverse().some(function(m){hits=namedWineMatches(m.text);return hits.length>0;});
+  if(!hits.length)return null;
+  function name(e){return e.title.replace(/\s*\([^)]*\)$/,'');}
+  var ambiguous=hits.some(function(hit){return hits.some(function(other){return other.entry!==hit.entry&&other.start===hit.start&&other.length===hit.length;});});
+  if(ambiguous)return {wineFact:true,wineAmbiguous:true,title:'와인 제품 확인',text:'제품을 골라 주세요.\n'+hits.map(function(h){return '• '+name(h.entry);}).join('\n'),src:'와인추천 참고자료 최신화 · 제품명'};
+  function field(e,label){var line=e.body.split('\n').find(function(s){return s.indexOf('- '+label+': ')===0;});return line?line.slice(('- '+label+': ').length).trim():'';}
+  var text=hits.map(function(hit){var e=hit.entry,lines=[];requested.forEach(function(f){
+    if(f[0]==='품종'){
+      var source=field(e,'품종 (와인 참고자료)'),menu=field(e,'품종 (메뉴판)');
+      if(source)lines.push('• 품종 · 와인 참고자료: '+source);
+      if(menu&&wineNameNorm(menu)!==wineNameNorm(source))lines.push('• 품종 · 메뉴판: '+menu);
+      if(!source&&!menu)lines.push('• 품종: 자료에 기재되어 있지 않아 관리자 확인이 필요해요.');
+      if(source&&menu&&wineNameNorm(menu)!==wineNameNorm(source))lines.push('• 두 자료의 품종 표기가 달라요. 정확한 구성·혼합 비율은 병 라벨이나 관리자 확인이 필요해요.');
+    }else{var label=f[0]==='국가'||f[0]==='영문명'?f[0]:f[0]==='가격'?'가격 원문 (메뉴판)':f[0]+' (메뉴판)';var value=field(e,label);lines.push('• '+f[0]+': '+(value||'자료에 기재되어 있지 않아 관리자 확인이 필요해요.'));}
+  });return (hits.length>1?name(e)+'\n':'')+lines.join('\n');}).join('\n\n');
+  return {wineFact:true,allowAi:requested.some(function(f){return /품종|국가|지역/.test(f[0]);}),title:hits.length===1?name(hits[0].entry):'와인 기본 정보 비교',text:text,src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List · 허용 열'};
 }
 function search(q){
   var n=norm(q), best=null, bs=0;
@@ -356,6 +378,7 @@ function answer(q){
   var menu=wineMenuAnswer(q);if(menu)return menu;
   var recipe=recipeAnswer(q);if(recipe)return recipe;
   var fact=wineFactAnswer(q);if(fact)return fact;
+  var info=wineInfoAnswer(q);if(info)return info;
   var wine=wineRecommend(q); if(wine) return wine;
   var e=search(q);
   if(!e) return {text:FALLBACK, src:"지식 문서에 없음"};
@@ -441,13 +464,20 @@ if(typeof document!=="undefined"){
         panel.appendChild(item);
       });
       var submit=document.createElement('button');submit.type='button';submit.className='submit-check';submit.textContent=(title==='오픈 순서'?'오픈':'마감')+' 제출 내용 확인';submit.onclick=function(){reviewShift(title,day,meta.checklist,state);};panel.appendChild(submit);var help=document.createElement('p');help.className='check-help';help.textContent='미완료 항목도 함께 제출할 수 있어요. 요일·상황에 따라 하지 않는 항목은 ‘해당 없음’으로 표시해 주세요.';panel.appendChild(help);reset.onclick=function(){state={};inputs.forEach(function(input){input.checked=false;input.disabled=false;input.closest('.info-item').classList.remove('skip');});skipButtons.forEach(function(b){b.textContent='해당 없음';});update();};update();d.appendChild(panel);
+    }else if(meta&&meta.searched){
+      var panel=document.createElement('div');panel.className='info-results';
+      var heading=document.createElement('div');heading.className='info-heading';heading.textContent='웹 검색으로 확인한 와인 정보';panel.appendChild(heading);
+      var content=document.createElement('div');content.style.whiteSpace='pre-wrap';content.textContent=text;panel.appendChild(content);
+      (meta.sources||[]).forEach(function(item){if(!/^https:\/\//.test(item.url))return;var a=document.createElement('a');a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=item.title;a.style.cssText='display:block;margin-top:12px;text-decoration:underline';panel.appendChild(a);});
+      if(meta.searchSuggestions){var frame=document.createElement('iframe');frame.title='Google 검색 제안';frame.setAttribute('sandbox','allow-popups allow-popups-to-escape-sandbox');frame.srcdoc=meta.searchSuggestions;frame.style.cssText='width:100%;height:190px;border:0;margin-top:12px';panel.appendChild(frame);}
+      d.appendChild(panel);
     }else if(isInfo){
       var panel=document.createElement('div');panel.className='info-results';
       var heading=document.createElement('div');heading.className='info-heading';heading.textContent=title||'근무 안내';panel.appendChild(heading);
       String(text).split('\n').map(function(line){return line.trim();}).filter(Boolean).forEach(function(line){
         var item=document.createElement('div');item.className='info-item'+(/[“”"‘’]/.test(line)?' quote':'')+(/\[확인\]/.test(line)?' confirm':'');
         var content=line.replace(/^•\s*/, '');var colon=content.indexOf(':');
-        if(colon>0&&colon<=24&&!/^\d{1,2}:\d{2}/.test(content)){var label=document.createElement('strong');label.className='info-label';label.textContent=content.slice(0,colon);item.appendChild(label);var skip=document.createElement('button');skip.type='button';skip.className='skip-check';skip.textContent=input.disabled?'해당 없음 취소':'해당 없음';skip.onclick=function(){input.disabled=!input.disabled;input.checked=false;state[key]=input.disabled?'na':false;item.classList.toggle('skip',input.disabled);skip.textContent=input.disabled?'해당 없음 취소':'해당 없음';update();};skipButtons.push(skip);item.appendChild(skip);item.appendChild(document.createTextNode(content.slice(colon+1).trim()));}
+        if(colon>0&&colon<=24&&!/^\d{1,2}:\d{2}/.test(content)){var label=document.createElement('strong');label.className='info-label';label.textContent=content.slice(0,colon);item.appendChild(label);item.appendChild(document.createTextNode(content.slice(colon+1).trim()));}
         else item.textContent=content;
         if(item.classList.contains('quote'))addCopy(item,content);panel.appendChild(item);
       });
@@ -458,7 +488,7 @@ if(typeof document!=="undefined"){
   }
   function setRecordStatus(message){var status=document.getElementById('record-status');status.textContent=message;clearTimeout(status._timer);if(message)status._timer=setTimeout(function(){status.textContent='';},5000);}
   function recordQuestion(q){if(!AI_ENDPOINT||!QUESTION_LOG_ENABLED)return;var endpoint=AI_ENDPOINT.replace(/\/api\/chat$/,'/api/questions'),found=search(q);fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,category:found?found.title:'자유 질문',consent:true})}).then(function(r){return r.json();}).then(function(d){setRecordStatus(d.saved?'질문을 개선 기록에 남겼습니다. 90일 뒤 삭제됩니다.':(d.reason||d.error||'질문을 기록하지 못했습니다.'));}).catch(function(){setRecordStatus('질문 기록에 연결하지 못했습니다.');});}
-  function askWithAi(q){var a=answer(q);if(a.menuPairing){if(a.pairingWines)aiConversation.push({role:'user',text:q},{role:'model',text:a.text});return Promise.resolve(a);}if(a.recipe){if(a.recipeName)aiConversation.push({role:'user',text:q},{role:'model',text:a.recipeName+'\n'+a.text});return Promise.resolve(a);}if(a.wineFact){if(!a.wineAmbiguous)aiConversation.push({role:'user',text:q},{role:'model',text:a.title+'\n'+a.text});return Promise.resolve(a);}if(a.wines||a.src==='와인 추천 데이터'||(/추천|골라|어울리/.test(norm(q))&&/와인|레드|화이트|로제|스파클링|포트|초보|처음|육포/.test(norm(q))))return Promise.resolve(a);var requestEpoch=responseEpoch;var messages=aiConversation.slice(-6).concat([{role:'user',text:q}]);return fetch(AI_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,context:relevantContext(q),messages:messages})}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'AI 연결 오류');return d;});}).then(function(d){if(requestEpoch===responseEpoch)aiConversation.push({role:'user',text:q},{role:'model',text:d.text});return{text:d.text.replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^[-*]\s+/gm,'• '),src:'Gemini · 매장 지식 검색',title:'직원 업무 안내'};}).catch(function(error){if(requestEpoch!==responseEpoch)return a;setRecordStatus((error.message||'Gemini 연결에 실패했습니다.')+' 관련 매장 자료를 표시합니다.');if(a.src==='지식 문서에 없음'){var previous=aiConversation.slice().reverse().find(function(m){return m.role==='user';});if(previous)a=answer(previous.text);}return a;});}
+  function askWithAi(q){var a=answer(q);if(a.menuPairing){if(a.pairingWines)aiConversation.push({role:'user',text:q},{role:'model',text:a.text});return Promise.resolve(a);}if(a.recipe){if(a.recipeName)aiConversation.push({role:'user',text:q},{role:'model',text:a.recipeName+'\n'+a.text});return Promise.resolve(a);}if(a.wineFact&&!a.allowAi){if(!a.wineAmbiguous)aiConversation.push({role:'user',text:q},{role:'model',text:a.title+'\n'+a.text});return Promise.resolve(a);}if(a.wines||a.src==='와인 추천 데이터'||(/추천|골라|어울리/.test(norm(q))&&/와인|레드|화이트|로제|스파클링|포트|초보|처음|육포/.test(norm(q))))return Promise.resolve(a);var wineHits=namedWineMatches(q);if(!wineHits.length&&/^(그럼|그러면|그와인|이와인|그리고|품종|산지|생산지)/.test(norm(q)))aiConversation.slice(-2).reverse().some(function(m){wineHits=namedWineMatches(m.text);return wineHits.length>0;});var publicWineName=wineHits.map(function(h){return h.entry.title+'\n'+h.entry.body.split('\n').filter(function(line){return /^- (영문명|국가|품종|지역)/.test(line);}).join('\n');}).join('\n\n');if(/샤또.*오뜨|샤토.*오뜨/.test(q))publicWineName+='\n가능한 공개 제품명: Château La Haute Brande Bordeaux Supérieur (정확한 라벨·빈티지 미확인). 제조사 후보: https://www.chateaulahautebrande.com/aoc-bordeaux/aoc-bordeaux/aoc-bordeaux/bordeaux-superieur.html';var requestEpoch=responseEpoch;var messages=aiConversation.slice(-6).concat([{role:'user',text:q}]);return fetch(AI_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,context:relevantContext(q),publicWineName:publicWineName,messages:messages})}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'AI 연결 오류');return d;});}).then(function(d){if(requestEpoch===responseEpoch)aiConversation.push({role:'user',text:q},{role:'model',text:d.text});if(d.searchUnavailable)return{text:d.text,src:'Gemini · 웹 검색 근거 미확인',title:'와인 제품 확인'};if(d.searched)return{text:d.text,src:'Gemini · Google 검색',title:'와인 정보',searched:true,sources:d.sources,searchSuggestions:d.searchSuggestions};return{text:d.text.replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^[-*]\s+/gm,'• '),src:'Gemini · 매장 지식 검색',title:'직원 업무 안내'};}).catch(function(error){if(requestEpoch!==responseEpoch)return a;setRecordStatus((error.message||'Gemini 연결에 실패했습니다.')+' 관련 매장 자료를 표시합니다.');if(a.src==='지식 문서에 없음'){var previous=aiConversation.slice().reverse().find(function(m){return m.role==='user';});if(previous)a=answer(previous.text);}return a;});}
   function setResponseBusy(busy){responseBusy=busy;var send=document.querySelector('#f button');send.disabled=busy;send.textContent=busy?'답변 중':'보내기';document.getElementById('q').setAttribute('aria-busy',String(busy));}
   function ask(q,preferManual){
     q=q.trim();if(!q)return false;
@@ -468,7 +498,7 @@ if(typeof document!=="undefined"){
     if(AI_ENDPOINT&&!preferManual){
       var epoch=responseEpoch;setResponseBusy(true);
       var pending=document.createElement('div');pending.className='pending';pending.setAttribute('role','status');
-      pending.innerHTML='<span class="typing-dots" aria-hidden="true"><i></i><i></i><i></i></span><span><strong>질문을 받았어요</strong><small>관련 매장 자료를 찾아 답변을 준비하고 있어요.</small></span>';log.appendChild(pending);pending.scrollIntoView({block:'center',behavior:'smooth'});
+      pending.innerHTML='<span class="typing-dots" aria-hidden="true"><i></i><i></i><i></i></span><span><strong>질문을 받았어요</strong><small>매장 자료를 확인하고, 필요하면 와인 정보를 웹에서 찾아요.</small></span>';log.appendChild(pending);pending.scrollIntoView({block:'center',behavior:'smooth'});
       var delay=setTimeout(function(){if(epoch===responseEpoch&&pending.isConnected)pending.querySelector('small').textContent='답변을 기다리고 있어요. 조금만 더 기다려 주세요.';},7000);
       askWithAi(q).then(function(a){if(epoch!==responseEpoch)return;pending.remove();add('bot',a.text,a.src,a.wines,a.stockNote,a.title,a);}).finally(function(){clearTimeout(delay);pending.remove();if(epoch===responseEpoch)setResponseBusy(false);});return true;
     }
