@@ -375,7 +375,7 @@ if(typeof document!=="undefined"){
       String(text).split('\n').map(function(line){return line.trim();}).filter(Boolean).forEach(function(line){
         var item=document.createElement('div');item.className='info-item'+(/[“”"‘’]/.test(line)?' quote':'')+(/\[확인\]/.test(line)?' confirm':'');
         var content=line.replace(/^•\s*/, '');var colon=content.indexOf(':');
-        if(colon>0&&colon<=24){var label=document.createElement('strong');label.className='info-label';label.textContent=content.slice(0,colon);item.appendChild(label);item.appendChild(document.createTextNode(content.slice(colon+1).trim()));}
+        if(colon>0&&colon<=24&&!/^\d{1,2}:\d{2}/.test(content)){var label=document.createElement('strong');label.className='info-label';label.textContent=content.slice(0,colon);item.appendChild(label);item.appendChild(document.createTextNode(content.slice(colon+1).trim()));}
         else item.textContent=content;
         panel.appendChild(item);
       });
