@@ -55,6 +55,7 @@ form{display:flex;gap:8px;margin-top:auto;padding:14px 0;background:var(--paper)
 var KB = /*KB_JSON*/[];
 var WINE_DATA = /*WINE_JSON*/[];
 var FOOD_DATA = /*FOOD_JSON*/[];
+var WINE_MENU_DATA = /*WINE_MENU_JSON*/[];
 var KB_VERSION = /*VERSION_JSON*/{};
 var AI_ENDPOINT = /*AI_ENDPOINT_JSON*/"";
 var QUESTION_LOG_ENABLED = /*QUESTION_LOG_ENABLED*/false;
@@ -387,8 +388,22 @@ function answer(q){
   if(e.status==="확인") return {text:FALLBACK+"\n"+formatKnowledge(e.body,e.title), src:e.file+" · "+e.title,title:e.title};
   return {text:formatKnowledge(e.body,e.title), src:e.file+" · "+e.title,title:e.title};
 }
+function isLineupQuestion(q){return /라인업|구색|와인구성|와인목록|와인리스트|부족한와인|와인.*보완|보완.*와인/.test(norm(q));}
+function continuesTopic(q){
+  if(isLineupQuestion(q)||namedWineMatches(q).length)return false;
+  return /^(그럼|그러면|그거|그것|그와인|이와인|그중|방금|아까|그리고|왜그래|왜그런|조금더|좀더|더자세|품종|산지|생산지|당도|산도|산미|탄닌|타닌|바디|도수|안주는)/.test(norm(q));
+}
+function topicMessages(q){return continuesTopic(q)?aiConversation.slice(-6):[];}
+function lineupContext(){
+  var counts={};WINE_MENU_DATA.forEach(function(w){counts[w.category]=(counts[w.category]||0)+1;});
+  var summary=Object.keys(counts).map(function(k){return k+': '+counts[k]+'개 메뉴 항목';}).join(' · ');
+  var rows=WINE_MENU_DATA.map(function(w){return [w.category,w.name,w.origin,w.variety].join(' | ');}).join('\n');
+  var taste=WINE_DATA.map(function(w){return w.name+': 당도'+w.sweetness+' 산도'+w.acidity+' 타닌'+w.tannin+' 바디'+w.body;}).join('\n');
+  return '질문 범위: 하라고지페 메뉴판 와인 구성 분석. 이전 개별 와인의 페어링 질문과 다른 주제다.\n출처: 메뉴판 List 허용 열, 2026-10-08 스냅샷. 항목 '+WINE_MENU_DATA.length+'개. 용량별 행을 포함하며 서로 다른 제품 수와 같다고 단정하지 않는다. 메뉴 등재 기준이다. 판매 성과·현재 판매 가능 여부는 알 수 없다.\n구분: '+summary+'\n분석 방법: 현재 구성의 강점, 자료에서 확인되는 빈틈, 보완할 스타일을 나누고 근거를 짧게 제시한다. 점수가 없는 제품을 추천용 38종에서 빠졌다는 이유로 메뉴에 없다고 판단하지 않는다. Blend 등 모호한 품종은 단정하지 않는다. 손님 응대나 안주 페어링을 답에 끼워 넣지 않는다. 추가할 구체적 제품·가격을 근거 없이 만들지 않는다.\n메뉴판 전체 항목 (종류 | 이름 | 산지 표기 | 품종):\n'+rows+'\n맛 점수 참고 (5점 기준, 확인된 '+WINE_DATA.length+'개 항목만):\n'+taste;
+}
 function relevantContext(q){
-  var queries=[q].concat(aiConversation.slice(-4).filter(function(m){return m.role==='user';}).map(function(m){return m.text;}));
+  if(isLineupQuestion(q))return lineupContext().slice(0,8500);
+  var queries=[q].concat(topicMessages(q).slice(-4).filter(function(m){return m.role==='user';}).map(function(m){return m.text;}));
   var named=queries.map(namedWineMatches);
   var recipes=recipeCatalog().filter(function(r){return queries.some(function(query){var n=norm(query);return r.aliases.some(function(alias){return n.indexOf(norm(alias))>=0;});});});
   var contextWineHits=named.flat().filter(function(hit,i,all){return all.findIndex(function(x){return x.entry===hit.entry;})===i;}).slice(0,3);
@@ -532,11 +547,12 @@ if(typeof document!=="undefined"){
   }
   function setRecordStatus(message){var status=document.getElementById('record-status');status.textContent=message;clearTimeout(status._timer);if(message)status._timer=setTimeout(function(){status.textContent='';},5000);}
   function recordQuestion(q){if(!AI_ENDPOINT||!QUESTION_LOG_ENABLED)return;var endpoint=AI_ENDPOINT.replace(/\/api\/chat$/,'/api/questions'),found=search(q);fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,category:found?found.title:'자유 질문',consent:true})}).then(function(r){return r.json();}).then(function(d){setRecordStatus(d.saved?'질문을 개선 기록에 남겼습니다. 90일 뒤 삭제됩니다.':(d.reason||d.error||'질문을 기록하지 못했습니다.'));}).catch(function(){setRecordStatus('질문 기록에 연결하지 못했습니다.');});}
-  function askWithAi(q){var a=answer(q);if(a.menuPairing){if(a.pairingWines)aiConversation.push({role:'user',text:q},{role:'model',text:a.text});return Promise.resolve(a);}if(a.recipe){if(a.recipeName)aiConversation.push({role:'user',text:q},{role:'model',text:a.recipeName+'\n'+a.text});return Promise.resolve(a);}if(a.wineFact&&!a.allowAi){if(!a.wineAmbiguous)aiConversation.push({role:'user',text:q},{role:'model',text:a.title+'\n'+a.text});return Promise.resolve(a);}if(a.wines||a.src==='와인 추천 데이터'||(/추천|골라|어울리/.test(norm(q))&&/와인|레드|화이트|로제|스파클링|포트|초보|처음|육포/.test(norm(q))))return Promise.resolve(a);var wineHits=namedWineMatches(q);if(!wineHits.length&&/^(그럼|그러면|그와인|이와인|그리고|품종|산지|생산지)/.test(norm(q)))aiConversation.slice(-2).reverse().some(function(m){wineHits=namedWineMatches(m.text);return wineHits.length>0;});var publicWineName=wineHits.map(function(h){return h.entry.title+'\n'+h.entry.body.split('\n').filter(function(line){return /^- (영문명|국가|품종|지역)/.test(line);}).join('\n');}).join('\n\n');if(/샤또.*오뜨|샤토.*오뜨/.test(q))publicWineName+='\n가능한 공개 제품명: Château La Haute Brande Bordeaux Supérieur (정확한 라벨·빈티지 미확인). 제조사 후보: https://www.chateaulahautebrande.com/aoc-bordeaux/aoc-bordeaux/aoc-bordeaux/bordeaux-superieur.html';var requestEpoch=responseEpoch;var messages=aiConversation.slice(-6).concat([{role:'user',text:q}]);return fetch(AI_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,context:relevantContext(q),publicWineName:publicWineName,messages:messages})}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'AI 연결 오류');return d;});}).then(function(d){if(requestEpoch===responseEpoch)aiConversation.push({role:'user',text:q},{role:'model',text:d.text});if(d.searchUnavailable)return{text:d.text,src:'Gemini · 웹 검색 근거 미확인',title:'와인 제품 확인'};if(d.searched)return{text:d.text,src:'Gemini · Google 검색',title:'와인 정보',searched:true,sources:d.sources,searchSuggestions:d.searchSuggestions};return{text:d.text.replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^[-*]\s+/gm,'• '),src:'Gemini · 매장 지식 검색',title:'직원 업무 안내'};}).catch(function(error){if(requestEpoch!==responseEpoch)return a;setRecordStatus((error.message||'Gemini 연결에 실패했습니다.')+' 관련 매장 자료를 표시합니다.');if(a.src==='지식 문서에 없음'){var previous=aiConversation.slice().reverse().find(function(m){return m.role==='user';});if(previous)a=answer(previous.text);}return a;});}
+  function askWithAi(q){var a=answer(q);if(a.menuPairing){if(a.pairingWines)aiConversation.push({role:'user',text:q},{role:'model',text:a.text});return Promise.resolve(a);}if(a.recipe){if(a.recipeName)aiConversation.push({role:'user',text:q},{role:'model',text:a.recipeName+'\n'+a.text});return Promise.resolve(a);}if(a.wineFact&&!a.allowAi){if(!a.wineAmbiguous)aiConversation.push({role:'user',text:q},{role:'model',text:a.title+'\n'+a.text});return Promise.resolve(a);}if(!isLineupQuestion(q)&&(a.wines||a.src==='와인 추천 데이터'||(/추천|골라|어울리/.test(norm(q))&&/와인|레드|화이트|로제|스파클링|포트|초보|처음|육포/.test(norm(q)))))return Promise.resolve(a);var wineHits=namedWineMatches(q);if(!wineHits.length&&/^(그럼|그러면|그와인|이와인|그리고|품종|산지|생산지)/.test(norm(q)))aiConversation.slice(-2).reverse().some(function(m){wineHits=namedWineMatches(m.text);return wineHits.length>0;});var publicWineName=wineHits.map(function(h){return h.entry.title+'\n'+h.entry.body.split('\n').filter(function(line){return /^- (영문명|국가|품종|지역)/.test(line);}).join('\n');}).join('\n\n');if(/샤또.*오뜨|샤토.*오뜨/.test(q))publicWineName+='\n가능한 공개 제품명: Château La Haute Brande Bordeaux Supérieur (정확한 라벨·빈티지 미확인). 제조사 후보: https://www.chateaulahautebrande.com/aoc-bordeaux/aoc-bordeaux/aoc-bordeaux/bordeaux-superieur.html';var requestEpoch=responseEpoch;var messages=topicMessages(q).concat([{role:'user',text:q}]);return fetch(AI_ENDPOINT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({question:q,context:relevantContext(q),publicWineName:publicWineName,messages:messages})}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'AI 연결 오류');return d;});}).then(function(d){if(requestEpoch===responseEpoch)aiConversation.push({role:'user',text:q},{role:'model',text:d.text});if(d.searchUnavailable)return{text:d.text,src:'Gemini · 웹 검색 근거 미확인',title:'와인 제품 확인'};if(d.searched)return{text:d.text,src:'Gemini · Google 검색',title:'와인 정보',searched:true,sources:d.sources,searchSuggestions:d.searchSuggestions};return{text:d.text.replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^[-*]\s+/gm,'• '),src:'Gemini · 매장 지식 검색',title:'직원 업무 안내'};}).catch(function(error){if(requestEpoch!==responseEpoch)return a;var message=error.message||'Gemini 연결에 실패했습니다.';setRecordStatus(message);if(isLineupQuestion(q)||a.src==='지식 문서에 없음')return {title:'답변 연결 오류',src:'AI 연결 상태',text:'• '+message+'\n• 이번 질문의 답변을 만들지 못했어요. 잠시 후 다시 보내 주세요.'};a.text='• '+message+'\n• 이번 질문과 관련된 매장 자료예요.\n\n'+a.text;return a;});}
   function setResponseBusy(busy){responseBusy=busy;var send=document.querySelector('#f button');send.disabled=busy;send.textContent=busy?'답변 중':'보내기';document.getElementById('q').setAttribute('aria-busy',String(busy));}
   function ask(q,preferManual){
     q=q.trim();if(!q)return false;
     if(responseBusy){setRecordStatus('답변을 준비하고 있어요. 잠시만 기다려 주세요.');return false;}
+    if(!continuesTopic(q))aiConversation=[];
     document.getElementById('app').classList.remove('wine-view');add('me',q);
     var record=document.getElementById('record-question');if(record&&record.checked){recordQuestion(q);record.checked=false;}
     if(AI_ENDPOINT&&!preferManual){
