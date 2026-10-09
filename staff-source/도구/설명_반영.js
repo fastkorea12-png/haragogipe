@@ -15,7 +15,7 @@ for(const m of menu.rows.filter(m=>/wine/i.test(m.values[0]||''))){
   if(/미션 레이트 하비스트/.test(r[1])){excluded.push([v[2],'당도 점수와 설명문 충돌 확인 필요']);continue;}
   const half=/half/i.test(v[0]);
   let kind=/port|포트/i.test(r[1]+' '+r[2])?'port':/로제|ros[eé]/i.test(r[1]+' '+r[2])?'rose':/스파클링/.test(r[11])?'sparkling':/레드|\(레드\)/.test(r[11]+' '+v[2])?'red':/화이트|\(화이트\)/.test(r[11]+' '+v[2])?'white':'unknown';
-  wines.push({name:v[2],sourceName:r[1],english:v[4],sweetness:Number(r[3]),body:Number(r[4]),acidity:Number(r[5]),tannin:Number(r[6]),aromas:r[7],pairing:r[8],country:r[9],variety:v[6],category:r[11],wineKind:kind,volumeLabel:half?'하프':/750ml/i.test(r[1])?'750ml':'',alcohol:v[3],region:v[5],price:v[7],description:clean(m.description),nuance:r[12],serviceDescription:r[13],descriptionUpdatedAt:source.readAt});
+  wines.push({menuCode:v[0],menuRow:m.row,name:v[2],sourceName:r[1],english:v[4],sweetness:Number(r[3]),body:Number(r[4]),acidity:Number(r[5]),tannin:Number(r[6]),aromas:r[7],pairing:r[8],country:r[9],variety:v[6],category:r[11],wineKind:kind,volumeLabel:half?'하프':/750ml/i.test(r[1])?'750ml':'',alcohol:v[3],region:v[5],price:v[7],description:clean(m.description),nuance:r[12],serviceDescription:r[13],descriptionUpdatedAt:source.readAt});
   links.push({menuName:v[2],sourceName:r[1],english:v[4],method});
 }
 fs.writeFileSync(path.join(__dirname,'와인_추천_데이터.json'),JSON.stringify(wines,null,2)+'\n');

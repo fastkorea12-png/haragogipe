@@ -47,3 +47,15 @@ const built=tpl.replace('/*KB_JSON*/[]',safe(kb)).replace('/*WINE_JSON*/[]',safe
 fs.writeFileSync(path.join(root,'챗봇_시안.html'),built);
 console.log('항목',kb.length,'개 내장');
 
+
+// The customer page contains only public menu identities and confirmed taste data.
+const customerWines=wines.map(w=>{
+ const matches=menuSource.rows.filter(m=>m.row===w.menuRow);
+ if(matches.length!==1)return null;
+ const originalNumber=String(matches[0].values[0]).trim();
+ const number=originalNumber.replace('White & Rose Wine','화이트·로제').replace('Sparkling Wine','스파클링').replace('Natural Wine','내추럴').replace('White Wine','화이트').replace('Red Wine','레드').replace('Port Wine','포트').replace('Half Wine','하프')+'번';
+ return {name:w.name,number,originalNumber,kind:w.wineKind,category:w.category,country:w.country,variety:w.variety,sweetness:w.sweetness,acidity:w.acidity,body:w.body,tannin:w.tannin,aromas:w.aromas,pairing:w.pairing,description:String(w.serviceDescription||w.description||'').split('\n')[0]};
+}).filter(Boolean);
+const customerTemplate=fs.readFileSync(path.join(root,'손님용','템플릿.html'),'utf8');
+fs.writeFileSync(path.join(root,'손님용','시안.html'),customerTemplate.replace('/*CUSTOMER_WINES*/[]',safe(customerWines)));
+console.log('손님용 추천',customerWines.length,'개 메뉴 번호 연결');

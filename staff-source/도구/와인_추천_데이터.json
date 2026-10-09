@@ -1,5 +1,7 @@
 [
   {
+    "menuCode": "Red Wine 1",
+    "menuRow": 3,
     "name": "올드 핸즈 호벤",
     "sourceName": "올드 핸즈 호벤",
     "english": "Old Hands Joven",
@@ -23,6 +25,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 2",
+    "menuRow": 4,
     "name": "라 푸리시마 모나스트렐",
     "sourceName": "라 푸리시마 모나스트렐",
     "english": "Bodegas La Purisima",
@@ -46,6 +50,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 3",
+    "menuRow": 5,
     "name": "후안길 옐로우 라벨",
     "sourceName": "후안길 옐로 라벨",
     "english": "Juan Gil Yellow Label",
@@ -69,6 +75,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 4",
+    "menuRow": 6,
     "name": "후안길 실버 라벨",
     "sourceName": "후안길 실버 라벨",
     "english": "Juan Gil Silver Label",
@@ -92,6 +100,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 5",
+    "menuRow": 7,
     "name": "샤또 오뜨 브랑드",
     "sourceName": "샤또 오뜨 브랑드",
     "english": "Château Haute Brande",
@@ -115,6 +125,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 6",
+    "menuRow": 8,
     "name": "롱반 멀롯",
     "sourceName": "롱반 멀롯",
     "english": "Long Barn Merlot",
@@ -138,6 +150,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 10",
+    "menuRow": 12,
     "name": "디킨 쉬라즈",
     "sourceName": "디킨 쉬라즈",
     "english": "Deakin shiraz",
@@ -161,6 +175,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 12",
+    "menuRow": 14,
     "name": "레 자르젤리에르 멜롯-쉬라",
     "sourceName": "레 자르젤리에르 멜롯-쉬라",
     "english": "Les Argelieres Merlot , Syrah",
@@ -184,6 +200,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 13",
+    "menuRow": 15,
     "name": "르 뷔우 트루폴리에",
     "sourceName": "르 뷔우 트루폴리에",
     "english": "Le Vieux Truffolier",
@@ -207,6 +225,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 14",
+    "menuRow": 16,
     "name": "폼비스 런 쉬라즈",
     "sourceName": "폼비스 런 쉬라즈",
     "english": "Fornby's Run",
@@ -230,6 +250,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 15",
+    "menuRow": 17,
     "name": "소모스 크리안자",
     "sourceName": "소모스 크리안자",
     "english": "Sommos, Crianza",
@@ -253,6 +275,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 17",
+    "menuRow": 19,
     "name": "날리헤드 올드바인 진판델",
     "sourceName": "날리헤드 올드바인 진판델",
     "english": "Gnarly Head Old Vine Zinfandel",
@@ -276,6 +300,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 18",
+    "menuRow": 20,
     "name": "퍼르시모",
     "sourceName": "퍼르시모",
     "english": "Vallepicciola Persimo",
@@ -299,6 +325,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 19",
+    "menuRow": 21,
     "name": "프리마 산지오베제 루비네코",
     "sourceName": "프리마 산지오베제 루비코네",
     "english": "Prima Pietra Sangiovese Rubicone",
@@ -322,6 +350,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 22",
+    "menuRow": 24,
     "name": "세파 비헤아스 보발",
     "sourceName": "세파 비헤아스 보발",
     "english": "Cepas Viejas BoBal",
@@ -345,6 +375,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 23",
+    "menuRow": 25,
     "name": "아라우카노 까르미네르 리제르바",
     "sourceName": "아라우카노 까르미네르 리제르바",
     "english": "Araucano Carmenere Reserva",
@@ -368,6 +400,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Red Wine 24",
+    "menuRow": 26,
     "name": "그랑 아라우카노",
     "sourceName": "그랑 아라우카노",
     "english": "Grand Araucano Reserva",
@@ -391,6 +425,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "White Wine 3",
+    "menuRow": 30,
     "name": "라로쉬 샤르도네 리저브",
     "sourceName": "라로쉬 샤르도네 리저브",
     "english": "Laroche Chardonnay Reserve",
@@ -414,6 +450,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "White Wine 4",
+    "menuRow": 31,
     "name": "롱반 샤도네이",
     "sourceName": "롱반 샤도네이",
     "english": "Long Barn Chardonnay",
@@ -437,6 +475,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "White Wine 6",
+    "menuRow": 33,
     "name": "상쎄르 도멘 블랑",
     "sourceName": "상쎄르 도멘 블랑",
     "english": "Sancerre Domaine Balland",
@@ -460,6 +500,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "White Wine 7",
+    "menuRow": 34,
     "name": "레 자르 젤리에르 비오니에",
     "sourceName": "레 자르 젤리에르 비오니에",
     "english": "Les Argelieres",
@@ -483,6 +525,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "White Wine 8",
+    "menuRow": 35,
     "name": "마틴 코닥스",
     "sourceName": "마틴 코닥스",
     "english": "Martin Codax",
@@ -506,6 +550,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "White & Rose Wine 10",
+    "menuRow": 37,
     "name": "카룬도 펄스 오브 로제",
     "sourceName": "카룬도 펄스 오브 로제",
     "english": "Carundo Pearls of Rose",
@@ -529,6 +575,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "White & Rose Wine 12",
+    "menuRow": 39,
     "name": "그라모나 제사미",
     "sourceName": "그라모나 제사미",
     "english": "Gramona Gessami",
@@ -552,6 +600,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Sparkling Wine 1",
+    "menuRow": 40,
     "name": "시드르 부쉐 바이오",
     "sourceName": "시드르 부쉐 바이오",
     "english": "Cidre De Bretagne Bio",
@@ -575,6 +625,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Sparkling Wine 2",
+    "menuRow": 41,
     "name": "발레벨보 브라께토",
     "sourceName": "발레벨보 브라께토",
     "english": "Vallebelbo, Brachetto",
@@ -598,6 +650,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Sparkling Wine 3",
+    "menuRow": 42,
     "name": "핑크 모스카토 스푸만테",
     "sourceName": "핑크 모스카토 스푸만테",
     "english": "Miravento, Pink Moscato Spumante",
@@ -621,6 +675,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Sparkling Wine 4",
+    "menuRow": 43,
     "name": "미라벤토 모스카토 스트로베리",
     "sourceName": "미라벤토 모스카토 스트로베리",
     "english": "Miravento, Moscato & strawberry",
@@ -644,6 +700,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Sparkling Wine 5",
+    "menuRow": 44,
     "name": "데코디 프라골리노 로쏘",
     "sourceName": "데코디 프라골리노 로쏘",
     "english": "Fragolino Rosso",
@@ -667,6 +725,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Sparkling Wine 6",
+    "menuRow": 45,
     "name": "세구라 비우다스 레세르바 에레다드 브뤼",
     "sourceName": "세구라 비우다스 레세르바 에레다드 브뤼",
     "english": "Segura Viudas Reserva Heredad Brut",
@@ -690,6 +750,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Sparkling Wine 7",
+    "menuRow": 46,
     "name": "톨라스코 모스카토 다스티",
     "sourceName": "톨라스코 모스카토 다스티",
     "english": "Torlasco Moscato d'Asti",
@@ -713,6 +775,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Sparkling Wine 8",
+    "menuRow": 47,
     "name": "발레벨보 모스카토 다스티",
     "sourceName": "발레벨보 모스카토 다스티",
     "english": "MIRAVENTO MOSCATO D'Asti",
@@ -736,6 +800,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Sparkling Wine 9",
+    "menuRow": 48,
     "name": "간치아 아스티",
     "sourceName": "간치아 아스티",
     "english": "Gancia, Asti",
@@ -759,6 +825,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Sparkling Wine 13",
+    "menuRow": 52,
     "name": "샤를 도떼일 샴페인 브륏",
     "sourceName": "샤를 도떼일 샴페인 브뤼",
     "english": "Charles Dauteuil, Champagne Brut",
@@ -782,6 +850,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Port Wine 1",
+    "menuRow": 54,
     "name": "콥케 파인 타우니 포트",
     "sourceName": "콥케 파인 타우니 포트",
     "english": "Fine Tawny Porto",
@@ -805,6 +875,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Port Wine 2",
+    "menuRow": 55,
     "name": "버메스터 타우니 포트",
     "sourceName": "버메스터 타우니 포트",
     "english": "Burmester, Tawny Port",
@@ -828,6 +900,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Port Wine 3",
+    "menuRow": 56,
     "name": "버메스터 화이트 포트",
     "sourceName": "버메스터 화이트 포트",
     "english": "Burmester, White Port",
@@ -851,6 +925,8 @@
     "descriptionUpdatedAt": "2026-10-08"
   },
   {
+    "menuCode": "Half Wine 3",
+    "menuRow": 65,
     "name": "카룬도 로제",
     "sourceName": "카룬도 로제",
     "english": "Carundo Rose",

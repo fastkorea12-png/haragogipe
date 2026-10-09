@@ -48,10 +48,11 @@ jobs:
           path: site
       - name: Update staff page
         run: |
-          mkdir -p site/staff
+          mkdir -p site/staff site/wine
           cp source/staff-source/챗봇_시안.html site/staff/index.html
+          cp source/staff-source/손님용/시안.html site/wine/index.html
           cd site
-          git add staff/index.html
+          git add staff/index.html wine/index.html
           if git diff --cached --quiet; then exit 0; fi
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Update staff assistant from manual and wine list'
           git push origin gh-pages
