@@ -24,6 +24,7 @@ form{display:flex;gap:8px;margin-top:auto;padding:14px 0;background:var(--paper)
 
 .submit-check{margin:12px 0 0;padding:14px 18px;border:0;border-radius:12px;background:var(--wine);color:white;font-weight:700;font-size:15px}.check-help{font-size:12px;color:var(--muted);margin:5px 0}.skip-check{align-self:flex-end;border:1px solid var(--rule);border-radius:7px;background:transparent;color:var(--muted);font-size:11px;min-height:44px;padding:4px 9px;margin:8px 0 0}.info-item.skip{background:var(--soft)}.info-item.skip .check-row span{opacity:.5}.submit-dialog{width:min(560px,calc(100vw - 28px));max-height:85dvh;border:1px solid var(--rule);border-radius:18px;padding:24px;background:var(--paper);color:var(--ink)}.submit-dialog::backdrop{background:#2b211b66}.submit-dialog h2{font-size:20px;color:var(--wine);margin:0 0 10px}.submit-dialog p{font-size:14px}.submit-dialog pre{white-space:pre-wrap;overflow-wrap:anywhere;font-family:inherit;font-size:13px;line-height:1.8;background:var(--bot);border:1px solid var(--rule);border-radius:10px;padding:14px;max-height:40dvh;overflow:auto}.submit-actions{display:flex;gap:10px;flex-wrap:wrap}.submit-actions a,.submit-actions button{display:flex;align-items:center;justify-content:center;padding:12px 16px;font-size:14px;min-height:44px;border-radius:9px;text-decoration:none}.submit-actions a{background:var(--wine);color:white}.submit-actions button.submit-primary{border:0;background:var(--wine);color:white;font-weight:700}.submit-actions button:disabled{opacity:.55}.submit-actions button{border:1px solid var(--rule);background:var(--bot);color:var(--muted)}
 .store-pairings{margin-top:18px;border-top:1px solid var(--rule);padding-top:16px;white-space:normal}.store-pairings>strong{color:var(--wine);font-size:14px}.store-pairing{margin-top:12px;padding:14px;background:var(--paper);border-radius:10px;font-size:14px}.store-pairing>strong{font-size:15px}.store-pairing p{font-size:12px;color:var(--muted);margin:7px 0}.store-pairing summary{font-size:12px;color:var(--wine)}.pairing-select{width:100%;padding:12px;border:1px solid var(--rule);border-radius:10px;background:var(--bot);color:var(--ink);font-size:16px;min-width:0}
+.search-answer{white-space:normal;gap:12px}.search-title{margin:0;color:var(--wine);font-size:21px;font-weight:700;line-height:1.5}.search-badge{font-size:12px;color:var(--muted);padding:0 2px}.search-body{display:grid;gap:10px}.search-body .info-item{white-space:normal;line-height:1.75}.search-body .info-item p{margin:0;white-space:pre-wrap}.search-field-label{display:block;color:var(--wine);font-size:13px;font-weight:700;margin:0 0 6px}.search-body strong{font-weight:700}.search-body a{color:var(--wine);text-decoration:underline;text-underline-offset:3px}.search-sources{border:1px solid var(--rule);border-radius:12px;background:var(--bot);padding:0 16px;font-size:13px;color:var(--muted)}.search-sources summary{padding:13px 0;font-weight:700;color:var(--wine)}.search-source-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:8px;padding:0 0 14px}.search-source-link{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:8px;background:var(--paper);color:var(--ink);text-decoration:none;min-height:44px}.search-source-link:hover{background:var(--soft)}.search-source-link small{display:block;color:var(--muted);font-size:11px;overflow-wrap:anywhere}.search-source-number{font-size:11px;color:var(--wine);background:var(--soft);padding:1px 6px;border-radius:5px;flex:none}.search-suggestions{border-top:1px solid var(--rule);padding-top:10px}.search-suggestions iframe{display:block;width:100%;height:190px;border:0;margin-top:6px;background:var(--bot);border-radius:10px}
 </style>
 </head>
 <body>
@@ -399,6 +400,42 @@ function relevantContext(q){
 if(typeof document!=="undefined"){
   var log=document.getElementById("log");
   function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function appendAnswerInline(parent,text){
+    var pattern=/\*\*([^*]+)\*\*|__([^_]+)__|`([^`]+)`|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,match,last=0;
+    while((match=pattern.exec(text))){
+      parent.appendChild(document.createTextNode(text.slice(last,match.index)));
+      var node;if(match[1]||match[2]){node=document.createElement('strong');node.textContent=match[1]||match[2];}
+      else if(match[3]){node=document.createElement('span');node.textContent=match[3];}
+      else{node=document.createElement('a');node.textContent=match[4];node.href=match[5];node.target='_blank';node.rel='noopener noreferrer';}
+      parent.appendChild(node);last=pattern.lastIndex;
+    }
+    parent.appendChild(document.createTextNode(text.slice(last)));
+  }
+  function renderSearchAnswer(panel,text,meta){
+    panel.classList.add('search-answer');
+    var badge=document.createElement('div');badge.className='search-badge';badge.textContent='웹 검색으로 확인한 와인 정보';panel.appendChild(badge);
+    var body=document.createElement('div');body.className='search-body';var blocks=[],current=null,hasTitle=false;
+    String(text).split('\n').forEach(function(raw){
+      var line=raw.trim();if(!line){current=null;return;}
+      var heading=/^#{1,6}\s+/.test(line),bullet=/^(?:[-*+•]\s+|\d+[.)]\s+)/.test(line);
+      line=line.replace(/^#{1,6}\s+/, '').replace(/^(?:[-*+•]\s+|\d+[.)]\s+)/,'');
+      if(heading||(!hasTitle&&!blocks.length&&!bullet&&line.length<=70)){
+        var title=document.createElement('div');title.className='search-title';appendAnswerInline(title,line);body.appendChild(title);hasTitle=true;current=null;return;
+      }
+      if(bullet||!current){current={text:line,node:document.createElement('article')};current.node.className='info-item';blocks.push(current);body.appendChild(current.node);}
+      else current.text+='\n'+line;
+    });
+    blocks.forEach(function(block){
+      var label=block.text.match(/^(?:\*\*|__)?([^:：\n]{1,30})[:：](?:\*\*|__)?\s*([\s\S]*)$/),content=block.text;
+      if(label){var name=document.createElement('strong');name.className='search-field-label';name.textContent=label[1].replace(/(?:\*\*|__)$/,'');block.node.appendChild(name);content=label[2];}
+      var p=document.createElement('p');appendAnswerInline(p,content);block.node.appendChild(p);
+    });panel.appendChild(body);
+    var sources=(meta.sources||[]).filter(function(item,i,all){return typeof item.url==='string'&&/^https:\/\//.test(item.url)&&all.findIndex(function(x){return x.url===item.url;})===i;});
+    if(sources.length){var details=document.createElement('details');details.className='search-sources';var summary=document.createElement('summary');summary.textContent='참고 출처 '+sources.length+'개 보기';details.appendChild(summary);var list=document.createElement('div');list.className='search-source-list';
+      sources.forEach(function(item,i){var a=document.createElement('a');a.className='search-source-link';a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';var number=document.createElement('span');number.className='search-source-number';number.textContent=String(i+1);a.appendChild(number);var label=document.createElement('span');label.textContent=item.title||'참고 출처';var domain=document.createElement('small');try{domain.textContent=new URL(item.url).hostname.replace(/^www\./,'');}catch(err){}label.appendChild(domain);a.appendChild(label);list.appendChild(a);});details.appendChild(list);panel.appendChild(details);
+    }
+    if(meta.searchSuggestions){var suggestions=document.createElement('div');suggestions.className='search-suggestions';var label=document.createElement('div');label.className='search-badge';label.textContent='Google 검색 제안';suggestions.appendChild(label);var frame=document.createElement('iframe');frame.title='Google 검색 제안';frame.setAttribute('sandbox','allow-popups allow-popups-to-escape-sandbox');frame.srcdoc=meta.searchSuggestions;suggestions.appendChild(frame);panel.appendChild(suggestions);}
+  }
   function reviewShift(title,day,entries,state){
     var tasks=entries.filter(function(e){return e.task;}),done=0,skipped=0;
     var lines=tasks.map(function(e,i){var value=state[norm(e.group+e.text)];if(value===true)done++;if(value==='na')skipped++;return (i+1)+'. ['+(value===true?'완료':value==='na'?'해당 없음':'미완료')+'] '+(e.group&&e.group!=='기본 준비'?e.group+' · ':'')+e.text;});
@@ -477,12 +514,7 @@ if(typeof document!=="undefined"){
       });
       var submit=document.createElement('button');submit.type='button';submit.className='submit-check';submit.textContent=(title==='오픈 순서'?'오픈':'마감')+' 제출 내용 확인';submit.onclick=function(){reviewShift(title,day,meta.checklist,state);};panel.appendChild(submit);var help=document.createElement('p');help.className='check-help';help.textContent='미완료 항목도 함께 제출할 수 있어요. 요일·상황에 따라 하지 않는 항목은 ‘해당 없음’으로 표시해 주세요.';panel.appendChild(help);reset.onclick=function(){state={};inputs.forEach(function(input){input.checked=false;input.disabled=false;input.closest('.info-item').classList.remove('skip');});skipButtons.forEach(function(b){b.textContent='해당 없음';});update();};update();d.appendChild(panel);
     }else if(meta&&meta.searched){
-      var panel=document.createElement('div');panel.className='info-results';
-      var heading=document.createElement('div');heading.className='info-heading';heading.textContent='웹 검색으로 확인한 와인 정보';panel.appendChild(heading);
-      var content=document.createElement('div');content.style.whiteSpace='pre-wrap';content.textContent=text;panel.appendChild(content);
-      (meta.sources||[]).forEach(function(item){if(!/^https:\/\//.test(item.url))return;var a=document.createElement('a');a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=item.title;a.style.cssText='display:block;margin-top:12px;text-decoration:underline';panel.appendChild(a);});
-      if(meta.searchSuggestions){var frame=document.createElement('iframe');frame.title='Google 검색 제안';frame.setAttribute('sandbox','allow-popups allow-popups-to-escape-sandbox');frame.srcdoc=meta.searchSuggestions;frame.style.cssText='width:100%;height:190px;border:0;margin-top:12px';panel.appendChild(frame);}
-      d.appendChild(panel);
+      var panel=document.createElement('div');panel.className='info-results';renderSearchAnswer(panel,text,meta);d.appendChild(panel);
     }else if(isInfo){
       var panel=document.createElement('div');panel.className='info-results';
       var heading=document.createElement('div');heading.className='info-heading';heading.textContent=title||'근무 안내';panel.appendChild(heading);
@@ -495,7 +527,7 @@ if(typeof document!=="undefined"){
       });
       d.appendChild(panel);
     }else d.innerHTML=esc(text).replace(/\[확인\]/g,'<span class="tbd">[확인]</span>');
-    if(src){var source=document.createElement('details');source.className='answer-details';var summary=document.createElement('summary');summary.textContent='출처 보기';var s=document.createElement('span');s.className='src';s.textContent=src;source.appendChild(summary);source.appendChild(s);d.appendChild(source);}
+    if(src&&!(meta&&meta.searched)){var source=document.createElement('details');source.className='answer-details';var summary=document.createElement('summary');summary.textContent='출처 보기';var s=document.createElement('span');s.className='src';s.textContent=src;source.appendChild(summary);source.appendChild(s);d.appendChild(source);}
     log.appendChild(d);if(!log.hidden)d.scrollIntoView({block:'start',behavior:'smooth'});
   }
   function setRecordStatus(message){var status=document.getElementById('record-status');status.textContent=message;clearTimeout(status._timer);if(message)status._timer=setTimeout(function(){status.textContent='';},5000);}
