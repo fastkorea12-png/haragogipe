@@ -376,7 +376,67 @@ function recipeAnswer(q){
   var options=hits.length?hits.map(function(x){return x.recipe.name;}):catalog.filter(function(r){return /파스타/.test(n)?/파스타|짜파게티/.test(r.name):/디저트/.test(n)?/아이스크림|초콜릿|홍시/.test(r.name):/치즈/.test(n)?/치즈/.test(r.name):true;}).map(function(r){return r.name;});
   return {recipe:true,recipeOptions:options,title:'안주 레시피 선택',text:'매뉴얼에 있는 메뉴를 골라 주세요. 만드는 법과 조리 시간을 보여 드릴게요.',src:'10_안주_가이드 · 만드는 법'};
 }
+// "○○랑 비슷한 와인"은 웹 검색 없이 우리 메뉴판의 맛 점수로만 고른다.
+var GRAPE_PROFILES=[
+  {name:'진판델',re:/진판델|진펀델|zinfandel|프리미티보|primitivo/i,kind:'red',p:{sweetness:1,acidity:3,tannin:3,body:5}},
+  {name:'말벡',re:/말벡|malbec/i,kind:'red',p:{sweetness:1,acidity:3,tannin:4,body:4}},
+  {name:'카베르네 소비뇽',re:/카베르네소비뇽|까베르네소비뇽|까베르네쇼비뇽|카베르네|까베르네|까쇼|cabernetsauvignon/i,kind:'red',p:{sweetness:1,acidity:3,tannin:5,body:5}},
+  {name:'메를로',re:/메를로|멀롯|멜롯|merlot|melort/i,kind:'red',p:{sweetness:1,acidity:3,tannin:3,body:4}},
+  {name:'피노 누아',re:/피노누아|피노누와|pinotnoir/i,kind:'red',p:{sweetness:1,acidity:4,tannin:2,body:2}},
+  {name:'시라',re:/쉬라즈|시라즈|쉬라|시라|syrah|shiraz/i,kind:'red',p:{sweetness:1,acidity:3,tannin:4,body:5}},
+  {name:'산지오베제',re:/산지오베제|산지오베세|sangiovese/i,kind:'red',p:{sweetness:1,acidity:4,tannin:4,body:3}},
+  {name:'템프라니요',re:/템프라니요|뗌쁘라니요|tempranillo/i,kind:'red',p:{sweetness:1,acidity:3,tannin:4,body:4}},
+  {name:'그르나슈',re:/그르나슈|가르나차|grenache|garnacha/i,kind:'red',p:{sweetness:1,acidity:3,tannin:3,body:4}},
+  {name:'네비올로',re:/네비올로|nebbiolo|바롤로|barolo/i,kind:'red',p:{sweetness:1,acidity:5,tannin:5,body:4}},
+  {name:'모나스트렐',re:/모나스트렐|무르베드르|monastrell|mourvedre/i,kind:'red',p:{sweetness:1,acidity:3,tannin:4,body:4}},
+  {name:'까르미네르',re:/까르미네르|카르메네르|carmenere/i,kind:'red',p:{sweetness:1,acidity:3,tannin:3,body:4}},
+  {name:'보발',re:/보발|bobal/i,kind:'red',p:{sweetness:1,acidity:3,tannin:3,body:3}},
+  {name:'가메',re:/가메|보졸레|gamay|beaujolais/i,kind:'red',p:{sweetness:1,acidity:4,tannin:2,body:2}},
+  {name:'샤르도네',re:/샤르도네|샤도네이|샤도네|chardonnay/i,kind:'white',p:{sweetness:1,acidity:3,tannin:1,body:4}},
+  {name:'소비뇽 블랑',re:/소비뇽블랑|쇼비뇽블랑|sauvignonblanc/i,kind:'white',p:{sweetness:1,acidity:5,tannin:1,body:2}},
+  {name:'리슬링',re:/리슬링|리즐링|riesling/i,kind:'white',p:{sweetness:2,acidity:5,tannin:1,body:2}},
+  {name:'피노 그리지오',re:/피노그리지오|피노그리|pinotgrigio|pinotgris/i,kind:'white',p:{sweetness:1,acidity:4,tannin:1,body:2}},
+  {name:'알바리뇨',re:/알바리뇨|albarino/i,kind:'white',p:{sweetness:1,acidity:4,tannin:1,body:2}},
+  {name:'모스카토',re:/모스카토|머스캣|뮈스카|moscato|muscat/i,kind:'',p:{sweetness:4,acidity:3,tannin:1,body:2}}
+];
+function similarWineAnswer(q){
+  var n=norm(q);
+  if(!/비슷|닮은|같은(와인|스타일|느낌|맛|거|것|레드|화이트|종류)|스타일의|느낌의|대신|대체|처럼/.test(n))return null;
+  if(/안주|음식|메뉴|칵테일/.test(n)&&!/와인/.test(n))return null;
+  var hits=namedWineMatches(q).map(function(h){var e=h.entry,name=e.title.replace(/\s*\([^)]*\)$/,'');return WINE_DATA.find(function(w){return norm(w.sourceName||w.name)===norm(e.kw[0])||norm(w.name)===norm(name);});}).filter(Boolean);
+  var compact=String(q).toLowerCase().replace(/\s+/g,'');
+  var grape=GRAPE_PROFILES.find(function(g){return g.re.test(compact);});
+  var same=[],unscored=[],target,kind,basis,exclude=[];
+  if(hits.length){
+    var ref=hits[0];target={sweetness:ref.sweetness,acidity:ref.acidity,tannin:ref.tannin,body:ref.body};kind=ref.wineKind||'';exclude=[ref];
+    basis='기준: 메뉴판의 '+ref.name+' (당도 '+ref.sweetness+' · 산도 '+ref.acidity+' · 타닌 '+ref.tannin+' · 바디 '+ref.body+')';
+  }else if(grape){
+    var grapeText=function(w){return String(w.variety+' '+w.name+' '+(w.english||'')).toLowerCase().replace(/\s+/g,'');};
+    same=WINE_DATA.filter(function(w){return grape.re.test(grapeText(w))&&(!grape.kind||matchesWineKind(w,grape.kind));});
+    unscored=WINE_MENU_DATA.filter(function(m){return grape.re.test(grapeText(m))&&(!grape.kind||new RegExp(grape.kind==='red'?'red|레드':'white|화이트','i').test(m.category))&&!WINE_DATA.some(function(w){return norm(w.name)===norm(m.name)||norm(w.sourceName||'')===norm(m.name);});});
+    kind=grape.kind;
+    if(same.length){
+      target={};['sweetness','acidity','tannin','body'].forEach(function(k){target[k]=Math.round(same.reduce(function(t,w){return t+w[k];},0)/same.length);});
+      basis='기준: 메뉴판의 '+grape.name+' 와인('+same.map(function(w){return w.name;}).join(', ')+') 맛 점수';
+    }else{target=grape.p;basis='기준: '+grape.name+'의 일반적인 맛 성향 (당도 '+target.sweetness+' · 산도 '+target.acidity+' · 타닌 '+target.tannin+' · 바디 '+target.body+'). 메뉴판에 맛 점수가 있는 '+grape.name+' 와인이 없어요.';}
+    exclude=same;
+  }else return null;
+  var criteria={targets:target,weights:{sweetness:1.5,acidity:1,tannin:1,body:1.5},food:[],kind:{similar:kind}};
+  var pool=WINE_DATA.filter(function(w){return exclude.indexOf(w)<0&&(!kind||matchesWineKind(w,kind));});
+  var ranked=pool.map(function(w){return {wine:w,fit:wineFit(w,criteria)};}).sort(function(a,b){return b.fit-a.fit||a.wine.name.localeCompare(b.wine.name,'ko');});
+  var picked=ranked.slice(0,Math.max(0,5-same.length)).map(function(x){return x.wine;});
+  function line(w,why){return '• '+w.name+' ('+w.category+') · 가격 원문 '+(w.price||'미기재')+
+    '\n  당도 '+bar(w.sweetness)+' · 산도 '+bar(w.acidity)+' · 타닌 '+bar(w.tannin)+' · 바디 '+bar(w.body)+
+    '\n  손님께 추천 멘트: “'+winePitch(w)+'”'+'\n  '+why;}
+  var lines=[basis];
+  if(same.length)lines.push('같은 품종 (메뉴판)\n\n'+same.map(function(w){return line(w,'선택 이유: '+grape.name+' · '+w.variety);}).join('\n\n'));
+  if(picked.length)lines.push((same.length?'맛이 가까운 다른 와인':'맛이 가까운 와인')+'\n\n'+picked.map(function(w){var diff=['sweetness','acidity','tannin','body'].reduce(function(t,k){return t+Math.abs(w[k]-target[k]);},0);return line(w,'선택 이유: 맛 점수 차이 합 '+diff+' · '+(w.variety||'품종 미기재')+(w.aromas?' · 향 '+w.aromas:''));}).join('\n\n'));
+  if(unscored.length)lines.push('메뉴판에 있지만 맛 점수가 없어 비교에서 빠진 '+grape.name+': '+unscored.map(function(m){return m.name;}).join(', '));
+  lines.push('맛 점수가 확인된 메뉴판 와인 '+WINE_DATA.length+'종 안에서 골랐어요. 재고는 직접 확인.');
+  return {text:lines.join('\n\n'),wines:same.concat(picked),stockNote:'메뉴판 와인 중 맛 점수가 가까운 순서예요. 재고는 직접 확인.',title:'비슷한 와인 (우리 메뉴판)',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
+}
 function answer(q){
+  var similar=similarWineAnswer(q);if(similar)return similar;
   var menu=wineMenuAnswer(q);if(menu)return menu;
   var recipe=recipeAnswer(q);if(recipe)return recipe;
   var fact=wineFactAnswer(q);if(fact)return fact;
