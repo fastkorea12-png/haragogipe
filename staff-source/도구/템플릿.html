@@ -77,9 +77,10 @@ var FAQ = [
 ];
 function norm(s){return String(s).toLowerCase().replace(/[^0-9a-z가-힣]/g,"");}
 function wineNameNorm(s){return norm(String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').normalize('NFC'));}
+function scoreLabel(w){return w.scoreSource==='web-estimate'?' · 웹 자료 기준 추정':'';}
 function namedWineMatches(q){
   var n=wineNameNorm(q),hits=[];
-  KB.filter(function(e){return e.file==='12_와인_추가_설명';}).forEach(function(e){
+  KB.filter(function(e){return e.file==='12_와인_추가_설명'||e.file==='13_와인_웹추정_설명';}).forEach(function(e){
     var best=null;
     e.kw.forEach(function(name){
       var words=name.trim().split(/\s+/);
@@ -110,7 +111,8 @@ function wineFactAnswer(q){
   var ambiguous=hits.some(function(hit){return hits.some(function(other){return other.entry!==hit.entry&&other.start===hit.start&&other.length===hit.length;});});
   if(ambiguous)return {wineFact:true,wineAmbiguous:true,title:'와인 제품 확인',src:'와인추천 참고자료 최신화 · 제품명',text:'어떤 제품을 말씀하시는지 골라 주세요.\n'+hits.map(function(h){return '• '+name(h.entry);}).join('\n')};
   var text=hits.map(function(hit){
-    var lines=requested.map(function(f){var match=hit.entry.body.match(new RegExp(f[0]+'\\s+([1-5])/5'));return '• '+f[0]+': '+(match?bar(Number(match[1])):'점수가 기재되지 않아 관리자 확인이 필요해요.');});
+    var estimated=hit.entry.status==='웹 자료 기준 추정';
+    var lines=requested.map(function(f){var match=hit.entry.body.match(new RegExp(f[0]+'\\s+([1-5])/5'));return '• '+f[0]+': '+(match?bar(Number(match[1])):'점수가 기재되지 않아 관리자 확인이 필요해요.')+(estimated?' · 웹 자료 기준 추정':'');});
     return (hits.length>1?name(hit.entry)+'\n':'')+lines.join('\n');
   }).join('\n\n');
   return {wineFact:true,title:hits.length===1?name(hits[0].entry):'와인 맛 점수 비교',text:text,src:'와인추천 참고자료 최신화 · 맛 점수'};
@@ -198,7 +200,7 @@ function wineRecommend(q){
   var key='text:'+JSON.stringify(criteria);
   var picked=rankDiverse(candidates,criteria,key);
   var lines=picked.map(function(w){
-    return '• '+w.name+' ('+w.category+') · 가격 원문 '+(w.price||'미기재')+
+    return '• '+w.name+' ('+w.category+')'+scoreLabel(w)+' · 가격 원문 '+(w.price||'미기재')+
       '\n  당도 '+bar(w.sweetness)+' · 산도 '+bar(w.acidity)+' · 타닌 '+bar(w.tannin)+' · 바디 '+bar(w.body)+
       '\n  손님께 추천 멘트: “'+winePitch(w)+'”'+
       '\n  선택 이유: 아로마 '+(w.aromas||'정보 없음')+'; 안주 '+(w.pairing||'정보 없음')+'.';
@@ -320,7 +322,7 @@ function tasteRecommend(values,kind,food){
   var sorted=rankDiverse(candidates,criteria,'slider:'+JSON.stringify(criteria));
   if(!sorted.length)return {text:'선택한 와인 종류와 안주에 맞는 조합을 찾지 못했어요. 안주나 와인 종류를 바꿔 보세요.',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
   return {text:sorted.map(function(w){
-    return '• '+w.name+' ('+w.category+') · 가격 원문 '+(w.price||'미기재')+
+    return '• '+w.name+' ('+w.category+')'+scoreLabel(w)+' · 가격 원문 '+(w.price||'미기재')+
       '\n  당도 '+bar(w.sweetness)+' · 산도 '+bar(w.acidity)+' · 타닌 '+bar(w.tannin)+' · 바디 '+bar(w.body)+
       '\n  손님께 추천 멘트: “'+winePitch(w)+'”'+
       '\n  아로마: '+(w.aromas||'정보 없음')+' · 어울리는 안주: '+(w.pairing||'정보 없음')+'.';
@@ -409,7 +411,7 @@ function similarWineAnswer(q){
   var same=[],unscored=[],target,kind,basis,exclude=[];
   if(hits.length){
     var ref=hits[0];target={sweetness:ref.sweetness,acidity:ref.acidity,tannin:ref.tannin,body:ref.body};kind=ref.wineKind||'';exclude=[ref];
-    basis='기준: 메뉴판의 '+ref.name+' (당도 '+ref.sweetness+' · 산도 '+ref.acidity+' · 타닌 '+ref.tannin+' · 바디 '+ref.body+')';
+    basis='기준: 메뉴판의 '+ref.name+scoreLabel(ref)+' (당도 '+ref.sweetness+' · 산도 '+ref.acidity+' · 타닌 '+ref.tannin+' · 바디 '+ref.body+')';
   }else if(grape){
     var grapeText=function(w){return String(w.variety+' '+w.name+' '+(w.english||'')).toLowerCase().replace(/\s+/g,'');};
     same=WINE_DATA.filter(function(w){return grape.re.test(grapeText(w))&&(!grape.kind||matchesWineKind(w,grape.kind));});
@@ -417,23 +419,23 @@ function similarWineAnswer(q){
     kind=grape.kind;
     if(same.length){
       target={};['sweetness','acidity','tannin','body'].forEach(function(k){target[k]=Math.round(same.reduce(function(t,w){return t+w[k];},0)/same.length);});
-      basis='기준: 메뉴판의 '+grape.name+' 와인('+same.map(function(w){return w.name;}).join(', ')+') 맛 점수';
+      basis='기준: 메뉴판의 '+grape.name+' 와인('+same.map(function(w){return w.name+scoreLabel(w);}).join(', ')+') 맛 점수';
     }else{target=grape.p;basis='기준: '+grape.name+'의 일반적인 맛 성향 (당도 '+target.sweetness+' · 산도 '+target.acidity+' · 타닌 '+target.tannin+' · 바디 '+target.body+'). 메뉴판에 맛 점수가 있는 '+grape.name+' 와인이 없어요.';}
     exclude=same;
   }else return null;
   var criteria={targets:target,weights:{sweetness:1.5,acidity:1,tannin:1,body:1.5},food:[],kind:{similar:kind}};
   var pool=WINE_DATA.filter(function(w){return exclude.indexOf(w)<0&&(!kind||matchesWineKind(w,kind));});
   var ranked=pool.map(function(w){return {wine:w,fit:wineFit(w,criteria)};}).sort(function(a,b){return b.fit-a.fit||a.wine.name.localeCompare(b.wine.name,'ko');});
-  var picked=ranked.slice(0,Math.max(0,5-same.length)).map(function(x){return x.wine;});
-  function line(w,why){return '• '+w.name+' ('+w.category+') · 가격 원문 '+(w.price||'미기재')+
+  var picked=ranked.slice(0,Math.max(0,6-same.length)).map(function(x){return x.wine;});
+  function line(w,why){return '• '+w.name+' ('+w.category+')'+scoreLabel(w)+' · 가격 원문 '+(w.price||'미기재')+
     '\n  당도 '+bar(w.sweetness)+' · 산도 '+bar(w.acidity)+' · 타닌 '+bar(w.tannin)+' · 바디 '+bar(w.body)+
     '\n  손님께 추천 멘트: “'+winePitch(w)+'”'+'\n  '+why;}
   var lines=[basis];
   if(same.length)lines.push('같은 품종 (메뉴판)\n\n'+same.map(function(w){return line(w,'선택 이유: '+grape.name+' · '+w.variety);}).join('\n\n'));
   if(picked.length)lines.push((same.length?'맛이 가까운 다른 와인':'맛이 가까운 와인')+'\n\n'+picked.map(function(w){var diff=['sweetness','acidity','tannin','body'].reduce(function(t,k){return t+Math.abs(w[k]-target[k]);},0);return line(w,'선택 이유: 맛 점수 차이 합 '+diff+' · '+(w.variety||'품종 미기재')+(w.aromas?' · 향 '+w.aromas:''));}).join('\n\n'));
   if(unscored.length)lines.push('메뉴판에 있지만 맛 점수가 없어 비교에서 빠진 '+grape.name+': '+unscored.map(function(m){return m.name;}).join(', '));
-  lines.push('맛 점수가 확인된 메뉴판 와인 '+WINE_DATA.length+'종 안에서 골랐어요. 재고는 직접 확인.');
-  return {text:lines.join('\n\n'),wines:same.concat(picked),stockNote:'메뉴판 와인 중 맛 점수가 가까운 순서예요. 재고는 직접 확인.',title:'비슷한 와인 (우리 메뉴판)',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
+  lines.push('원문 점수와 웹 자료 기준 추정을 포함한 메뉴판 와인 '+WINE_DATA.length+'종 안에서 골랐어요. 재고는 직접 확인.');
+  return {text:lines.join('\n\n'),wines:same.concat(picked),comparisonBasis:basis,sameGrapeNames:same.map(function(w){return w.name;}),stockNote:'메뉴판 와인 중 맛 점수가 가까운 순서예요. 재고는 직접 확인.',title:'비슷한 와인 (우리 메뉴판)',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
 }
 function answer(q){
   var similar=similarWineAnswer(q);if(similar)return similar;
@@ -544,14 +546,23 @@ if(typeof document!=="undefined"){
     var d=document.createElement("div"); d.className="m "+cls+(wines&&wines.length?' wine-answer':isInfo?' info-answer':'');
     if(wines&&wines.length){
       var cards=document.createElement('div');cards.className='wine-results';
-      var heading=document.createElement('div');heading.className='wine-results-heading';heading.textContent='추천 '+wines.length+'종';cards.appendChild(heading);
+      var heading=document.createElement('div');heading.className='wine-results-heading';heading.textContent=(meta&&meta.comparisonBasis?'비슷한 와인 ':'추천 ')+wines.length+'종';cards.appendChild(heading);
+      if(meta&&meta.comparisonBasis){var basis=document.createElement('p');basis.className='wine-price';basis.textContent=meta.comparisonBasis;cards.appendChild(basis);}
       wines.forEach(function(w,index){
-        if(index===0||index===3){var tier=document.createElement('div');tier.className='wine-tier';tier.textContent=index===0?'우선 추천 · 취향 점수 순':'함께 볼 대안';cards.appendChild(tier);}
+        var sameCount=meta&&meta.sameGrapeNames?meta.sameGrapeNames.length:0;
+        if(meta&&meta.comparisonBasis){if(index===0||index===sameCount){var tier=document.createElement('div');tier.className='wine-tier';tier.textContent=index<sameCount?'같은 품종 · 우리 메뉴판':'맛이 가까운 다른 와인';cards.appendChild(tier);}}
+        else if(index===0||index===3){var tier=document.createElement('div');tier.className='wine-tier';tier.textContent=index===0?'우선 추천 · 취향 점수 순':'함께 볼 대안';cards.appendChild(tier);}
         var card=document.createElement('article');card.className='wine-card';
         var head=document.createElement('div');head.className='wine-card-head';
         var title=document.createElement('div');title.className='wine-title';title.textContent=w.name;
         var category=document.createElement('span');category.className='wine-category';category.textContent=({red:'레드',white:'화이트',rose:'로제',sparkling:'스파클링',port:'포트'}[w.wineKind]||w.category)+(w.volumeLabel?' · '+w.volumeLabel:'');
         head.appendChild(title);head.appendChild(category);card.appendChild(head);
+        if(w.scoreSource==='web-estimate'){
+          var badge=document.createElement('div');badge.className='wine-price';badge.textContent='웹 자료 기준 추정 · 확신도 '+w.scoreConfidence;card.appendChild(badge);
+          var sources=document.createElement('details');sources.className='wine-description';var sourceSummary=document.createElement('summary');sourceSummary.textContent='추정 근거와 빈티지 보기';sources.appendChild(sourceSummary);
+          var vintage=document.createElement('p');vintage.textContent=w.scoreVintageNote;sources.appendChild(vintage);
+          w.scoreSources.forEach(function(url,i){if(!/^https:\/\//.test(url))return;var p=document.createElement('p'),a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='출처 '+(i+1)+' · '+new URL(url).hostname;p.appendChild(a);sources.appendChild(p);});card.appendChild(sources);
+        }
         var price=document.createElement('div');price.className='wine-price';price.textContent='메뉴판 가격 원문 · '+(w.price||'미기재')+' · 현재 가격 확인 필요';card.appendChild(price);
         if(w.nuance){var nuance=document.createElement('div');nuance.className='wine-nuance';nuance.textContent=w.nuance;card.appendChild(nuance);}
         var scores=document.createElement('div');scores.className='wine-scores';

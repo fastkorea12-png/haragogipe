@@ -4,6 +4,6 @@
   "scripts": {
     "update": "node 도구/갱신.js",
     "build": "node 도구/빌드.js",
-    "check": "node 도구/시험.js && node 도구/전반_점검.js"
+    "check": "node 도구/시험.js && node 도구/전반_점검.js && node 도구/웹추정_점검.js"
   }
 }

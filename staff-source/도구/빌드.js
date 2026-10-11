@@ -50,7 +50,8 @@ console.log('항목',kb.length,'개 내장');
 
 // The customer page contains only public menu identities and confirmed taste data.
 const customerCopy=JSON.parse(fs.readFileSync(path.join(root,'손님용','와인_손님용_문구.json'),'utf8'));
-const customerWines=wines.map(w=>{
+const approvedGuestNames=new Set(JSON.parse(fs.readFileSync(path.join(__dirname,'기존38_맛점수_1011.json'),'utf8')).map(w=>w.name));
+const customerWines=wines.filter(w=>w.scoreSource!=='web-estimate'&&approvedGuestNames.has(w.name)).map(w=>{
  const matches=menuSource.rows.filter(m=>m.row===w.menuRow);
  if(matches.length!==1)return null;
  const originalNumber=String(matches[0].values[0]).trim();

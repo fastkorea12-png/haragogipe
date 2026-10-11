@@ -1,0 +1,269 @@
+[
+  {
+    "name": "올드 핸즈 호벤",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 3,
+    "body": 3
+  },
+  {
+    "name": "라 푸리시마 모나스트렐",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 3,
+    "body": 3
+  },
+  {
+    "name": "후안길 옐로우 라벨",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 4,
+    "body": 3
+  },
+  {
+    "name": "후안길 실버 라벨",
+    "sweetness": 2,
+    "acidity": 4,
+    "tannin": 3,
+    "body": 4
+  },
+  {
+    "name": "샤또 오뜨 브랑드",
+    "sweetness": 1,
+    "acidity": 4,
+    "tannin": 4,
+    "body": 4
+  },
+  {
+    "name": "롱반 멀롯",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 4,
+    "body": 4
+  },
+  {
+    "name": "디킨 쉬라즈",
+    "sweetness": 1,
+    "acidity": 4,
+    "tannin": 3,
+    "body": 3
+  },
+  {
+    "name": "레 자르젤리에르 멜롯-쉬라",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 3,
+    "body": 3
+  },
+  {
+    "name": "르 뷔우 트루폴리에",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 3,
+    "body": 4
+  },
+  {
+    "name": "폼비스 런 쉬라즈",
+    "sweetness": 2,
+    "acidity": 4,
+    "tannin": 4,
+    "body": 4
+  },
+  {
+    "name": "소모스 크리안자",
+    "sweetness": 1,
+    "acidity": 2,
+    "tannin": 3,
+    "body": 3
+  },
+  {
+    "name": "날리헤드 올드바인 진판델",
+    "sweetness": 1,
+    "acidity": 4,
+    "tannin": 4,
+    "body": 5
+  },
+  {
+    "name": "퍼르시모",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 4,
+    "body": 3
+  },
+  {
+    "name": "프리마 산지오베제 루비네코",
+    "sweetness": 1,
+    "acidity": 4,
+    "tannin": 3,
+    "body": 3
+  },
+  {
+    "name": "세파 비헤아스 보발",
+    "sweetness": 2,
+    "acidity": 3,
+    "tannin": 3,
+    "body": 3
+  },
+  {
+    "name": "아라우카노 까르미네르 리제르바",
+    "sweetness": 2,
+    "acidity": 3,
+    "tannin": 3,
+    "body": 4
+  },
+  {
+    "name": "그랑 아라우카노",
+    "sweetness": 2,
+    "acidity": 3,
+    "tannin": 3,
+    "body": 4
+  },
+  {
+    "name": "라로쉬 샤르도네 리저브",
+    "sweetness": 1,
+    "acidity": 4,
+    "tannin": 1,
+    "body": 3
+  },
+  {
+    "name": "롱반 샤도네이",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 1,
+    "body": 3
+  },
+  {
+    "name": "상쎄르 도멘 블랑",
+    "sweetness": 1,
+    "acidity": 4,
+    "tannin": 1,
+    "body": 2
+  },
+  {
+    "name": "레 자르 젤리에르 비오니에",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 1,
+    "body": 2
+  },
+  {
+    "name": "마틴 코닥스",
+    "sweetness": 1,
+    "acidity": 4,
+    "tannin": 1,
+    "body": 3
+  },
+  {
+    "name": "카룬도 펄스 오브 로제",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 2,
+    "body": 3
+  },
+  {
+    "name": "그라모나 제사미",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 1,
+    "body": 3
+  },
+  {
+    "name": "시드르 부쉐 바이오",
+    "sweetness": 2,
+    "acidity": 4,
+    "tannin": 1,
+    "body": 2
+  },
+  {
+    "name": "발레벨보 브라께토",
+    "sweetness": 4,
+    "acidity": 1,
+    "tannin": 1,
+    "body": 2
+  },
+  {
+    "name": "핑크 모스카토 스푸만테",
+    "sweetness": 4,
+    "acidity": 2,
+    "tannin": 1,
+    "body": 2
+  },
+  {
+    "name": "미라벤토 모스카토 스트로베리",
+    "sweetness": 4,
+    "acidity": 3,
+    "tannin": 1,
+    "body": 1
+  },
+  {
+    "name": "데코디 프라골리노 로쏘",
+    "sweetness": 4,
+    "acidity": 2,
+    "tannin": 2,
+    "body": 5
+  },
+  {
+    "name": "세구라 비우다스 레세르바 에레다드 브뤼",
+    "sweetness": 2,
+    "acidity": 3,
+    "tannin": 1,
+    "body": 3
+  },
+  {
+    "name": "톨라스코 모스카토 다스티",
+    "sweetness": 4,
+    "acidity": 2,
+    "tannin": 1,
+    "body": 3
+  },
+  {
+    "name": "발레벨보 모스카토 다스티",
+    "sweetness": 4,
+    "acidity": 2,
+    "tannin": 1,
+    "body": 2
+  },
+  {
+    "name": "간치아 아스티",
+    "sweetness": 4,
+    "acidity": 2,
+    "tannin": 1,
+    "body": 2
+  },
+  {
+    "name": "샤를 도떼일 샴페인 브륏",
+    "sweetness": 1,
+    "acidity": 4,
+    "tannin": 1,
+    "body": 3
+  },
+  {
+    "name": "콥케 파인 타우니 포트",
+    "sweetness": 5,
+    "acidity": 1,
+    "tannin": 3,
+    "body": 4
+  },
+  {
+    "name": "버메스터 타우니 포트",
+    "sweetness": 5,
+    "acidity": 1,
+    "tannin": 4,
+    "body": 5
+  },
+  {
+    "name": "버메스터 화이트 포트",
+    "sweetness": 5,
+    "acidity": 3,
+    "tannin": 2,
+    "body": 4
+  },
+  {
+    "name": "카룬도 로제",
+    "sweetness": 1,
+    "acidity": 3,
+    "tannin": 2,
+    "body": 4
+  }
+]
+

@@ -1,0 +1,135 @@
+[
+  {
+    "name": "올드 핸즈 호벤",
+    "estimated": [
+      1,
+      4,
+      3,
+      3
+    ],
+    "urls": [
+      "https://www.bodegaslapurisima.com/tienda-online/old-hands-joven/",
+      "https://londonwinecompetition.com/en/winner-brands/wines/2025/cooperativa-del-vino-de-yecla-la-purisima-s-c-l--3565/la-purisima-blanco-8248.htm"
+    ],
+    "basis": "La Purísima / Old Hands Joven Monastrell, 2024 시음. 스위트 기술 없는 일반 레드 →1, lively acidity4, moderate structure의 타닌3·바디3. Old Hands Roble 시음은 사용 안 함.",
+    "original": [
+      1,
+      3,
+      3,
+      3
+    ],
+    "delta": [
+      0,
+      1,
+      0,
+      0
+    ],
+    "pass": true
+  },
+  {
+    "name": "롱반 샤도네이",
+    "estimated": [
+      2,
+      3,
+      1,
+      2
+    ],
+    "urls": [
+      "https://longbarnwinery.com/chardonnay/",
+      "https://longbarnwinery.com/wp-content/uploads/2026/05/LongBarn_CH_CA_2024_TechSheet.pdf"
+    ],
+    "basis": "Long Barn / Chardonnay 2024 (Reserve 아님). RS5.2 →2, TA5.1 pH3.7와refreshing 균형3, 화이트타닌1, light-to-medium2.",
+    "original": [
+      1,
+      3,
+      1,
+      3
+    ],
+    "delta": [
+      1,
+      0,
+      0,
+      -1
+    ],
+    "pass": true
+  },
+  {
+    "name": "마틴 코닥스",
+    "estimated": [
+      1,
+      4,
+      1,
+      3
+    ],
+    "urls": [
+      "https://tienda.martincodax.com/collections/vinos-martin-codax/products/vino-albarino-martin-codax",
+      "https://www.diffordsguide.com/beer-wine-spirits/5864/martin-codax-albarino"
+    ],
+    "basis": "Martín Códax / Albariño (Lías 제외). 2014 시음·현재 공식. RS3.5→1, TA6.3·tart lime4, 타닌1, enveloping 균형3.",
+    "original": [
+      1,
+      4,
+      1,
+      3
+    ],
+    "delta": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "pass": true
+  },
+  {
+    "name": "세구라 비우다스 레세르바 에레다드 브뤼",
+    "estimated": [
+      2,
+      4,
+      1,
+      3
+    ],
+    "urls": [
+      "https://seguraviudas.com/en/wp-content/uploads/sites/8/2021/02/segura-viudas-brut-reserva-heredad-english.pdf"
+    ],
+    "basis": "Segura Viudas / Reserva Heredad Brut NV (일반 Brut Reserva 제외). dosage9g/L→2, pH2.97·fresh4(TA3.5의 단위 기준 불명이라 직접 다른TA와 비교 안 함), 타닌1, 효모숙성의구조·softness·plenitude3.",
+    "original": [
+      2,
+      3,
+      1,
+      3
+    ],
+    "delta": [
+      0,
+      1,
+      0,
+      0
+    ],
+    "pass": true
+  },
+  {
+    "name": "간치아 아스티",
+    "estimated": [
+      4,
+      3,
+      1,
+      2
+    ],
+    "urls": [
+      "https://www.gancia.it/en/gancia-products/sparkling-wines/gancia-metodo-charmat-en/asti-docg/"
+    ],
+    "basis": "Gancia / Asti DOCG NV. RS89→4, freshness와sweet balanced 감각3, 타닌1, delicate·ABV7.5%의 가벼운바디2.",
+    "original": [
+      4,
+      2,
+      1,
+      2
+    ],
+    "delta": [
+      0,
+      1,
+      0,
+      0
+    ],
+    "pass": true
+  }
+]

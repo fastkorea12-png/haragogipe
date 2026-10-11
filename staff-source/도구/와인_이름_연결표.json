@@ -36,6 +36,12 @@
     "method": "한글명 일치"
   },
   {
+    "menuName": "민친버리 피노누아",
+    "sourceName": "민친버리 피노누아",
+    "english": "Minchinbury Pinot Noir",
+    "method": "한글명 일치"
+  },
+  {
     "menuName": "디킨 쉬라즈",
     "sourceName": "디킨 쉬라즈",
     "english": "Deakin shiraz",
@@ -102,6 +108,12 @@
     "method": "한글명 일치"
   },
   {
+    "menuName": "킬리힐 파트너 리슬링",
+    "sourceName": "킬리힐 파트너 리슬링",
+    "english": "Kirrihill Partner Series Riesling",
+    "method": "한글명 일치"
+  },
+  {
     "menuName": "라로쉬 샤르도네 리저브",
     "sourceName": "라로쉬 샤르도네 리저브",
     "english": "Laroche Chardonnay Reserve",
@@ -141,6 +153,12 @@
     "menuName": "그라모나 제사미",
     "sourceName": "그라모나 제사미",
     "english": "Gramona Gessami",
+    "method": "한글명 일치"
+  },
+  {
+    "menuName": "카룬도 샤도네이 750ml",
+    "sourceName": "카룬도 샤도네이 750ml",
+    "english": "Carundo Chardonnay",
     "method": "한글명 일치"
   },
   {
@@ -226,5 +244,71 @@
     "sourceName": "카룬도 로제",
     "english": "Carundo Rose",
     "method": "한글명 일치"
+  },
+  {
+    "menuName": "바인션 그르나슈",
+    "sourceName": "바인션 그르나슈",
+    "english": "Haselgrove, Vine Sean",
+    "method": "웹 자료 기준 추정 · Haselgrove / Vine Sean Grenache, McLaren Vale. 메뉴 영문 Haselgrove와 퀴베 일치."
+  },
+  {
+    "menuName": "뷰 마넨 레세르바",
+    "sourceName": "뷰 마넨 레세르바",
+    "english": "Viu manent Reserva",
+    "method": "웹 자료 기준 추정 · Viu Manent / Reserva Malbec. Gran Reserva·Single Vineyard 자료는 제외."
+  },
+  {
+    "menuName": "도멘 오뜨 브랑드 말벡",
+    "sourceName": "도멘 오뜨 브랑드 말벡",
+    "english": "Malbec Domaine Haute Brande",
+    "method": "웹 자료 기준 추정 · Earl Haute Brande / Malbec IGP Atlantique. Vinessen 홈페이지 Malbec와 메뉴 지역 일치. Bordeaux Supérieur·Merlot와 별개."
+  },
+  {
+    "menuName": "킬리빙빙 스윗 립스 로제",
+    "sourceName": "킬리빙빙 스윗 립스 로제",
+    "english": "Killibinbin, Sweet Lips",
+    "method": "웹 자료 기준 추정 · Killibinbin / Sweet Lips Rosé. Sweet Heart Chardonnay·다른 로제 제외."
+  },
+  {
+    "menuName": "루이 부요 크레망 드 부르고 그랑 리저브",
+    "sourceName": "루이 부요 크레망 드 부르고 그랑 리저브",
+    "english": "Perle de Vigne Louis Bouillot Cremant de Bourgogne Grand Reserve Brut",
+    "method": "웹 자료 기준 추정 · Louis Bouillot / Perle de Vigne Grande Réserve Brut. Perle d'Or·Perle d'Aurore 제외."
+  },
+  {
+    "menuName": "투렌 크레망 드 루아르",
+    "sourceName": "투렌 크레망 드 루아르",
+    "english": "Domaine Pre Cremant de Loire Blanc",
+    "method": "웹 자료 기준 추정 · Domaine Pré Baron / Crémant de Loire Blanc. 메뉴 영문 축약 Domaine Pre, 60%Chardonnay+40%Orbois가 Wine21·Vivino 후기와 정확히 일치."
+  },
+  {
+    "menuName": "폴 당장 뀌베 카르트 누와",
+    "sourceName": "폴 당장 뀌베 카르트 누와",
+    "english": "PAUL DANGIN CUVEE CARTE NOIRE",
+    "method": "웹 자료 기준 추정 · Paul Dangin & Fils / Cuvée Carte Noire Brut, Pinot Noir100%. Carte Blanche·Prestige와 별개."
+  },
+  {
+    "menuName": "띠에라 데 푸마스",
+    "sourceName": "띠에라 데 푸마스",
+    "english": "Tierra De Pumas",
+    "method": "웹 자료 기준 추정 · Roberto Henríquez / Tierra de Pumas País. País Verde·Fundo La Unión 제외."
+  },
+  {
+    "menuName": "1808 콜헤이타 배이라 인테리어",
+    "sourceName": "1808 유기농 콜헤이타 배이라 인테리어 다오씨",
+    "english": "1808 Beira",
+    "method": "웹 자료 기준 추정 · Casca Wines / 1808 Colheita Tinto, Beira Interior. Lisboa Colheita·Varietal Expression Tinta Roriz·Branco 제외."
+  },
+  {
+    "menuName": "미션 레이트 하비스트 (화이트)",
+    "sourceName": "미션 레이트 하비스트",
+    "english": "Mission, Estate Late Harvest",
+    "method": "웹 자료 기준 추정 · Mission Estate / Estate Late Harvest, 375ml는Woolworths 확인. 단종 Mission Riesling과 별개. 기존 단맛1의 충돌 원문은 수정하지 않고 웹추정으로 별도 수록."
+  },
+  {
+    "menuName": "카룬도 샤도네이 (화이트)",
+    "sourceName": "카룬도 샤도네이",
+    "english": "Carundo Chardonnay",
+    "method": "웹 자료 기준 추정 · Carundo Brothers In Arms / Chardonnay. 동일2008상품의375ml 표기를 Hyatt 메뉴로 교차 확인. 점수는 동일퀴베의750ml 시음 근거를 사용, 용량만 다른 것으로 연결."
   }
 ]

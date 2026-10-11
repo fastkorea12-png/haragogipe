@@ -1,0 +1,661 @@
+{
+  "scoredAt": "2026-10-11",
+  "actualWorkDate": "2026-10-12",
+  "note": "작업지시서 지정 이력일자는 2026-10-11. 웹 근거는 측정치가 아닌 보정된 추정이며 현물 빈티지 확인 필요. 낮음은 점수 없이 제외.",
+  "targets": [
+    {
+      "row": 9,
+      "urls": [],
+      "reason": "미스터/M./Mister/Monsieur Pierre Pinot Noir 검색에서 동일 생산자·퀴베 자료를 찾지 못함. Pierre Ponnelle·Pierre Gerbais 등 다른 제품은 사용하지 않음.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Red Wine 7",
+      "name": "미스터 피에르 피노누아",
+      "english": "M. Pierre Pinot Noir",
+      "variety": "Pinot Noir",
+      "country": "France"
+    },
+    {
+      "row": 10,
+      "urls": [
+        "https://www.vivino.com/black-beret-pinot-noir/w/2093554?year=2020"
+      ],
+      "reason": "정확한 제품 식별과 과실향은 확인. 텍스트에 맛 막대 위치·단맛·바디·타닌 강도 근거가 없어 네 점수를 함께 추정하기에는 부족.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Red Wine 8",
+      "name": "블랙 베레 피노 누아",
+      "english": "Black Beret Pinot Noir",
+      "variety": "Pinot Noir",
+      "country": "France"
+    },
+    {
+      "row": 11,
+      "score": [
+        1,
+        3,
+        2,
+        2
+      ],
+      "urls": [
+        "https://www.danmurphys.com.au/product/DM_53212/minchinbury-pinot-noir"
+      ],
+      "identity": "Minchinbury / Pinot Noir, South Australia, 750ml. 판매처가 Pinnacle Drinks 계열 생산을 명시.",
+      "vintage": "판매처 현행 정보·2019 패널 시음. 매장 빈티지 미기재·도수 13% vs 웹 13.5%.",
+      "reasons": [
+        "드라이 표기",
+        "fresh·juicy 과실감 → 보통 산도",
+        "매끄러운 목넘김 후기·가벼운 구조 → 약한 타닌",
+        "Light Bodied 명시"
+      ],
+      "aromas": "자두, 붉은 과실",
+      "pairing": "오리, 버섯, 치즈",
+      "pitch": "가볍게 한 잔 쉬어가고 싶다면 이 피노누아가 좋아요. 산뜻한 자두의 여운을 편안하게 즐겨보세요.",
+      "confidence": "원문",
+      "status": "existing-source",
+      "menuCode": "Red Wine 26",
+      "name": "민친버리 피노누아",
+      "english": "Minchinbury Pinot Noir",
+      "variety": "Pinot Noir",
+      "country": "South Australia, Australia",
+      "reason": "최신 List 연결 후 기존 허용 점수 원문에서 동일한 한글명과 완성된 네 점수 확인. 웹 점수 대신 원문을 연결. 손님용은 기존38종 범위로 제한."
+    },
+    {
+      "row": 12,
+      "urls": [
+        "https://www.winedexer.com/vin/eugene-leblanc/vieilles-vignes-vacqueyras",
+        "https://www.viniou.fr/vins/pays/france/104_vallee-du-rhone/288_vacqueyras/44123_eugene-leblanc-2020"
+      ],
+      "reason": "Eugène Leblanc Vacqueyras 후보 확인. Vieilles Vignes 표기·블렌드가 매장 영문/품종과 불명확해 다른 퀴베 혼입 가능. 라벨 확인 필요.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Red Wine 9",
+      "name": "으젠느 르블랑 바케라스",
+      "english": "Eugene Le Vacqueras",
+      "variety": "Grenache Syrah Cinsault",
+      "country": "Rhone, France"
+    },
+    {
+      "row": 14,
+      "score": [
+        1,
+        4,
+        2,
+        3
+      ],
+      "urls": [
+        "https://haselgrove.com.au/products/vine-sean-grenache"
+      ],
+      "identity": "Haselgrove / Vine Sean Grenache, McLaren Vale. 메뉴 영문 Haselgrove와 퀴베 일치.",
+      "vintage": "공식 2024. 매장 빈티지 미기재.",
+      "reasons": [
+        "일반 비스위트 레드 양조·단맛 언급 없음 → 드라이 추론(RS 미공개)",
+        "정의된 산미·TA 6.99, pH3.41 → 높은 산도",
+        "fine tannin → 섬세한 타닌",
+        "medium bodied 명시"
+      ],
+      "aromas": "블랙베리, 허브, 키르슈",
+      "pairing": "육류, 치즈",
+      "pitch": "붉은 과실과 허브의 깊이를 천천히 즐겨보세요. 중간 바디에 산미가 살아 있어 음식과도 편안하게 어울려요.",
+      "confidence": "중간",
+      "status": "accepted",
+      "menuCode": "Red Wine 11",
+      "name": "바인션 그르나슈",
+      "english": "Haselgrove, Vine Sean",
+      "variety": "Grenache 100%",
+      "country": "Haselgrove, Vine Sean"
+    },
+    {
+      "row": 19,
+      "score": [
+        1,
+        3,
+        2,
+        3
+      ],
+      "urls": [
+        "https://viumanent.cl/our-wines/reserva/",
+        "https://www.saq.com/en/15483332"
+      ],
+      "identity": "Viu Manent / Reserva Malbec. Gran Reserva·Single Vineyard 자료는 제외.",
+      "vintage": "공식 Reserva와 SAQ 2023. 매장 빈티지 미기재.",
+      "reasons": [
+        "RS2g/L·dry",
+        "present acidity·fresh 균형 → 보통",
+        "smooth rounded tannins → 약함",
+        "medium-bodied 명시"
+      ],
+      "aromas": "자두, 체리, 바이올렛",
+      "pairing": "돼지고기, 소고기, 치즈",
+      "pitch": "자두와 꽃향이 은은하게 이어지는 말벡이에요. 부드러운 타닌으로 고기 한 점과 편안하게 즐겨보세요.",
+      "confidence": "중간",
+      "status": "accepted",
+      "menuCode": "Red Wine 16",
+      "name": "뷰 마넨 레세르바",
+      "english": "Viu manent Reserva",
+      "variety": "Malbec",
+      "country": "Chile"
+    },
+    {
+      "row": 23,
+      "urls": [
+        "https://www.luvincoop.co.kr/item/438/",
+        "https://www.wine21.com/13_search/pop_wine_preview.html?WineIdx=158366"
+      ],
+      "reason": "Chianti Rufina Riserva는 생산자별로 다름. Il Capitano·Frescobaldi Nipozzano 등 후보; 메뉴에 생산자/퀴베 없음. 후보 점수를 이식하지 않음.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Red Wine 20",
+      "name": "키안티 루피나 리제르바",
+      "english": "Chianti Rufina Riserva",
+      "variety": "Sangiovese",
+      "country": "Chianti, Italy"
+    },
+    {
+      "row": 24,
+      "urls": [
+        "https://manila-wine.com/gran-tierra-vino-tinto-semidulce-spanish-red-wine-1"
+      ],
+      "reason": "Semidulce 후보는 Tempranillo10.5%,매장은Blend11.5%. 동일생산자·퀴베 및 단맛 세부형 확인 불가.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Red Wine 21",
+      "name": "그랑 띠에라 비노 틴토",
+      "english": "Gran Tierra Vino Tinto",
+      "variety": "Blend",
+      "country": "Spain"
+    },
+    {
+      "row": 28,
+      "score": [
+        1,
+        4,
+        2,
+        3
+      ],
+      "urls": [
+        "https://vinessen.fr/",
+        "https://winedogam.com/wine/malbec-domaine-haute-brande",
+        "https://menufans.com/ko-KR/place/ikseon-dong-restaurant-maison-de-paris-019b0908c0407718a5d510af8bc15fd4"
+      ],
+      "identity": "Earl Haute Brande / Malbec IGP Atlantique. Vinessen 홈페이지 Malbec와 메뉴 지역 일치. Bordeaux Supérieur·Merlot와 별개.",
+      "vintage": "시음 근거 2020. 매장 빈티지 미기재. 수입사 개별 영상 페이지 열람 실패; 홈페이지 제품 식별+통관 식별+메뉴 시음 교차 확인.",
+      "reasons": [
+        "일반 비스위트 말벡·단맛 언급 없음 → 드라이 추론(RS 미공개)",
+        "견고한 산미 명시",
+        "부드러운 타닌 명시",
+        "부드러운 질감·13.5% → 중간 바디 추론"
+      ],
+      "aromas": "체리, 오디, 바이올렛",
+      "pairing": "등갈비, 소고기, 닭고기",
+      "pitch": "체리와 꽃향이 부드럽게 다가오는 말벡이에요. 탄탄한 산미가 받쳐주어 고기 요리와 함께 즐기기 좋아요.",
+      "confidence": "중간",
+      "status": "accepted",
+      "menuCode": "Red Wine 25",
+      "name": "도멘 오뜨 브랑드 말벡",
+      "english": "Malbec Domaine Haute Brande",
+      "variety": "Malbec 100%",
+      "country": "IGP Atlantique, France"
+    },
+    {
+      "row": 30,
+      "score": [
+        1,
+        3,
+        1,
+        2
+      ],
+      "urls": [
+        "https://kirrihill.com.au/products/partner-series-riesling-2024-clare-valley",
+        "https://www.seckfordagencies.co.uk/wines/kirrihill-partner-series-riesling/",
+        "https://iwsc.net/results/detail/118728/partner-series-riesling-2020"
+      ],
+      "identity": "Kirrihill / Partner Series Riesling, Clare Valley. Estate 등 다른 라인 제외.",
+      "vintage": "공식 2024·IWSC 2020. 매장 빈티지 미기재.",
+      "reasons": [
+        "dry(<5g/L) 분류",
+        "crisp·bright acid, TA7.44 pH3.21",
+        "화이트 프레스·스테인리스, 과피 추출 구조 없음 → 1",
+        "elegant·12%·집중된 시트러스 → 가벼운 바디"
+      ],
+      "aromas": "라임, 레몬, 꽃",
+      "pairing": "해산물, 샐러드, 치즈",
+      "pitch": "라임과 꽃향이 산뜻하게 반기는 드라이 리슬링이에요. 가볍고 상큼한 한 잔을 찾으시면 권해드려요.",
+      "confidence": "원문",
+      "status": "existing-source",
+      "menuCode": "White Wine 1",
+      "name": "킬리힐 파트너 리슬링",
+      "english": "Kirrihill Partner Series Riesling",
+      "variety": "Riesling",
+      "country": "Australia",
+      "reason": "최신 List 연결 후 기존 허용 점수 원문에서 동일한 한글명과 완성된 네 점수 확인. 웹 점수 대신 원문을 연결. 손님용은 기존38종 범위로 제한."
+    },
+    {
+      "row": 31,
+      "urls": [
+        "https://dailyshot.co/m/item/13950",
+        "https://www.lescavesdulac.fr/gunderloch"
+      ],
+      "reason": "Gunderloch는 trocken/feinherb/Kabinett 등 여러 단맛 제품 존재. Qualitatswein만으로도 특정 불가; 메뉴의 GunderLoch 축약으로 퀴베 확인 불가.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "White Wine 2",
+      "name": "군터록 리즐링",
+      "english": "GunderLoch",
+      "variety": "Riesling",
+      "country": "Rheinhessen, Germany"
+    },
+    {
+      "row": 37,
+      "urls": [
+        "https://www.volioimports.com/wp-content/uploads/2021/12/Peter-Wienbach_Riesling-Medium-Sweet_Tech-Sheet.pdf",
+        "https://dailyshot.co/m/item/15889"
+      ],
+      "reason": "허용 원문에 Spätlese 이름과 점수 후보가 있으나 List 영어는 Peter로 축약돼 자동 이름 연결이 성립하지 않음. 일반 Medium Sweet·Late Harvest·Spätlese 자료 간 동일 제품 확인 불충분. 현물 라벨 확인 후 원문 연결 우선.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "White Wine 8",
+      "name": "피터 바인바흐 미디움 스위트",
+      "english": "Peter",
+      "variety": "Riesling",
+      "country": "Germany"
+    },
+    {
+      "row": 39,
+      "score": [
+        3,
+        3,
+        1,
+        3
+      ],
+      "urls": [
+        "https://www.killibinbin.com.au/store/sweet-lips-rose"
+      ],
+      "identity": "Killibinbin / Sweet Lips Rosé. Sweet Heart Chardonnay·다른 로제 제외.",
+      "vintage": "공식 2024, 13% vs 메뉴14.5%; 빈티지 미기재로 현물 확인 필요.",
+      "reasons": [
+        "Sugar19.1 → 세미 스위트",
+        "crisp acid·TA5.3 pH3.47 → 보통",
+        "로제·타닌 구조 기술 없음 → 최소1 추론",
+        "ripe berries·13% → 중간 바디 추론"
+      ],
+      "aromas": "딸기, 라즈베리, 꽃",
+      "pairing": "매콤한 음식, 치즈, 과일",
+      "pitch": "딸기와 라즈베리 향 뒤로 기분 좋은 달콤함이 이어져요. 산뜻한 산미가 균형을 잡아주는 로제예요.",
+      "confidence": "중간",
+      "status": "accepted",
+      "menuCode": "White & Rose Wine 10",
+      "name": "킬리빙빙 스윗 립스 로제",
+      "english": "Killibinbin, Sweet Lips",
+      "variety": "Shiraz",
+      "country": "Australia"
+    },
+    {
+      "row": 41,
+      "score": [
+        1,
+        3,
+        1,
+        3
+      ],
+      "urls": [
+        "https://carundowines.com/"
+      ],
+      "identity": "Carundo Brothers In Arms / Chardonnay 750ml, 13.5%. 말레이시아 공식 유통사 페이지이며 생산자 공식 사이트로 부르지 않음. Reserve Suisse 레드는 제외.",
+      "vintage": "웹2008. 매장 빈티지 미기재; 오래된 빈티지이므로 숙성 편차·현물 확인 필요.",
+      "reasons": [
+        "일반 비스위트 샤르도네·단맛 언급 없음 → 드라이 추론",
+        "fresh lime·smooth 균형 → 보통 산도 추론",
+        "화이트, 타닌 구조 기술 없음 → 최소1 추론",
+        "smooth body·12개월 오크·13.5% → 중간 바디"
+      ],
+      "aromas": "멜론, 파인애플, 라임, 오크",
+      "pairing": "훈제 연어, 치즈, 해산물",
+      "pitch": "열대과일 향과 크리미한 오크의 여운을 천천히 즐겨보세요. 부드럽게 머무는 중간 바디의 샤르도네예요.",
+      "confidence": "원문",
+      "status": "existing-source",
+      "menuCode": "White & Rose Wine 12",
+      "name": "카룬도 샤도네이 750ml",
+      "english": "Carundo Chardonnay",
+      "variety": "Chardonnay",
+      "country": "Langhorne Creek, Australia",
+      "reason": "최신 List 연결 후 기존 허용 점수 원문에서 동일한 한글명과 완성된 네 점수 확인. 웹 점수 대신 원문을 연결. 손님용은 기존38종 범위로 제한."
+    },
+    {
+      "row": 51,
+      "score": [
+        2,
+        4,
+        1,
+        3
+      ],
+      "urls": [
+        "https://www.louis-bouillot.com/fr/nos-cremants.r-767/perle-de-vigne.v-10308.html",
+        "https://s3-ap-northeast-1.amazonaws.com/orchestracms/eosportal/pdf/tasting-notes/louis-bouillot/louis-bouillot-perle-de-vigne-cremant-de-bourgogne.pdf"
+      ],
+      "identity": "Louis Bouillot / Perle de Vigne Grande Réserve Brut. Perle d'Or·Perle d'Aurore 제외.",
+      "vintage": "NV. 매장 로트 미기재; 기술자료 발행/로트 미확인.",
+      "reasons": [
+        "Brut·Sugar10–12g/L → 2",
+        "공식 bouche vive → 생기 있는 높은 산도",
+        "화이트 크레망·타닌 구조 없음 → 1",
+        "généreuse·블렌딩·효모숙성 → 중간 바디"
+      ],
+      "aromas": "꽃, 과일, 감귤",
+      "pairing": "가금류, 치즈, 식전주",
+      "pitch": "섬세한 버블에 과일과 꽃향이 어우러져요. 생기 있는 산미와 넉넉한 질감으로 저녁을 시작해보세요.",
+      "confidence": "중간",
+      "status": "accepted",
+      "menuCode": "Sparkling Wine 10",
+      "name": "루이 부요 크레망 드 부르고 그랑 리저브",
+      "english": "Perle de Vigne Louis Bouillot Cremant de Bourgogne Grand Reserve Brut",
+      "variety": "Chardonnay, Pinot Noir, Aligote, Gamay",
+      "country": "France"
+    },
+    {
+      "row": 52,
+      "score": [
+        1,
+        4,
+        1,
+        2
+      ],
+      "urls": [
+        "https://www.wine21.com/13_search/wine_view.html?Idx=166573",
+        "https://www.vivino.com/en/pre-baron-cremant-de-loire/w/2078958"
+      ],
+      "identity": "Domaine Pré Baron / Crémant de Loire Blanc. 메뉴 영문 축약 Domaine Pre, 60%Chardonnay+40%Orbois가 Wine21·Vivino 후기와 정확히 일치.",
+      "vintage": "Wine21 NV·2021 후기. 다른 후기의 Pineau d'Aunis+Cabernet Franc는 다른 색상/퀴베이므로 제외.",
+      "reasons": [
+        "crisp dry 후기 → 1(RS 미공개)",
+        "생기 있는 산미·crisp → 4",
+        "화이트 크레망·타닌 구조 없음 → 1",
+        "섬세한 기포·크리미한 질감,12.5% → 가벼운 바디 추론"
+      ],
+      "aromas": "사과, 레몬, 효모, 미네랄",
+      "pairing": "해산물, 가금류, 식전주",
+      "pitch": "상큼한 사과와 레몬 느낌에 섬세한 버블이 더해져요. 산뜻한 크레망으로 첫 잔을 시작해보세요.",
+      "confidence": "중간",
+      "status": "accepted",
+      "menuCode": "Sparkling Wine 11",
+      "name": "투렌 크레망 드 루아르",
+      "english": "Domaine Pre Cremant de Loire Blanc",
+      "variety": "Chardonnay60%, Orbois40%",
+      "country": "France"
+    },
+    {
+      "row": 53,
+      "score": [
+        1,
+        4,
+        1,
+        3
+      ],
+      "urls": [
+        "https://www.champagne-dangin.com/carte_noire_brut-1.html"
+      ],
+      "identity": "Paul Dangin & Fils / Cuvée Carte Noire Brut, Pinot Noir100%. Carte Blanche·Prestige와 별개.",
+      "vintage": "NV. 현물 로트/도사주 미확인.",
+      "reasons": [
+        "Brut 표기(RS 미공개) → 드라이1 추론",
+        "fraîcheur vive → 높은 산도",
+        "블랑 드 누아·부드러운 시작 → 타닌1",
+        "깊이·집중도·부드러운 시작 → 중간 바디"
+      ],
+      "aromas": "구운 빵, 과일, 감귤",
+      "pairing": "닭고기, 치즈, 식전주",
+      "pitch": "과일과 구운 빵의 향을 섬세한 버블과 함께 즐겨보세요. 감귤의 산뜻한 여운이 이어지는 샴페인이에요.",
+      "confidence": "중간",
+      "status": "accepted",
+      "menuCode": "Sparkling Wine 12",
+      "name": "폴 당장 뀌베 카르트 누와",
+      "english": "PAUL DANGIN CUVEE CARTE NOIRE",
+      "variety": "Pinot Noir 100%",
+      "country": "Champagne, France"
+    },
+    {
+      "row": 59,
+      "urls": [
+        "https://www.danmurphys.com.au/product/DM_267998/minchinbury-reserve-australian-tawny"
+      ],
+      "reason": "확인된 상품은 Reserve Australian Tawny17.5%·Australia. 매장은Tawny Porto19–20%·Portgal. Reserve/호주라벨 확인 전 동일퀴베로 단정하지 않음.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Port Wine 4",
+      "name": "민친버리 포트",
+      "english": "Minchinbury, Tawny Porto",
+      "variety": "Blend",
+      "country": "Portgal"
+    },
+    {
+      "row": 60,
+      "urls": [
+        "https://static1.squarespace.com/static/52c0b746e4b0694c9633738a/t/6148ab9dc700e0379200dba9/1632152480192/Keep6%2B-%2BProduct%2BAvailability%2B%28Sept.20%29.pdf",
+        "https://scuoladivino.com/wine-list"
+      ],
+      "reason": "Artesano Pardalet2020은Chenin/Parellada/Xarel-lo,2022는Moscatell/Chenin/Macabeu. 매장Chenin/XarelLo와 일치하는2020 맛특성 네축 자료 부족; 다른빈티지블렌드 이식하지 않음.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Natural Wine 1",
+      "name": "빠르다렛 오렌지",
+      "english": "Pardalet",
+      "variety": "Chenin Blanc, Xarel-Lo",
+      "country": "Spain"
+    },
+    {
+      "row": 61,
+      "urls": [
+        "https://www.vivino.com/pt-BR/roberto-henriquez-fundo-la-union-pais/w/7780189",
+        "https://www.astorwines.com/item/47573"
+      ],
+      "reason": "País 제품 식별은 가능하나 시음 상세가 부족. 풍부한 검색 시음은Cinsault·Semillón 제품으로 품종이 다름; País에 적용 금지.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Natural Wine 2",
+      "name": "푼도 라 우니온",
+      "english": "Fundo La Union",
+      "variety": "Pais",
+      "country": "Chile"
+    },
+    {
+      "row": 62,
+      "score": [
+        1,
+        4,
+        2,
+        3
+      ],
+      "urls": [
+        "https://www.wine.com/product/roberto-henriquez-tierra-de-pumas-2019/778024",
+        "https://www.botilia.gr/en/p/red-wine/Tierra-De-Pumas-Roberto-Henriquez",
+        "https://www.primitiveselections.com/shop/p/roberto-henrquez-tierra-de-pumas-pais"
+      ],
+      "identity": "Roberto Henríquez / Tierra de Pumas País. País Verde·Fundo La Unión 제외.",
+      "vintage": "2019·2022·2024 교차. 매장 빈티지 미기재. 2022 가벼움 vs 2024 중간 바디, 메뉴의 묵직한 타닌 표현과 차이 있음.",
+      "reasons": [
+        "2024 Dry 표기",
+        "refreshing/bright acidity → 4",
+        "2019 very delicate,2022 soft,2024 silky moderate → 2",
+        "빈티지별 light~medium → 3; 범위2~3"
+      ],
+      "aromas": "베리, 오렌지 껍질, 허브",
+      "pairing": "치즈, 육류, 버섯",
+      "pitch": "붉은 베리와 오렌지 껍질의 향이 싱그럽게 이어져요. 섬세한 타닌과 산뜻한 여운을 즐겨보세요.",
+      "confidence": "중간",
+      "status": "accepted",
+      "menuCode": "Natural Wine 3",
+      "name": "띠에라 데 푸마스",
+      "english": "Tierra De Pumas",
+      "variety": "Pais",
+      "country": "Chile"
+    },
+    {
+      "row": 63,
+      "urls": [
+        "https://heldercunha.com/cascale/",
+        "https://cascawines.com/pt/marcas/cascale/"
+      ],
+      "reason": "공식 Cascale에는T/Palhete/Orange 등 여러상품 존재. 메뉴Unknown·Red Beira 축약으로 T 퀴베 동일성 확인 불가. 오렌지Síria 테크시트는 사용하지 않음.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Natural Wine 4",
+      "name": "카스케일 레드 배이라 인테리어",
+      "english": "Cascale Red Beira",
+      "variety": "Unkown",
+      "country": "Portgal"
+    },
+    {
+      "row": 64,
+      "score": [
+        2,
+        3,
+        4,
+        4
+      ],
+      "urls": [
+        "https://cascawines.com/product/1808-colheita-tinto/",
+        "https://www.alko.fi/en/products/432627/casca-wines-1808-colheita-tinto-2022",
+        "https://vinhovoyage.com/en/products/1808-colheita-tinto-2020?variant=53770362978629"
+      ],
+      "identity": "Casca Wines / 1808 Colheita Tinto, Beira Interior. Lisboa Colheita·Varietal Expression Tinta Roriz·Branco 제외.",
+      "vintage": "공식/Alko2022·판매처2020. 메뉴 Tinta Roriz+Rufete,2022는Touriga Nacional15% 추가; 동일퀴베 빈티지 블렌드 차이. 현물 빈티지 미확인.",
+      "reasons": [
+        "2020 RS5.3g/L → 2(2022 잔당 미확인)",
+        "2020 TA5.69·균형 → 3",
+        "firm structure·Alko tannic3/4 → 4",
+        "Alko full-bodied3/4 → 4"
+      ],
+      "aromas": "블랙체리, 라즈베리, 바닐라",
+      "pairing": "소고기, 돼지고기, 치즈",
+      "pitch": "검은 체리와 바닐라 향에 단단한 구조가 더해져요. 조금 든든한 레드를 찾으시면 고기와 함께 권해드려요.",
+      "confidence": "중간",
+      "status": "accepted",
+      "menuCode": "Natural Wine 5",
+      "name": "1808 콜헤이타 배이라 인테리어",
+      "english": "1808 Beira",
+      "variety": "Tinta Roriz, Rufete",
+      "country": "Portgal"
+    },
+    {
+      "row": 65,
+      "urls": [
+        "https://modu.wine/detail/56557",
+        "https://www.hyatt.com/content/dam/hotel/propertysites/assets/andaz/selaz/documents/en_us/dining/a-z/AZ-Spring-Menu.pdf"
+      ],
+      "reason": "Conara375ml 식별은 가능. 모두와인 텍스트의 시음은 일반쉬라즈 품종설명이며 제품 네축 막대 수치 미노출; 메뉴14.5% vs웹12.5% 차이. 다른Carundo Bin313/Reserve 사용 금지.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Half Wine 1",
+      "name": "카룬도 코나라 (레드)",
+      "english": "Carundo Conara",
+      "variety": "Shiraz",
+      "country": "Austraila"
+    },
+    {
+      "row": 66,
+      "urls": [
+        "https://www.triplevino.com.br/casas-del-toqui-single-estate-d-o-central-valley-cabernet-sauvignon-375-ml"
+      ],
+      "reason": "허용 원문에는 Casas del Toqui 점수 후보가 있으나 List는 생산자명이 빠진 Single Estate로 축약. 현물 생산자 확인 전 수동 연결 보류. 웹 판매처도 SingleEstate 제목과 BarrelSeriesReserva 설명이 충돌.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Half Wine 2",
+      "name": "싱글 이스테이트 까베르네 쇼비뇽 (레드)",
+      "english": "Single Estate Cabrnet Sauvignon",
+      "variety": "Cabrnet Sauvignon",
+      "country": "Chile"
+    },
+    {
+      "row": 68,
+      "score": [
+        4,
+        4,
+        1,
+        4
+      ],
+      "urls": [
+        "https://www.missionestate.co.nz/products/estate-late-harvest",
+        "https://missionestate.co.nz/wp-content/uploads/2018/07/2018-Mission-Estate-Late-Harvest.pdf",
+        "https://www.woolworths.co.nz/shop/product-details/910931/mission-estate-winery-white-blend-late-harvest"
+      ],
+      "identity": "Mission Estate / Estate Late Harvest, 375ml는Woolworths 확인. 단종 Mission Riesling과 별개. 기존 단맛1의 충돌 원문은 수정하지 않고 웹추정으로 별도 수록.",
+      "vintage": "현재 공식RS86.4 TA8.7 12%;2018 RS90 TA8.1 10.8%;매장11.5%,3품종 설명과 공식Riesling중심 차이 메모.",
+      "reasons": [
+        "RS86.4–90·luscious sweet → 4",
+        "TA8.1–8.7·fresh → 4(단맛 완충,단순TA로5 부여 안 함)",
+        "화이트 프레스·타닌 없음 → 1",
+        "공식 full bodied rich → 4"
+      ],
+      "aromas": "시트러스, 핵과, 꿀, 꽃",
+      "pairing": "초콜릿, 과일, 디저트, 치즈",
+      "pitch": "꿀과 잘 익은 과일의 달콤함이 풍부한 디저트 와인이에요. 시트러스의 산뜻한 여운까지 천천히 즐겨보세요.",
+      "confidence": "중간",
+      "status": "accepted",
+      "menuCode": "Half Wine 4",
+      "name": "미션 레이트 하비스트 (화이트)",
+      "english": "Mission, Estate Late Harvest",
+      "variety": "Blend",
+      "country": "New Zealand"
+    },
+    {
+      "row": 69,
+      "urls": [
+        "https://modu.wine/detail/31430",
+        "https://vino-bot.com/wine/%EA%B9%8C%EC%82%AC%EB%8D%B8%ED%86%A0%ED%82%A4-%EC%8B%B1%EA%B8%80-%EC%97%90%EC%8A%A4%ED%85%8C%EC%9D%B4%ED%8A%B8-%EC%86%8C%EB%B9%84%EB%87%BD-%EB%B8%94%EB%9E%91-375ml-2019/"
+      ],
+      "reason": "허용 원문에는 Casas del Toqui 점수 후보가 있으나 List는 생산자명 없는 Single Estate. 현물 라벨 확인 전 수동 연결 보류. Ara(NZ) 등 동명 제품 자료는 사용하지 않음.",
+      "confidence": "낮음",
+      "status": "excluded",
+      "score": null,
+      "menuCode": "Half Wine 5",
+      "name": "싱글 이스테이트 소비뇽 블랑 (화이트)",
+      "english": "Single Estate Sauvignon Blanc",
+      "variety": "Sauvignon blanc",
+      "country": "Chile"
+    },
+    {
+      "row": 70,
+      "score": [
+        1,
+        3,
+        1,
+        3
+      ],
+      "urls": [
+        "https://carundowines.com/",
+        "https://www.hyatt.com/content/dam/hotel/propertysites/assets/andaz/selaz/documents/en_us/dining/a-z/AZ-Spring-Menu.pdf"
+      ],
+      "identity": "Carundo Brothers In Arms / Chardonnay. 동일2008상품의375ml 표기를 Hyatt 메뉴로 교차 확인. 점수는 동일퀴베의750ml 시음 근거를 사용, 용량만 다른 것으로 연결.",
+      "vintage": "웹2008·375ml 메뉴2023. 매장 빈티지 미기재; 숙성 편차 확인 필요.",
+      "reasons": [
+        "일반 비스위트 샤르도네·단맛 언급 없음 → 드라이 추론",
+        "fresh lime·smooth 균형 → 보통 산도 추론",
+        "화이트·타닌 구조 없음 → 1",
+        "smooth body·12개월 오크·13.5% → 중간 바디"
+      ],
+      "aromas": "멜론, 파인애플, 라임, 오크",
+      "pairing": "치즈, 해산물, 샐러드",
+      "pitch": "작은 병으로 열대과일 향과 크리미한 오크의 여운을 즐겨보세요. 부드럽게 머무는 샤르도네예요.",
+      "confidence": "중간",
+      "status": "accepted",
+      "menuCode": "Half Wine 6",
+      "name": "카룬도 샤도네이 (화이트)",
+      "english": "Carundo Chardonnay",
+      "variety": "Chardonnay",
+      "country": "Australia"
+    }
+  ]
+}

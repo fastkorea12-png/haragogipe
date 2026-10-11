@@ -66,7 +66,7 @@ const wineData=JSON.parse(fs.readFileSync(path.join(__dirname,'와인_추천_데
 const template=fs.readFileSync(path.join(__dirname,'템플릿.html'),'utf8');
 const needText=fs.readFileSync(path.join(root,'지식','와인추천_확인필요.md'),'utf8');
 const excludedCount=(needText.match(/^\| \d+ \|/gm)||[]).length;
-const integrity=wineData.length+excludedCount===64&&wineData.every(w=>[w.sweetness,w.body,w.acidity,w.tannin].every(x=>Number.isInteger(x)&&x>=1&&x<=5))&&!wineData.some(w=>/미션 리즐링|그랑 띠에라 비노 틴토|군터록 리즐링/.test(w.name));
+const integrity=wineData.length+excludedCount===66&&wineData.every(w=>[w.sweetness,w.body,w.acidity,w.tannin].every(x=>Number.isInteger(x)&&x>=1&&x<=5))&&!wineData.some(w=>/미션 리즐링|그랑 띠에라 비노 틴토|군터록 리즐링/.test(w.name));
 let ok=0,unk=0,bad=0;const rows=[];
 T.forEach((t,i)=>{
   const a=ctx.answer(t[0]); const isUnk=a.text.indexOf(ctx.FALLBACK)===0;

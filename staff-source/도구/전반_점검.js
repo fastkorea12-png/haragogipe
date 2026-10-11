@@ -4,7 +4,7 @@ vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(root,'챗봇_시
 const rows=JSON.parse(fs.readFileSync(path.join(__dirname,'와인_설명_원본_1008.json'))).values.slice(1);
 const checks=[];const check=(name,pass)=>checks.push({name,pass:!!pass});
 check('67종 모두 새 설명을 조회',rows.every(row=>ctx.answer(row[1]+' 설명해줘').src.startsWith('12_')));
-check('추천 37종의 뉘앙스·설명문이 지정 탭 원문과 일치',ctx.WINE_DATA.every(w=>{const row=rows.find(r=>r[1]===(w.sourceName||w.name));return row&&w.nuance===row[12]&&w.serviceDescription===row[13];}));
+check('원문 점수 와인의 뉘앙스·설명문이 허용 원문과 일치',ctx.WINE_DATA.filter(w=>w.scoreSource!=='web-estimate').every(w=>{const row=rows.find(r=>r[1]===(w.sourceName||w.name));return row&&w.nuance===row[12]&&w.serviceDescription===row[13];}));
 const ice=ctx.answer('아이스크림과 어울리는 와인 추천');check('아이스크림 직접 질문에 디저트 페어링 조건 반영',ice.wines?.length>0&&ice.wines.every(w=>ctx.matchesFood(w,'아이스크림')));
 for(const [q,key] of [['산도 낮은 화이트 추천','acidity'],['타닌 낮은 레드 추천','tannin']]){
   const a=ctx.answer(q);check(q+'에서 높은 점수 추천 금지',a.wines?a.wines.every(w=>w[key]<=2):a.text===ctx.FALLBACK);
