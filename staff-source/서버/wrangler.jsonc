@@ -4,6 +4,10 @@
   "main": "index.js",
   "compatibility_date": "2026-10-08",
   "workers_dev": true,
+  // Gemini API rejects calls from unsupported egress locations such as HKG; run fetch near Seoul.
+  "placement": {
+    "region": "gcp:asia-northeast3"
+  },
   "triggers": {
     "crons": [
       "0 18 * * *"

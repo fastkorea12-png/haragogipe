@@ -101,6 +101,7 @@ const handler={async fetch(request,env){
       if(upstream.ok||![500,503,504].includes(upstream.status)||attempt===1)break;
       await new Promise(resolve=>setTimeout(resolve,700));
     }
+    if(!upstream.ok&&data?.error?.status==="FAILED_PRECONDITION")return response({error:"Gemini가 이 서버 위치에서 응답하지 않았습니다. 관리자에게 알려 주세요."},502);
     if(!upstream.ok)return response({error:upstream.status===429?"AI 요청 한도에 도달했습니다. 잠시 후 다시 시도해 주세요.":upstream.status===503?"Gemini가 일시적으로 혼잡합니다.":"Gemini 응답을 받지 못했습니다."},upstream.status===429?429:upstream.status===503?503:502);
     const text=(data.candidates||[]).flatMap(c=>c.content?.parts||[]).map(p=>p.text||"").join("\n").trim();
     const grounding=data.candidates?.[0]?.groundingMetadata;
