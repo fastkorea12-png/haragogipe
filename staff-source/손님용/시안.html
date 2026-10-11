@@ -26,7 +26,7 @@ const grapes=[
  ['sauvignon','소비뇽 블랑','Sauvignon Blanc','시트러스와 허브, 또렷한 산미. 산뜻한 화이트가 끌릴 때 살펴보세요.','Citrus, herbs, and bright acidity. Explore it for a fresh white.',['sauvignonblanc','sauvinon']],
  ['viognier','비오니에','Viognier','복숭아와 살구, 꽃향이 자주 느껴져요. 향긋한 화이트를 찾는 날에.','Often peachy, apricot-like, and floral. For a fragrant white.',['viognier','veognier']],
  ['albarino','알바리뇨','Albariño','시트러스와 신선한 산미. 매장의 마틴 코닥스로 만나 보세요.','Citrus and fresh acidity. Discover it in our Martín Códax.',['albarino']],
- ['moscato','모스카토','Moscato','꽃과 과일 향이 향긋해요. 매장에서는 달콤한 스파클링으로 만나볼 수 있어요.','Floral and fruity. Our menu offers it in sweet sparkling styles.',['moscato','muscat']]
+ ['moscato','모스카토','Moscato','꽃과 과일 향이 향긋해요. 달콤한 스파클링부터 블렌드 화이트까지 만나 보세요.','Floral and fruity. Explore sweet sparkling wines and blended whites on our menu.',['moscato','muscat']]
 ];
 function grapeMatches(w,id){const g=grapes.find(g=>g[0]===id);if(!g)return false;const v=(w.variety||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z]/g,'');return g[5].some(a=>v.includes(a));}
 function guideControls(){
