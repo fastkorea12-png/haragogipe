@@ -49,7 +49,7 @@ jobs:
       - name: Update staff page
         run: |
           mkdir -p site/staff site/wine
-          cp source/staff-source/챗봇_시안.html site/staff/index.html
+          cp source/staff-source/근무노트.html site/staff/index.html
           cp source/staff-source/손님용/시안.html site/wine/index.html
           cd site
           git add staff/index.html wine/index.html

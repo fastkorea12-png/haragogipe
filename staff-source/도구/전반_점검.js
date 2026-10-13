@@ -1,6 +1,6 @@
 const fs=require('fs'),vm=require('vm'),path=require('path');
 const root=path.join(__dirname,'..'),ctx={};
-vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(root,'챗봇_시안.html'),'utf8').match(/<script>([\s\S]*)<\/script>/)[1],ctx);
+vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(root,'근무노트.html'),'utf8').match(/<script>([\s\S]*)<\/script>/)[1],ctx);
 const rows=JSON.parse(fs.readFileSync(path.join(__dirname,'와인_설명_원본_1008.json'))).values.slice(1);
 const checks=[];const check=(name,pass)=>checks.push({name,pass:!!pass});
 check('67종 모두 새 설명을 조회',rows.every(row=>ctx.answer(row[1]+' 설명해줘').src.startsWith('12_')));

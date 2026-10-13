@@ -1,6 +1,6 @@
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path'),assert=require('node:assert/strict');
 const root=path.join(__dirname,'..'),read=f=>JSON.parse(fs.readFileSync(path.join(__dirname,f),'utf8'));
-const ctx={};vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(root,'챗봇_시안.html'),'utf8').match(/<script>([\s\S]*)<\/script>/)[1],ctx);
+const ctx={};vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(root,'근무노트.html'),'utf8').match(/<script>([\s\S]*)<\/script>/)[1],ctx);
 const baseline=read('기존38_맛점수_1011.json'),dossier=read('웹추정_맛점수_1011.json'),menu=read('메뉴판_허용자료_1008.json');
 const results=[],check=(name,condition)=>{assert.ok(condition,name);results.push({name,pass:true});};
 check('메뉴66종·단종2종 제외',menu.rows.filter(r=>/wine/i.test(r.values[0])).length===66&&!menu.rows.some(r=>/미션 리즐링|킬리빙빙 스윗 하트 샤도네이/.test(r.values[2])));

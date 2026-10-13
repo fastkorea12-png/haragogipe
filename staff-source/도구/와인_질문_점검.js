@@ -1,6 +1,6 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const root=path.join(__dirname,'..'),ctx={};
-vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(root,'챗봇_시안.html'),'utf8').match(/<script>([\s\S]*)<\/script>/)[1],ctx);
+vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(root,'근무노트.html'),'utf8').match(/<script>([\s\S]*)<\/script>/)[1],ctx);
 const source=JSON.parse(fs.readFileSync(path.join(__dirname,'와인_설명_원본_1008.json'),'utf8')).values;
 const row=source.find(r=>r[1]==='라로쉬 샤르도네 리저브');
 for(const q of ['라로쉬 산도는?','라로쉬 산미가 높아?','Laroche acidity','Laroche Chardonnay Réserve 산도']){

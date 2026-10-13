@@ -1,13 +1,13 @@
-// 챗봇_시안.html 안의 스크립트를 DOM 없이 실행해 20문항을 돌리고 시험질문.md 를 만든다. (node 시험.js)
+// 근무노트.html 안의 스크립트를 DOM 없이 실행해 20문항을 돌리고 시험질문.md 를 만든다. (node 시험.js)
 const fs=require('fs'),vm=require('vm'),path=require('path');
 const root=path.join(__dirname,'..');
-const html=fs.readFileSync(path.join(root,'챗봇_시안.html'),'utf8');
+const html=fs.readFileSync(path.join(root,'근무노트.html'),'utf8');
 const js=html.match(/<script>([\s\S]*)<\/script>/)[1];
 const ctx={};vm.createContext(ctx);vm.runInContext(js,ctx);
 const T=[
  ['칵테일 전환 가격이 얼마예요?',['전환 가격'],'1잔 3,000원, 2잔 5,000원, 와인값은 그대로'],
  ['칼리모초가 뭐예요?',['칼리모초'],'레드 와인에 콜라를 더한 칵테일 + 안C3 문구'],
- ['화이트 와인은 어떤 칵테일로 바꿔요?',['와인별 칵테일 짝'],'화이트는 스프리처(레드 칼리모초, 스파클링 미모사)'],
+ ['화이트 와인은 어떤 칵테일로 바꿔요?',['와인별 칵테일 짝'],'화이트는 키르(레드 칼리모초, 스파클링 미모사)'],
  ['미모사 설명해 주세요',['미모사'],'스파클링에 오렌지 주스, 안C3 문구'],
  ['칵테일 한 잔에 와인이 몇 ml 들어가요?',['칵테일 한 잔에 들어가는 와인','만드는 법 (직원용)'],'와인 약 120ml'],
  ['이벤트가 뭐예요?',['이벤트가 뭔가요'],'병 와인 주문 + 리뷰 시 두 잔까지 무료 전환, 테이블당 1회'],
@@ -60,6 +60,25 @@ const OPS=[
  ['마감 순서 알려줘','마감 순서'],
  ['짜파게티 만드는 순서','피자 · 파스타']
 ];
+// 칵테일 레시피 시험 10개: [질문, 기대 출처 제목, 답에 꼭 들어갈 말, 답에 들어가면 안 되는 말, 모름 처리로 시작해야 하는지]
+const R=[
+ ['칼리모초 만드는 법 알려줘','칼리모초 레시피',['레드 120ml','콜라 120ml','레몬 슬라이스','1분'],[],false],
+ ['키르 레시피가 뭐예요?','키르 레시피',['크렘 드 카시스','15ml','화이트 120ml','얼음: 없어요'],[],false],
+ ['미모사 비율이 어떻게 돼요?','미모사 레시피',['모스카토','40ml','60ml','90~120ml'],[],false],
+ ['레드 칵테일 뭐 있어요?','칵테일 레시피 한눈에 (확정 3가지)',['칼리모초','손님께 권하지 않아요'],[],false],
+ ['틴토 데 베라노 레시피 알려줘','틴토 데 베라노 레시피 (초안 후보)',['아직 정해진 게 없','손님께 권하지 않아요','직원 참고용'],[],true],
+ ['손님한테 벨리니 추천해도 돼요?','벨리니 레시피 (초안 후보)',['아직 정해진 게 없','손님께 권하지 않아요'],[],true],
+ ['잔 와인으로 칵테일 만들 수 있어요?','잔 와인으로 칵테일 만들 때',['잔 가격·품목·시작일','아직 정해진 게 없어요'],[],true],
+ ['스프리처 레시피 알려줘','스프리처 레시피 (초안 후보, 지금 안 씀)',['키르로 바뀌어','지금은 쓰지 않아요','손님께 권하지 않아요'],[],true],
+ ['미모사 만들 때 얼음이랑 잔은요?','미모사 레시피',['얼음','[확인]'],[],false],
+ ['콜라는 어떤 브랜드 써요?',null,[],[],true]
+];
+const recipeRows=R.map(t=>{const a=ctx.answer(t[0]);const fb=a.text.indexOf(ctx.FALLBACK)===0;
+ const srcOk=t[1]===null?a.src==='지식 문서에 없음':a.src.includes(t[1]);
+ const has=t[2].every(x=>a.text.includes(x));const no=t[3].every(x=>!a.text.includes(x));
+ const fbOk=t[4]?fb:!fb;
+ return {q:t[0],a,pass:srcOk&&has&&no&&fbOk&&!/원가|단가|링크|https?:/.test(a.text)};});
+const recipePass=recipeRows.filter(x=>x.pass).length;
 const opsRows=OPS.map(t=>{const a=ctx.answer(t[0]);return {q:t[0],a,pass:a.src.includes(t[1])};});
 const wineRows=W.map(t=>{const a=ctx.answer(t[0]);return {q:t[0],a,pass:t[1].every(s=>a.text.includes(s))&&a.src.includes('List')};});
 const wineData=JSON.parse(fs.readFileSync(path.join(__dirname,'와인_추천_데이터.json'),'utf8'));
@@ -110,7 +129,7 @@ const cheeseRecommendations=ctx.tasteRecommend({sweetness:3,acidity:3,tannin:3,b
 const cardsTest=['wine-results','wine-results-heading','wine-card','wine-scores','score-track','wine-pitch','wine-facts'].every(c=>template.includes(c));
 const md=`# 근무 도움 챗봇 시험 결과
 
-시험 방법: \`도구/시험.js\`가 \`챗봇_시안.html\`의 검색 함수(answer)를 node로 직접 실행했다. AI 호출은 없다. 판정은 기대 출처(지식 항목)와 일치하면 맞음, 지식에 없는 것을 물었을 때 "아직 정해진 게 없어요. 사장님께 확인해 주세요."로 시작하면 모름 처리, 그 밖에는 틀림이다.
+시험 방법: \`도구/시험.js\`가 \`근무노트.html\`의 검색 함수(answer)를 node로 직접 실행했다. AI 호출은 없다. 판정은 기대 출처(지식 항목)와 일치하면 맞음, 지식에 없는 것을 물었을 때 "아직 정해진 게 없어요. 사장님께 확인해 주세요."로 시작하면 모름 처리, 그 밖에는 틀림이다.
 질문 16~20번은 일부러 모르는 것(지식에 없거나 [확인] 항목, 폐기 항목, 범위 밖)을 물었다. 질문 21~30번은 2026-10-06 드라이브 자료 반영분(와인·운영·안주)이고, 29·30번은 모름 처리 확인용이다.
 
 | 번호 | 질문 | 기대 답 | 실제 답(앞 60자) | 출처 표시 | 결과 |
@@ -128,6 +147,14 @@ ${wineRows.map((x,i)=>`| ${i+1} | ${x.q} | ${x.pass?'통과':'실패'} | ${x.a.t
 | 번호 | 질문 | 결과 | 출처 |
 |---:|---|---|---|
 ${opsRows.map((x,i)=>`| ${i+1} | ${x.q} | ${x.pass?'통과':'실패'} | ${x.a.src} |`).join('\n')}
+
+## 칵테일 레시피 질문 10개 (12_칵테일_레시피 추가분)
+
+판정 기준: 기대 항목(출처)에서 답이 나오고, 꼭 들어갈 말이 있고, 원가·단가·링크가 없고, 후보·미정 항목은 "아직 정해진 게 없어요"로 시작한다. 5·6·8번은 후보 레시피를 손님용으로 권하지 않는지, 7·10번은 모르는 것을 모른다고 답하는지 본다.
+
+| 번호 | 질문 | 결과 | 출처 | 실제 답(앞 80자) |
+|---:|---|---|---|---|
+${recipeRows.map((x,i)=>`| ${i+1} | ${x.q} | ${x.pass?'통과':'실패'} | ${x.a.src} | ${x.a.text.replace(/\n/g,' ').slice(0,80)} |`).join('\n')}
 
 ## 와인 취향 슬라이더·막대
 - 네 가지 점수 선택으로 최대 6종 추천: ${taste.text.split('• ').length-1===6?'통과':'실패'}
@@ -154,15 +181,18 @@ ${opsRows.map((x,i)=>`| ${i+1} | ${x.q} | ${x.pass?'통과':'실패'} | ${x.a.sr
 - 제외 대상 ${excludedCount}종을 분리하고 미연결·빈 점수 와인이 추천 데이터에 없음: ${integrity?'통과':'실패'}
 - 와인 질문 시험: ${winePass}/10 통과
 - 직원 근무 질문 시험: ${opsPass}/10 통과
+- 칵테일 레시피 질문 시험: ${recipePass}/10 통과
 
 ## 결과 요약
 - 맞음 ${ok}개 / 모름 처리 ${unk}개 / 틀림 ${bad}개 (총 ${T.length}개)
 - 지어낸 답: ${bad===0?'없음':'틀림 항목 확인 필요'}
 - 시험 중 발견한 문제: 처음 돌렸을 때 15번(뱅쇼는 언제부터)이 "언제부터" 키워드 때문에 이벤트 기간 답으로 잘못 갔다(틀림 1). 이벤트 키워드를 "이벤트언제" 식으로 좁히고 다시 돌려 해결했다. 질문 문구를 바꾸지 않고 지식 키워드만 고쳤다. 21~30번을 처음 돌렸을 때 24번(잔 깨뜨림), 27번(안주 추천), 28번(마감)이 기존 항목의 짧은 키워드(와인잔, 안주뭐, 마감)에 먼저 걸려 틀렸다(틀림 3). 새 항목 키워드를 보강하고 짧은 키워드를 구체적으로 바꿔 해결했다.
+- 칵테일 레시피 10문항(10/13 추가): 처음 돌렸을 때 6개가 실패했다. 키르·틴토 질문은 기존 안주 레시피 안내(10번)가 가로챘고, 벨리니 추천 질문은 02번 와인 고르기로, 미모사 얼음 질문은 03번으로 갔다. 레시피 가로채기 예외 단어에 키르·상그리아·벨리니·휴고·틴토를 추가하고 12번 지식의 키워드를 보강해 10/10 통과로 맞췄다. 후보 레시피(5·6·8번)는 모두 "아직 정해진 게 없어요"로 시작하고 "손님께 권하지 않아요"가 들어 있다. 7번(잔 와인 칵테일)과 10번(콜라 브랜드)은 모른다고 답한다.
+- 가격 표시: 메뉴판 원본 가격이 '59,'처럼 천 원 단위로 끝이 잘려 있어 화면에서 '59,000원'으로 보정한다(템플릿 fmtPrice·fixPrices). 확인: ${ctx.answer('달콤한 와인 추천').text.includes('59,000원')&&!/원문 \d+, /.test(ctx.answer('달콤한 와인 추천').text)?'통과':'실패'}
 - 추가 확인(20문항 밖): "리뷰 1+1 맞아요?"는 현재 기준(두 잔까지 무료 전환, 1+1은 예비안)으로 답한다. "이벤트 시작했어요?"는 시작 전 답으로 간다.
 `;
 fs.writeFileSync(path.join(root,'시험질문.md'),md);
 console.log(md);
 
-const apiEndpointTest=template.includes('AI_ENDPOINT')&&template.includes('record-question')&&!template.includes('id="ai-mode"')&&template.includes('최근 대화');
-if(bad||winePass!==10||opsPass!==10||!integrity||!menuPitchTest||!levelTest||!kindTest||!selectedFoodTest||!rotationTest||!apiEndpointTest)process.exitCode=1;
+const localSearchTest=!template.includes('fetch(')&&!template.includes('AI_ENDPOINT')&&template.includes('var a=answer(q)')&&['home','checklist','recipes','wine','phrases'].every(id=>template.includes('id="screen-'+id+'"'));
+if(bad||winePass!==10||opsPass!==10||recipePass!==10||!integrity||!menuPitchTest||!levelTest||!kindTest||!selectedFoodTest||!rotationTest||!localSearchTest)process.exitCode=1;
