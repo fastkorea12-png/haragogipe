@@ -14,6 +14,7 @@ h2{margin:0 0 8px;font-size:20px;color:var(--wine)}
 .btn{border:1px solid var(--rule);background:var(--bot);border-radius:10px;padding:8px 14px}
 .btn.primary{background:var(--wine);border-color:var(--wine);color:#fff;font-weight:700}.btn.primary:disabled{opacity:.5;cursor:default}
 .btn.danger{color:var(--wine);border-color:var(--wine)}
+input[type=date]{min-height:48px;border:1px solid #CFC4B8;border-radius:10px;padding:8px 12px;background:#fff;font-size:16px;line-height:1.5;max-width:100%}
 input[type=text],input[type=search]{width:100%;min-height:48px;border:1px solid #CFC4B8;border-radius:10px;padding:10px 12px;background:#fff;font-size:16px;line-height:1.5}
 label.f{display:block;font-weight:700;margin:14px 0 6px}
 .hint{color:var(--muted);margin:6px 0}
@@ -24,6 +25,7 @@ label.f{display:block;font-weight:700;margin:14px 0 6px}
 .chips button{flex:0 0 auto;white-space:nowrap;border:1px solid #CFC4B8;background:#fff;border-radius:22px;padding:0 16px;min-width:44px;font-weight:600}
 .chips button[aria-pressed=true]{background:var(--wine);color:#fff;border-color:var(--wine)}
 .seg{display:flex;gap:8px;margin:0 0 12px}.seg button{flex:1;border:1px solid #CFC4B8;background:#fff;border-radius:10px;font-weight:700}.seg button[aria-pressed=true]{background:var(--wine);color:#fff;border-color:var(--wine)}
+.datebox{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin:0 0 12px}.datebox .hint{margin:0}
 .sech{margin:16px 0 4px;font-weight:700;color:var(--muted)}
 .card{background:var(--bot);border:1px solid var(--rule);border-radius:14px;padding:14px 16px;margin-bottom:12px}
 #msg{min-height:56px}
@@ -65,6 +67,8 @@ dialog ul{padding-left:20px;margin:6px 0}dialog li{margin:4px 0;overflow-wrap:an
   <div class="chips" id="chips" role="group" aria-label="칸 선택"></div>
   <div class="sech">위치</div>
   <div class="seg" id="locs" role="group" aria-label="입력 위치"></div>
+  <div class="sech">조사 일자</div>
+  <div class="datebox"><input type="date" id="surveyDate" aria-label="조사 일자"><span class="hint" id="dateNote" role="status"></span></div>
   <div id="panel" hidden>
     <label class="f" for="digits" id="digitsLabel">수량 숫자열</label>
     <input type="text" id="digits" inputmode="numeric" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="200" placeholder="예: 3345633432 또는 3,3,4,12" aria-describedby="digitsHint">
@@ -82,10 +86,10 @@ dialog ul{padding-left:20px;margin:6px 0}dialog li{margin:4px 0;overflow-wrap:an
 var API_BASE="https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev";
 var EMBEDDED={"groups":[{"id":"red","name":"레드","items":[{"id":"w5f4322b0","name":"올드 핸즈 호벤","order":1},{"id":"wa9d9b933","name":"라 푸리시마 모나스트렐","order":2},{"id":"wbbf998ee","name":"후안길 옐로우 라벨","order":3},{"id":"w5c90a9fc","name":"후안길 실버 라벨","order":4},{"id":"w3db69d06","name":"샤또 오뜨 브랑드","order":5},{"id":"wcd2fc8f9","name":"롱반 멀롯","order":6},{"id":"w4da0e4e0","name":"미스터 피에레 피노누아","order":7},{"id":"wfdbe3369","name":"블랙 베레 피노누아","order":8},{"id":"w0df1c996","name":"민친버리 피노누아","order":9},{"id":"w78ef00b5","name":"으젠느 르블랑 바케라스","order":10},{"id":"w88dbabee","name":"디킨 쉬라즈","order":11},{"id":"w3849ef35","name":"바인션 그르나슈","order":12},{"id":"wf840ac62","name":"레 자르젤리에르 멜롯-쉬라","order":13},{"id":"w8264b2d9","name":"르 뷔우 트루폴리에","order":14},{"id":"wb791f6c0","name":"폼비스 런 쉬라즈","order":15},{"id":"wf59c8b90","name":"소모스 크리안자","order":16},{"id":"w87524c8e","name":"뷰 마넨 레세르바","order":17},{"id":"w53fa89e8","name":"날리헤드 올드바인 진판델","order":18},{"id":"wde549bb9","name":"퍼르시모","order":19},{"id":"wbaa84409","name":"프리마 피에트라 산지오베제 루비네코","order":20},{"id":"w36fdb525","name":"키안티 루피나 리제르바","order":21},{"id":"wf69792b8","name":"비냐 란자 틴토","order":22},{"id":"w2895862b","name":"도멘 말백","order":23},{"id":"wfbca3c37","name":"세파 비헤아스 보발","order":24},{"id":"wff3f1a71","name":"아라우카노 까르미네르 리제르바","order":25},{"id":"w6035d793","name":"그랑 아라우카노","order":26}]},{"id":"white","name":"화이트","items":[{"id":"we6d345c9","name":"킬리힐 파트너 리즐링","order":1},{"id":"w3658cab0","name":"군터록 리즐링","order":2},{"id":"w65ae65c2","name":"라로쉬 샤르도네 리저브","order":3},{"id":"w6777b744","name":"롱반 샤도네이","order":4},{"id":"wc0ec4602","name":"카룬도 샤도네이750","order":5},{"id":"w977f839c","name":"상쎄르 도멘 블랑","order":6},{"id":"w1e0b65d7","name":"레 자르 젤리에르 비오니에","order":7},{"id":"w6b420b21","name":"마틴 코닥스","order":8}]},{"id":"whiterose","name":"화이트 & 로제","items":[{"id":"w00c7246f","name":"피터 바인바흐 미디움 스위트 스페트레제","order":1},{"id":"w2d290c5a","name":"카룬도 펄스 오브 로제","order":2},{"id":"w87eb6bab","name":"킬리빙빙 스윗 립스 로제","order":3},{"id":"w7ac2ce1c","name":"그라모나 제사미","order":4}]},{"id":"sparkling","name":"스파클링","items":[{"id":"w5c797b89","name":"시드르 부쉐 바이오","order":1},{"id":"wbcaa4e52","name":"발레벨보 브라께토","order":2},{"id":"wfde7090e","name":"데코디 프라골리노 로쏘","order":3},{"id":"w670aef14","name":"미라벤토 모스카토 스트로베리","order":4},{"id":"w183fa03e","name":"세구라 비우다스 레세르바 에레다드 브뤼","order":5},{"id":"w95efa40d","name":"미라벤토 모스카토 핑크","order":6},{"id":"wa6a2617b","name":"톨라스코 모스카토 다스티","order":7},{"id":"w31cff3c9","name":"발레벨보 모스카토 다스티","order":8},{"id":"w8c773fa2","name":"간치아 아스티","order":9},{"id":"we9942ba8","name":"루이 부요 크레망 드 부르고 그랑 리저브","order":10},{"id":"wd28f6a00","name":"투렌 크레망 드 루아르","order":11},{"id":"wde5bc8a5","name":"폴 당장 뀌베 카르트 누와","order":12},{"id":"w7b0ee569","name":"샤를 도떼일 샴페인 브륏","order":13}]},{"id":"port","name":"포트","items":[{"id":"w231f884f","name":"콥케 파인 타우니 포트","order":1},{"id":"w9e6e09a7","name":"버메스터 타우니 포트","order":2},{"id":"wf2a344ca","name":"버메스터 화이트 포트","order":3},{"id":"w690c6107","name":"민친버리 타우니 포트","order":4},{"id":"w338fdc5b","name":"마젤란 핑크 포트","order":5}]},{"id":"natural","name":"내추럴","items":[{"id":"w2b2cbdc7","name":"빠르다렛 오렌지","order":1},{"id":"wfec1cf29","name":"푼도 라 우니온","order":2},{"id":"w95a41400","name":"띠에라 데 푸마스","order":3},{"id":"w7cda0252","name":"카스케일 레드 배이라 인테리어","order":4},{"id":"wbdc061f7","name":"1808 콜헤이타 배이라 인테리어","order":5},{"id":"w4a42d196","name":"롤 메소드 앙세스트랄","order":6}]},{"id":"half","name":"하프","items":[{"id":"w6c40985b","name":"카룬도 코나라 375ml (레드)","order":1},{"id":"w69d8d52e","name":"카사델토키 싱글 이스테이트 까베르네 쇼비뇽 (레드)","order":2},{"id":"w1a108d08","name":"카룬도 로제(375ml)","order":3},{"id":"wd8ce5ca0","name":"미션 레이트 하비스트 (화이트)(375ml)","order":4},{"id":"w605197f9","name":"카사델토키 싱글 이스테이트 소비뇽 블랑 (화이트)","order":5},{"id":"w8e3f8f07","name":"카룬도 샤도네이 (화이트)(375ml)","order":6},{"id":"w61b624f5","name":"쇼토트 화이트 (임시명·확인 필요)","order":7,"confirm":true}]}]};
 var DRAFT_KEY="harago-inv-draft",PENDING_KEY="harago-inv-pending";
-var LOCS=[["fridge","냉장고"],["display","진열장"],["storage","창고"]];
-var LOC_NAME={fridge:"냉장고",display:"진열장",storage:"창고"};
-var DEFAULT_MIN=3;
-var S={groups:[],counts:null,stockState:"loading",gid:null,loc:"fridge",digits:"",manual:{},query:"",detail:null,dEdit:null,sending:false};
+var LOCS=[["fridge","냉장고"],["storage","창고"]];
+var LOC_NAME={fridge:"냉장고",storage:"창고"};
+var DEFAULT_MIN=3,MAX_PAST_DAYS=7,STALE_DAYS=7;
+var S={groups:[],counts:null,stockState:"loading",gid:null,loc:"fridge",digits:"",date:"",manual:{},query:"",detail:null,dEdit:null,sending:false};
 var mem={};
 var $=function(id){return document.getElementById(id);};
 
@@ -103,6 +107,23 @@ function lsSet(k,v){mem[k]=v;try{localStorage.setItem(k,v);}catch(e){}}
 function lsDel(k){delete mem[k];try{localStorage.removeItem(k);}catch(e){}}
 function norm(s){return String(s).toLowerCase().replace(/[^0-9a-z가-힣]/g,"");}
 function fmtTime(iso){try{var p={};new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Seoul",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date(iso)).forEach(function(x){p[x.type]=x.value;});return p.month+"/"+p.day+" "+(p.hour==="24"?"00":p.hour)+":"+p.minute;}catch(e){return "";}}
+// 날짜(한국 시간 기준 YYYY-MM-DD)
+function todayKST(){return new Date(Date.now()+9*3600000).toISOString().slice(0,10);}
+function addDays(ymd,n){var p=ymd.split("-"),t=Date.UTC(+p[0],+p[1]-1,+p[2])+n*86400000;return new Date(t).toISOString().slice(0,10);}
+function dayDiff(a,b){var x=a.split("-"),y=b.split("-");return Math.round((Date.UTC(+x[0],+x[1]-1,+x[2])-Date.UTC(+y[0],+y[1]-1,+y[2]))/86400000);}
+function validDate(d){return typeof d==="string"&&/^\d{4}-\d\d-\d\d$/.test(d)&&addDays(d,0)===d&&d<=todayKST()&&d>=addDays(todayKST(),-MAX_PAST_DAYS);}
+function fmtDate(d){var m=/^\d{4}-(\d\d)-(\d\d)$/.exec(d||"");return m?(+m[1])+"/"+(+m[2]):"";}
+function isStale(d){return !!d&&dayDiff(todayKST(),d)>=STALE_DAYS;}
+function setDateNote(t){var n=$("dateNote");if(n)n.textContent=t||"";}
+// 날짜가 범위 밖이면 오늘로 맞춘다. 반환: 바뀌었는지
+function syncDate(note){
+  if(validDate(S.date)){applyDateUi();return false;}
+  S.date=todayKST();applyDateUi();if(note)setDateNote(note);return true;
+}
+function applyDateUi(){
+  var el=$("surveyDate");if(!el)return;
+  el.min=addDays(todayKST(),-MAX_PAST_DAYS);el.max=todayKST();if(el.value!==S.date)el.value=S.date;
+}
 function uuid(){
   if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();
   var b=new Uint8Array(16);crypto.getRandomValues(b);b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;
@@ -125,6 +146,7 @@ function statusOf(qty,min){
   return {cls:"s-ok",text:"● 충분"};
 }
 function badge(qty,min){var s=statusOf(qty,min);return h("span",{class:"badge "+s.cls,text:s.text});}
+function staleTag(d){return isStale(d)?h("span",{class:"tag","data-stale":"1",text:"오래됨"}):null;}
 
 // ---------- 숫자열 해석 ----------
 function normDigits(s){return String(s).replace(/[０-９]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);}).replace(/[，、﹐]/g,",").replace(/\s+/g,"");}
@@ -177,13 +199,13 @@ function saveDraft(){
   clearTimeout(draftTimer);
   draftTimer=setTimeout(function(){
     if(!S.gid||(!S.digits&&!Object.keys(S.manual).length)){lsDel(DRAFT_KEY);return;}
-    lsSet(DRAFT_KEY,JSON.stringify({gid:S.gid,loc:S.loc,digits:S.digits,manual:S.manual}));
+    lsSet(DRAFT_KEY,JSON.stringify({gid:S.gid,loc:S.loc,date:S.date,day:todayKST(),digits:S.digits,manual:S.manual}));
   },200);
 }
 function loadDraft(){
   try{
     var d=JSON.parse(lsGet(DRAFT_KEY)||"null");
-    if(d&&group(d.gid)){S.gid=d.gid;S.loc=LOC_NAME[d.loc]?d.loc:"fridge";S.digits=String(d.digits||"").slice(0,200);S.manual={};
+    if(d&&group(d.gid)){S.gid=d.gid;S.loc=LOC_NAME[d.loc]?d.loc:"fridge";if(d.date){if(d.day===todayKST()&&validDate(d.date))S.date=d.date;else if(d.date!==todayKST())S.dateReset=true;}S.digits=String(d.digits||"").slice(0,200);S.manual={};
       Object.keys(d.manual||{}).forEach(function(k){var v=d.manual[k];if(findItem(k)&&Number.isInteger(v)&&v>=0&&v<=99)S.manual[k]=v;});}
   }catch(e){}
 }
@@ -204,6 +226,11 @@ function pickGroup(id){
     if(had)lsDel(DRAFT_KEY);
   }
   renderChips();renderPanel();
+}
+function pickDate(v){
+  if(!/^\d{4}-\d\d-\d\d$/.test(v||"")){S.date=todayKST();setDateNote("날짜를 오늘로 맞춤");}
+  else{S.date=v;if(!validDate(v)){S.date=todayKST();setDateNote("조사 일자는 오늘부터 "+MAX_PAST_DAYS+"일 전까지. 오늘로 맞춤");}else setDateNote(v===todayKST()?"":"오늘이 아님");}
+  applyDateUi();renderPanel();saveDraft();
 }
 function renderPanel(){
   var v=view();
@@ -227,9 +254,11 @@ function renderPreview(){
   updateBar(v);
 }
 function rowSub(r){
-  var parts=[],prevTxt=r.prev==null?"이전 -":"이전 "+r.prev;
+  var c=cnt(r.it.id,S.loc),pd=c&&c.surveyDate?c.surveyDate:"";
+  var parts=[],prevTxt=r.prev==null?"이전 -":"이전 "+r.prev+(pd?" ("+fmtDate(pd)+")":"");
   if(r.val==null)parts.push(h("span",{},prevTxt+" → ",h("span",{class:"keep",text:"미입력, 기존 유지"})));
   else{parts.push(h("span",{},prevTxt+" → ",h("b",{text:String(r.val)})));if(r.manual)parts.push(h("span",{class:"tag",text:"직접 수정"}));}
+  if(pd&&r.prev!=null)parts.push(staleTag(pd));
   if(S.loc==="fridge"){var q=r.val!=null?r.val:r.prev;parts.push(badge(q,r.it.min));}
   return parts;
 }
@@ -277,7 +306,7 @@ function updateBar(v){
   var show=!!v&&!S.query;
   bar.hidden=!show;
   if(!show)return;
-  $("sum").textContent=v.g.name+" · "+LOC_NAME[S.loc]+" · 입력 "+v.input+"/"+v.g.items.length+"종 · 변경 "+v.changed+"종";
+  $("sum").textContent=v.g.name+" · "+LOC_NAME[S.loc]+" · 조사 "+fmtDate(S.date)+" · 입력 "+v.input+"/"+v.g.items.length+"종 · 변경 "+v.changed+"종";
   $("submitBtn").disabled=v.blocked||S.sending;
 }
 
@@ -293,7 +322,7 @@ function searchItems(q){
   });});
   return byName.concat(byGroup);
 }
-function lastTime(id){var best="";LOCS.forEach(function(l){var c=cnt(id,l[0]);if(c&&c.at>best)best=c.at;});return best;}
+function lastDate(id){var best="";LOCS.forEach(function(l){var c=cnt(id,l[0]);if(c&&c.surveyDate&&c.surveyDate>best)best=c.surveyDate;});return best;}
 function renderSearch(){
   var q=S.query.trim(),res=$("results"),det=$("detail");
   $("survey").hidden=!!q;
@@ -309,7 +338,7 @@ function renderSearch(){
       var c=cnt(it.id,"fridge");
       kids.push(h("button",{type:"button",class:"res","data-res":it.id,onclick:function(){S.detail=it.id;S.dEdit=null;renderSearch();window.scrollTo(0,0);}},
         h("span",{class:"l1",text:it.gname+" · "+it.no+"번 · "+it.name}),
-        h("span",{class:"l2"},h("span",{text:"냉장고 "+(c?c.qty+"병":"-")}),badge(c?c.qty:null,it.min),it.confirm?h("span",{class:"tag",text:"확인 필요"}):null)));
+        h("span",{class:"l2"},h("span",{text:"냉장고 "+(c?c.qty+"병":"-")+(c&&c.surveyDate?" ("+fmtDate(c.surveyDate)+")":"")}),badge(c?c.qty:null,it.min),c?staleTag(c.surveyDate):null,it.confirm?h("span",{class:"tag",text:"확인 필요"}):null)));
     });
   }
   res.replaceChildren.apply(res,kids);
@@ -319,19 +348,20 @@ function renderDetail(){
   var it=findItem(S.detail),det=$("detail");
   if(!it){S.detail=null;renderSearch();return;}
   if(!S.dEdit){var c0=cnt(it.id,S.loc);S.dEdit={loc:S.loc,qty:c0?String(c0.qty):"",memo:c0&&c0.memo?c0.memo:"",memoTouched:false};}
-  var E=S.dEdit,last=lastTime(it.id);
-  var table=h("table",{class:"loctab"},h("thead",{},h("tr",{},h("th",{text:"위치"}),h("th",{text:"수량"}),h("th",{text:"상태"}),h("th",{text:"위치 메모·조사 시각"}))),
+  var E=S.dEdit,last=lastDate(it.id);
+  var table=h("table",{class:"loctab"},h("thead",{},h("tr",{},h("th",{text:"위치"}),h("th",{text:"수량"}),h("th",{text:"상태"}),h("th",{text:"위치 메모·조사 일자"}))),
     h("tbody",{},LOCS.map(function(l){
       var c=cnt(it.id,l[0]);
       return h("tr",{"data-loc-row":l[0]},h("td",{text:l[1]}),h("td",{text:c?c.qty+"병":"-"}),
         h("td",{},l[0]==="fridge"?badge(c?c.qty:null,it.min):h("span",{class:"keep",text:"-"})),
-        h("td",{},c&&c.memo?h("div",{text:c.memo}):null,h("div",{class:"keep",text:c?fmtTime(c.at):"조사 기록 없음"})));
+        h("td",{},c&&c.memo?h("div",{text:c.memo}):null,h("div",{class:"keep"},c?(c.surveyDate?"조사 "+fmtDate(c.surveyDate)+" ":"조사 일자 -"):"조사 기록 없음",c?staleTag(c.surveyDate):null)));
     })));
   var qty=h("input",{type:"text",id:"dQty",inputmode:"numeric",maxlength:"2","aria-label":"수정할 수량",value:E.qty,placeholder:"수량",style:"width:80px;text-align:center",autocomplete:"off",oninput:function(ev){E.qty=normDigits(ev.target.value);ev.target.removeAttribute("aria-invalid");}});
   var memo=h("input",{type:"text",id:"dMemo",maxlength:"40","aria-label":"위치 메모",value:E.memo,placeholder:"위치 메모(선택, 40자, 개인정보 금지)",autocomplete:"off",oninput:function(ev){E.memo=ev.target.value;E.memoTouched=true;}});
   var locSeg=h("div",{class:"seg",role:"group","aria-label":"수정할 위치"},LOCS.map(function(l){
     return h("button",{type:"button","data-dloc":l[0],"aria-pressed":String(E.loc===l[0]),text:l[1],onclick:function(){var c=cnt(it.id,l[0]);S.dEdit={loc:l[0],qty:c?String(c.qty):"",memo:c&&c.memo?c.memo:"",memoTouched:false};renderDetail();}});
   }));
+  var dateIn=h("input",{type:"date",id:"dDate","aria-label":"수정 조사 일자",min:addDays(todayKST(),-MAX_PAST_DAYS),max:todayKST(),value:S.date,onchange:function(ev){pickDate(ev.target.value);ev.target.value=S.date;}});
   var errBox=h("div",{id:"dErr",role:"status"});
   var go=h("button",{type:"button",class:"btn primary",id:"dGo",text:"수정 제출",onclick:function(){
     var t=E.qty;
@@ -339,7 +369,7 @@ function renderDetail(){
     errBox.replaceChildren();
     var c=cnt(it.id,E.loc),entry={itemId:it.id,qty:Number(t),name:it.name,no:it.no};
     var oldMemo=c&&c.memo?c.memo:"";if(E.memo.trim()!==oldMemo)entry.memo=E.memo.trim();
-    confirmSubmit({gid:it.gid,gname:it.gname,loc:E.loc,entries:[entry],single:true});
+    confirmSubmit({gid:it.gid,gname:it.gname,loc:E.loc,entries:[entry],single:true,date:S.date});
   }});
   det.replaceChildren(
     h("button",{type:"button",class:"btn",id:"dBack",text:"← 검색 결과로",onclick:function(){S.detail=null;S.dEdit=null;renderSearch();}}),
@@ -347,8 +377,9 @@ function renderDetail(){
       h("h2",{id:"dName",text:it.name}),
       h("div",{class:"hint",text:it.gname+" · "+it.no+"번"+(it.confirm?" · 확인 필요":"")}),
       table,h("div",{class:"hint",text:"상태는 냉장고 수량 기준: 0 없음 · 1~"+(it.min-1)+" 필요 · "+it.min+" 이상 충분"}),
-      h("div",{class:"hint",id:"dLast",text:last?"마지막 조사 "+fmtTime(last):"마지막 조사: 기록 없음"+(S.stockState==="fail"?" (최신 수량 불러오기 실패)":"")})),
+      h("div",{class:"hint",id:"dLast",text:last?"마지막 조사 "+fmtDate(last):"마지막 조사: 기록 없음"+(S.stockState==="fail"?" (최신 수량 불러오기 실패)":"")})),
     h("div",{class:"card"},h("h2",{text:"수량 수정"}),locSeg,
+      h("label",{class:"f",for:"dDate",text:"조사 일자"}),dateIn,
       h("label",{class:"f",for:"dQty",text:LOC_NAME[E.loc]+" 수량"}),qty,
       h("label",{class:"f",for:"dMemo",text:"위치 메모"}),memo,errBox,
       h("div",{class:"acts"},go))
@@ -356,29 +387,30 @@ function renderDetail(){
 }
 
 // ---------- 제출 ----------
-function sigOf(body){return JSON.stringify([body.groupId,body.loc,body.entries.map(function(e){return [e.itemId,e.qty,e.memo===undefined?null:e.memo];})]);}
+function sigOf(body){return JSON.stringify([body.groupId,body.loc,body.surveyDate,body.entries.map(function(e){return [e.itemId,e.qty,e.memo===undefined?null:e.memo];})]);}
 var dlg=$("dlg");
 function openDlg(){if(dlg.showModal){if(!dlg.open)dlg.showModal();}else dlg.setAttribute("open","");}
 function closeDlg(){try{dlg.close();}catch(e){dlg.removeAttribute("open");}}
 function buildBody(o){
-  return {surveyId:null,groupId:o.gid,groupName:o.gname,loc:o.loc,entries:o.entries.map(function(e){var x={itemId:e.itemId,qty:e.qty,name:e.name,no:e.no};if(e.memo!==undefined)x.memo=e.memo;return x;})};
+  return {surveyId:null,groupId:o.gid,groupName:o.gname,loc:o.loc,surveyDate:o.date,entries:o.entries.map(function(e){var x={itemId:e.itemId,qty:e.qty,name:e.name,no:e.no};if(e.memo!==undefined)x.memo=e.memo;return x;})};
 }
 function surveyOf(){
   var v=view();if(!v)return null;
   var entries=[];
   v.rows.forEach(function(r){if(r.val!=null)entries.push({itemId:r.it.id,qty:r.val,name:r.it.name,no:r.it.no,prev:r.prev});});
-  return {gid:v.g.id,gname:v.g.name,loc:S.loc,entries:entries,changed:v.changed,total:v.g.items.length};
+  return {gid:v.g.id,gname:v.g.name,loc:S.loc,date:S.date,entries:entries,changed:v.changed,total:v.g.items.length};
 }
 function confirmSubmit(o){
   if(S.sending)return;
   if(navigator.onLine===false){showNet(true);dlg.replaceChildren(h("h2",{id:"dlgTitle",text:"오프라인"}),h("p",{text:"인터넷 연결 없음. 입력은 이 기기에 보존됨. 연결 후 다시 제출"}),h("div",{class:"acts"},h("button",{type:"button",class:"btn",id:"dlgClose",text:"닫기",onclick:closeDlg})));openDlg();return;}
+  if(syncDate("날짜를 오늘로 맞춤"))o.date=S.date;
   var changed=o.entries.filter(function(e){var c=cnt(e.itemId,o.loc);return !c||c.qty!==e.qty||e.memo!==undefined;}).length;
   var lines=o.entries.map(function(e){var c=cnt(e.itemId,o.loc),prev=c?c.qty:null;return h("li",{text:(e.no?e.no+". ":"")+e.name+": "+(prev==null?"-":prev)+" → "+e.qty+(prev===e.qty?" (변경 없음)":"")+(e.memo!==undefined?" · 메모 수정":"")});});
   var go=h("button",{type:"button",class:"btn primary",id:"dlgGo",text:"제출",onclick:function(){go.disabled=true;send(o);}});
   dlg.replaceChildren(h("h2",{id:"dlgTitle",text:"제출 확인"}),
-    h("ul",{id:"dlgSum"},h("li",{text:"칸: "+o.gname}),h("li",{text:"위치: "+LOC_NAME[o.loc]}),h("li",{text:"입력 "+o.entries.length+"종"}),h("li",{text:"변경 "+changed+"종"})),
+    h("ul",{id:"dlgSum"},h("li",{text:"칸: "+o.gname}),h("li",{text:"위치: "+LOC_NAME[o.loc]}),h("li",{id:"dlgDate",text:"조사 일자: "+o.date+(o.date===todayKST()?" (오늘)":" (오늘 아님)")}),h("li",{text:"입력 "+o.entries.length+"종"}),h("li",{text:"변경 "+changed+"종"})),
     lines.length<=40?h("ul",{class:"keep",id:"dlgLines"},lines):null,
-    h("p",{class:"hint",text:"제출하면 최신 수량이 바뀜. 틀리면 다시 입력해 제출."}),
+    h("p",{class:"hint",text:"제출하면 최신 수량이 바뀜(더 늦은 조사 일자의 수량은 덮어쓰지 않음). 틀리면 다시 입력해 제출."}),
     h("div",{class:"acts"},go,h("button",{type:"button",class:"btn",id:"dlgCancel",text:"취소",onclick:closeDlg})));
   openDlg();
 }
@@ -426,7 +458,8 @@ function onSaved(body,o,already){
   if(!S.counts)S.counts={};
   body.entries.forEach(function(e){
     var m=S.counts[e.itemId]=S.counts[e.itemId]||{};
-    var old=m[body.loc]||{},n={qty:e.qty,at:now};
+    var old=m[body.loc]||{},n={qty:e.qty,at:now,surveyDate:body.surveyDate};
+    if(old.surveyDate&&old.surveyDate>body.surveyDate){return;}
     var memo=e.memo!==undefined?e.memo:old.memo;if(memo)n.memo=memo;
     m[body.loc]=n;
   });
@@ -434,7 +467,7 @@ function onSaved(body,o,already){
   if(o&&o.pendingRetry){renderPanel();if(S.detail)renderDetail();}
   else if(!o||!o.single){S.digits="";S.manual={};$("digits").value="";renderPanel();}
   else{S.dEdit=null;renderDetail();}
-  showResult("ok","제출 완료",[body.groupName+" · "+LOC_NAME[body.loc]+" · "+body.entries.length+"종 저장"+(already?" (이미 저장돼 있었음)":""),"입력 초기화됨"]);
+  showResult("ok","제출 완료",[body.groupName+" · "+LOC_NAME[body.loc]+" · "+body.entries.length+"종 저장"+(already?" (이미 저장돼 있었음)":""),"조사 일자 "+body.surveyDate,"입력 초기화됨"]);
 }
 function retryPending(){
   var p=readPending();if(!p){closeDlg();return;}
@@ -473,14 +506,19 @@ function loadStock(){
 // ---------- 연결 ----------
 $("digits").addEventListener("input",function(ev){S.digits=ev.target.value;renderPreview();saveDraft();});
 $("q").addEventListener("input",function(ev){S.query=ev.target.value;S.detail=null;S.dEdit=null;renderSearch();});
+$("surveyDate").addEventListener("change",function(ev){pickDate(ev.target.value);});
+function recheckDay(){var was=S.date;if(S.dayAt&&S.dayAt!==todayKST()){S.dayAt=todayKST();if(S.date===S.dayPrev||!validDate(S.date)){S.date=todayKST();setDateNote("날짜를 오늘로 맞춤");}}else if(!validDate(S.date)){S.date=todayKST();setDateNote("날짜를 오늘로 맞춤");}S.dayPrev=todayKST();if(was!==S.date){applyDateUi();renderPanel();}else applyDateUi();}
+document.addEventListener("visibilitychange",function(){if(!document.hidden)recheckDay();});window.addEventListener("focus",recheckDay);
 $("resetManual").addEventListener("click",function(){S.manual={};renderPreview();saveDraft();});
 $("submitBtn").addEventListener("click",function(){var o=surveyOf();var v=view();if(!o||!v||v.blocked||S.sending)return;confirmSubmit(o);});
 window.addEventListener("online",function(){showNet(false);});
 window.addEventListener("offline",function(){showNet(true);});
-window.addEventListener("beforeunload",function(){clearTimeout(draftTimer);if(S.gid&&(S.digits||Object.keys(S.manual).length))lsSet(DRAFT_KEY,JSON.stringify({gid:S.gid,loc:S.loc,digits:S.digits,manual:S.manual}));});
+window.addEventListener("beforeunload",function(){clearTimeout(draftTimer);if(S.gid&&(S.digits||Object.keys(S.manual).length))lsSet(DRAFT_KEY,JSON.stringify({gid:S.gid,loc:S.loc,date:S.date,day:todayKST(),digits:S.digits,manual:S.manual}));});
 (function init(){
   setGroups(EMBEDDED);
+  S.date=todayKST();S.dayAt=S.dayPrev=S.date;
   loadDraft();
+  applyDateUi();if(S.dateReset)setDateNote("날짜를 오늘로 맞춤");
   $("digits").value=S.digits;
   renderChips();renderPanel();renderPendingBox();
   if(navigator.onLine===false)showNet(true);

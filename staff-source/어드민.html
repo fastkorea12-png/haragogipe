@@ -66,7 +66,7 @@ textarea.bad{border-color:var(--wine)}
 .detail .bar{margin-top:0}
 .cmp{margin:2px 0}
 .badge.st-none{color:var(--del);background:#FBEDEB}.badge.st-low{color:var(--warn);background:#FBF3E2}.badge.st-ok{color:var(--ok);background:#EEF6EF}.badge.st-na{color:var(--muted);background:var(--soft)}
-.qgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:6px 0}.qcell{background:var(--soft);border-radius:8px;padding:6px 8px;display:grid;gap:2px;align-content:start}
+.qgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:6px 0}.qcell{background:var(--soft);border-radius:8px;padding:6px 8px;display:grid;gap:2px;align-content:start}
 .row.inv{padding:10px 12px}
 select{font:inherit;font-size:16px;min-height:44px;border:1px solid #CFC4B8;border-radius:10px;padding:0 8px;background:#fff;color:inherit;max-width:100%}
 #invChips{flex-wrap:wrap}
@@ -1120,7 +1120,8 @@ function applyChecklist(p){
 function scrollToHl(){var r=document.querySelector('[data-row="'+S.hl+'"]');if(r)r.scrollIntoView({block:"center"});}
 
 // ======================= 재고 조사 =======================
-var INV_LOC=[["fridge","냉장고"],["display","진열장"],["storage","창고"]];
+var INV_LOC=[["fridge","냉장고"],["storage","창고"]];
+var INV_LOC_NAME={fridge:"냉장고",storage:"창고"};
 var INV_SHEET={sent:["ok","시트 전송 성공"],form:["ok","양식 기록 성공(대체)"],failed:["err","시트 전송 실패"],form_failed:["err","양식 기록 실패"],pending:["warn","전송 중"],unset:["","미설정"]};
 var INV_MODE={script:"앱스크립트 연결됨. 새 탭 '재고조사'에 기록",form:"앱스크립트 미설정. 구글 양식으로 대체 기록 중(새 탭 없음)",off:"시트 기록 꺼짐. 서버 저장소에만 저장"};
 var EMBEDDED_WINES={"groups":[{"id":"red","name":"레드","items":[{"id":"w5f4322b0","name":"올드 핸즈 호벤","order":1},{"id":"wa9d9b933","name":"라 푸리시마 모나스트렐","order":2},{"id":"wbbf998ee","name":"후안길 옐로우 라벨","order":3},{"id":"w5c90a9fc","name":"후안길 실버 라벨","order":4},{"id":"w3db69d06","name":"샤또 오뜨 브랑드","order":5},{"id":"wcd2fc8f9","name":"롱반 멀롯","order":6},{"id":"w4da0e4e0","name":"미스터 피에레 피노누아","order":7},{"id":"wfdbe3369","name":"블랙 베레 피노누아","order":8},{"id":"w0df1c996","name":"민친버리 피노누아","order":9},{"id":"w78ef00b5","name":"으젠느 르블랑 바케라스","order":10},{"id":"w88dbabee","name":"디킨 쉬라즈","order":11},{"id":"w3849ef35","name":"바인션 그르나슈","order":12},{"id":"wf840ac62","name":"레 자르젤리에르 멜롯-쉬라","order":13},{"id":"w8264b2d9","name":"르 뷔우 트루폴리에","order":14},{"id":"wb791f6c0","name":"폼비스 런 쉬라즈","order":15},{"id":"wf59c8b90","name":"소모스 크리안자","order":16},{"id":"w87524c8e","name":"뷰 마넨 레세르바","order":17},{"id":"w53fa89e8","name":"날리헤드 올드바인 진판델","order":18},{"id":"wde549bb9","name":"퍼르시모","order":19},{"id":"wbaa84409","name":"프리마 피에트라 산지오베제 루비네코","order":20},{"id":"w36fdb525","name":"키안티 루피나 리제르바","order":21},{"id":"wf69792b8","name":"비냐 란자 틴토","order":22},{"id":"w2895862b","name":"도멘 말백","order":23},{"id":"wfbca3c37","name":"세파 비헤아스 보발","order":24},{"id":"wff3f1a71","name":"아라우카노 까르미네르 리제르바","order":25},{"id":"w6035d793","name":"그랑 아라우카노","order":26}]},{"id":"white","name":"화이트","items":[{"id":"we6d345c9","name":"킬리힐 파트너 리즐링","order":1},{"id":"w3658cab0","name":"군터록 리즐링","order":2},{"id":"w65ae65c2","name":"라로쉬 샤르도네 리저브","order":3},{"id":"w6777b744","name":"롱반 샤도네이","order":4},{"id":"wc0ec4602","name":"카룬도 샤도네이750","order":5},{"id":"w977f839c","name":"상쎄르 도멘 블랑","order":6},{"id":"w1e0b65d7","name":"레 자르 젤리에르 비오니에","order":7},{"id":"w6b420b21","name":"마틴 코닥스","order":8}]},{"id":"whiterose","name":"화이트 & 로제","items":[{"id":"w00c7246f","name":"피터 바인바흐 미디움 스위트 스페트레제","order":1},{"id":"w2d290c5a","name":"카룬도 펄스 오브 로제","order":2},{"id":"w87eb6bab","name":"킬리빙빙 스윗 립스 로제","order":3},{"id":"w7ac2ce1c","name":"그라모나 제사미","order":4}]},{"id":"sparkling","name":"스파클링","items":[{"id":"w5c797b89","name":"시드르 부쉐 바이오","order":1},{"id":"wbcaa4e52","name":"발레벨보 브라께토","order":2},{"id":"wfde7090e","name":"데코디 프라골리노 로쏘","order":3},{"id":"w670aef14","name":"미라벤토 모스카토 스트로베리","order":4},{"id":"w183fa03e","name":"세구라 비우다스 레세르바 에레다드 브뤼","order":5},{"id":"w95efa40d","name":"미라벤토 모스카토 핑크","order":6},{"id":"wa6a2617b","name":"톨라스코 모스카토 다스티","order":7},{"id":"w31cff3c9","name":"발레벨보 모스카토 다스티","order":8},{"id":"w8c773fa2","name":"간치아 아스티","order":9},{"id":"we9942ba8","name":"루이 부요 크레망 드 부르고 그랑 리저브","order":10},{"id":"wd28f6a00","name":"투렌 크레망 드 루아르","order":11},{"id":"wde5bc8a5","name":"폴 당장 뀌베 카르트 누와","order":12},{"id":"w7b0ee569","name":"샤를 도떼일 샴페인 브륏","order":13}]},{"id":"port","name":"포트","items":[{"id":"w231f884f","name":"콥케 파인 타우니 포트","order":1},{"id":"w9e6e09a7","name":"버메스터 타우니 포트","order":2},{"id":"wf2a344ca","name":"버메스터 화이트 포트","order":3},{"id":"w690c6107","name":"민친버리 타우니 포트","order":4},{"id":"w338fdc5b","name":"마젤란 핑크 포트","order":5}]},{"id":"natural","name":"내추럴","items":[{"id":"w2b2cbdc7","name":"빠르다렛 오렌지","order":1},{"id":"wfec1cf29","name":"푼도 라 우니온","order":2},{"id":"w95a41400","name":"띠에라 데 푸마스","order":3},{"id":"w7cda0252","name":"카스케일 레드 배이라 인테리어","order":4},{"id":"wbdc061f7","name":"1808 콜헤이타 배이라 인테리어","order":5},{"id":"w4a42d196","name":"롤 메소드 앙세스트랄","order":6}]},{"id":"half","name":"하프","items":[{"id":"w6c40985b","name":"카룬도 코나라 375ml (레드)","order":1},{"id":"w69d8d52e","name":"카사델토키 싱글 이스테이트 까베르네 쇼비뇽 (레드)","order":2},{"id":"w1a108d08","name":"카룬도 로제(375ml)","order":3},{"id":"wd8ce5ca0","name":"미션 레이트 하비스트 (화이트)(375ml)","order":4},{"id":"w605197f9","name":"카사델토키 싱글 이스테이트 소비뇽 블랑 (화이트)","order":5},{"id":"w8e3f8f07","name":"카룬도 샤도네이 (화이트)(375ml)","order":6},{"id":"w61b624f5","name":"쇼토트 화이트 (임시명·확인 필요)","order":7,"confirm":true}]}]};
@@ -1228,11 +1229,11 @@ function invRowNodes(){
   if(!list.length)kids.push(h("div",{class:"card",id:"invEmpty",text:INV.low?"필요·없음 상태인 와인 없음":"일치하는 와인 없음"}));
   list.forEach(function(r){
     var it=r.it,c=INV.items[it.id]||{},min=Number.parseInt(it.min,10)||3,last="",memos=[];
-    INV_LOC.forEach(function(l){var x=c[l[0]];if(x){if(x.at>last)last=x.at;if(x.memo)memos.push(l[1]+": "+x.memo);}});
-    var cells=INV_LOC.map(function(l){var x=c[l[0]];return h("div",{class:"qcell","data-loc":l[0]},h("div",{class:"small",text:l[1]}),h("b",{text:x?x.qty+"병":"-"}),l[0]==="fridge"?invBadge(x?x.qty:null,min):null);});
+    INV_LOC.forEach(function(l){var x=c[l[0]];if(x){if((x.surveyDate||"")>last)last=x.surveyDate||"";if(x.memo)memos.push(l[1]+": "+x.memo);}});
+    var cells=INV_LOC.map(function(l){var x=c[l[0]];return h("div",{class:"qcell","data-loc":l[0]},h("div",{class:"small",text:l[1]}),h("b",{text:x?x.qty+"병":"-"}),l[0]==="fridge"?invBadge(x?x.qty:null,min):null,h("div",{class:"small","data-ldate":l[0],text:x&&x.surveyDate?"조사 일자 "+x.surveyDate:"조사 일자 -"}));});
     kids.push(h("div",{class:"row inv","data-inv":it.id},h("div",{},h("b",{text:r.g.name+" · "+r.no+"번 · "+it.name}),it.confirm?h("span",{class:"tag",text:" 확인 필요"}):null),
       h("div",{class:"qgrid"},cells),
-      h("div",{class:"small",text:(last?"마지막 조사 "+invFmt(last):"조사 기록 없음")+(min!==3?" · 기준 "+min:"")+(memos.length?" · "+memos.join(" / "):"")})));
+      h("div",{class:"small",text:(last?"마지막 조사 일자 "+last:"조사 기록 없음")+(min!==3?" · 기준 "+min:"")+(memos.length?" · "+memos.join(" / "):"")})));
   });
   return kids;
 }
@@ -1246,7 +1247,8 @@ function viewInvHistory(){
     if(INV.detailErr)box.append(h("div",{class:"msg err",text:INV.detailErr}));
     if(!d){if(!INV.detailErr)box.append(h("div",{class:"card",text:"불러오는 중"}));return box;}
     var canResend=["failed","form_failed","unset","pending"].indexOf(d.sheetState)>=0;
-    box.append(h("div",{class:"card",id:"invDetail"},h("h3",{text:invFmt(d.createdAt)+" · "+(d.groupName||wGroupName(INV.w.orig,d.groupId))+" · "+({fridge:"냉장고",display:"진열장",storage:"창고"}[d.loc])}),
+    box.append(h("div",{class:"card",id:"invDetail"},h("h3",{text:(d.surveyDate||"")+" · "+(d.groupName||wGroupName(INV.w.orig,d.groupId))+" · "+(INV_LOC_NAME[d.loc])}),
+      h("p",{class:"hint",id:"invDetailTimes",text:"조사 일자 "+(d.surveyDate||"-")+" · 제출 시각 "+invFmt(d.createdAt)}),
       h("p",{class:"hint",text:"입력 "+d.entries.length+"종"+(d.surveyedBy?" · "+d.surveyedBy:"")}),
       h("div",{class:"bar"},sheetBadge(d.sheetState),canResend?h("button",{class:"btn",type:"button",id:"invResend",disabled:!!INV.resend[d.id],text:INV.resend[d.id]?"전송 중":"재전송",onclick:function(){invResend(d.id);}}):null),
       canResend&&INV.sheetMode==="form"?h("p",{class:"small",text:"양식 대체 기록은 재전송하면 응답 시트에 보고문이 한 번 더 쌓일 수 있음. 실패가 확실할 때만."}):null));
@@ -1260,7 +1262,7 @@ function viewInvHistory(){
   if(!INV.surveys.length)box.append(h("div",{class:"card",id:"invNoHist",text:"조사 이력 없음"}));
   INV.surveys.forEach(function(s){
     box.append(h("button",{type:"button",class:"card sub-card","data-survey":s.id,onclick:function(){invOpenDetail(s.id);}},
-      h("div",{class:"ver"},h("div",{class:"top"},h("b",{text:invFmt(s.createdAt)}),h("span",{text:(s.groupName||wGroupName(INV.w.orig,s.groupId))+" · "+({fridge:"냉장고",display:"진열장",storage:"창고"}[s.loc])}),h("span",{class:"small",text:"입력 "+s.itemCount+"종"})),h("div",{},sheetBadge(s.sheetState)))));
+      h("div",{class:"ver"},h("div",{class:"top"},h("b",{text:s.surveyDate||"-"}),h("span",{text:(s.groupName||wGroupName(INV.w.orig,s.groupId))+" · "+(INV_LOC_NAME[s.loc])}),h("span",{class:"small",text:"입력 "+s.itemCount+"종"}),h("span",{class:"small",text:"제출 "+invFmt(s.createdAt)})),h("div",{},sheetBadge(s.sheetState)))));
   });
   return box;
 }
