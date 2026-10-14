@@ -64,3 +64,11 @@ console.log('항목',kb.length,'개 내장 / 응대 멘트',phrases.length,'개 
 const adminTpl=fs.readFileSync(path.join(__dirname,'어드민.html'),'utf8');
 fs.writeFileSync(path.join(root,'어드민.html'),adminTpl.replace('/*LOGO_URL*/',logo.header).replace('/*FAVICON_URL*/',logo.favicon).replace('/*ADMIN_API_BASE*/""',safe(adminBase)).replace('/*CHECKLIST_JSON*/{}',()=>safe(adminChecklist)).replace('/*CONTENT_JSON*/{}',()=>safe(adminContent)));
 console.log('어드민.html 생성 / 서버 주소',adminBase);
+
+// 재고 조사 화면(근무노트·어드민과 별개 산출물): 와인 목록(이름·칸·순서만)을 시작값으로 심는다. 자료/ 원문은 넣지 않는다.
+const inventoryWines=require('./재고조사_추출.js')();
+const inventoryTpl=fs.readFileSync(path.join(__dirname,'재고조사.html'),'utf8');
+fs.writeFileSync(path.join(root,'재고조사.html'),inventoryTpl.replace('/*LOGO_URL*/',logo.header).replace('/*FAVICON_URL*/',logo.favicon).replace('/*INV_API_BASE*/""',safe(adminBase)).replace('/*WINES_JSON*/{"groups":[]}',()=>safe(inventoryWines)));
+// 어드민의 와인 목록 시작값(이름·칸·순서만)도 같은 추출 결과를 쓴다.
+fs.writeFileSync(path.join(root,'어드민.html'),fs.readFileSync(path.join(root,'어드민.html'),'utf8').replace('/*WINES_JSON*/{"groups":[]}',()=>safe(inventoryWines)));
+console.log('재고조사.html 생성 / 와인',inventoryWines.groups.reduce((n,g)=>n+g.items.length,0),'종 / 서버 주소',adminBase);
