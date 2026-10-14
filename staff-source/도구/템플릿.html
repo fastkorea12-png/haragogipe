@@ -128,7 +128,7 @@ html{overflow-anchor:none}
 .req-item .req-actions button.req-resend{border-color:var(--wine);background:var(--wine);color:white}.req-item .req-actions button:disabled{opacity:.55}
 .send-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom));z-index:30;max-width:min(92vw,520px);margin:0;padding:10px 16px;border-radius:12px;background:#2B211B;color:white;font-size:14px;line-height:1.5;pointer-events:none;word-break:keep-all;overflow-wrap:anywhere;box-shadow:0 6px 18px #0004}.send-toast[hidden]{display:none}
 @media(min-width:851px){.send-toast{bottom:24px}}
-.web-body{position:relative;display:block;font-size:16px;line-height:1.75;overflow-wrap:anywhere}.web-body p{margin:0 0 6px}.web-body ul{margin:0 0 6px;padding-left:20px;display:grid;gap:4px}.web-body li.sub{margin-left:16px;list-style:circle}.web-body strong{font-weight:700;color:var(--wine)}.web-body.clamped{max-height:7em;overflow:hidden}.web-body.clamped.soft{-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}#log .info-heading{margin:6px 0}.web-badge{margin:2px 0 8px}.search-tools{flex-wrap:wrap}.search-tools button{white-space:nowrap;padding:0 14px}.search-tools h2{flex:1 1 200px;min-width:0}.web-more{display:block;margin:6px 0 0;border:1px solid #D9C9B5;border-radius:8px;background:white;color:var(--wine);padding:0 14px;font-size:14px}
+.web-body{position:relative;display:block;font-size:16px;line-height:1.75;overflow-wrap:anywhere}.web-body p{margin:0 0 6px}.web-body ul{margin:0 0 6px;padding-left:20px;display:grid;gap:4px}.web-body li.sub{margin-left:16px;list-style:circle}.web-body strong{font-weight:700;color:var(--wine)}.web-body.clamped{max-height:7em;overflow:hidden}.web-body.clamped.soft{-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}#log .info-heading{margin:6px 0}.web-badge{margin:2px 0 8px}.search-tools{flex-wrap:wrap}.search-tools button{white-space:nowrap;padding:0 14px}.search-tools h2{flex:1 1 200px;min-width:0}.web-find{display:block;margin:10px 0 0;border:1px solid #D9C9B5;border-radius:8px;background:white;color:var(--wine);padding:0 14px;font-size:14px;min-height:44px}.web-more{display:block;margin:6px 0 0;border:1px solid #D9C9B5;border-radius:8px;background:white;color:var(--wine);padding:0 14px;font-size:14px}
 </style></head>
 <body><div id="app">
 <header><div class="brand"><img class="brand-logo" id="brandLogo" src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페" draggable="false"><p class="brand-subtitle">근무노트</p></div><div class="header-actions"><button class="home-button" id="reqGo" type="button">수정 제안<span class="count" id="reqCount" hidden></span></button><button class="home-button" id="homeGo" type="button">홈</button></div></header>
@@ -1563,12 +1563,42 @@ var recipeKind='안주',openFood='';
  /* 웹 검색 답변: 내장 검색이 '모름'일 때만, 공개 와인·주류 일반 지식 질문에 한해 서버 /api/chat(Gemini+구글 검색)으로 넘긴다. 매장 운영 사실은 보내지 않는다. */
  var WEB_MAX=200,WEB_PER_MIN=4,WEB_TIMEOUT_MS=window.HARAGO_WEB_TIMEOUT_MS||10000,webTimes=[],webLast={q:'',t:0},webBusyQ='';
  var WEB_OPS=/와이파이|wifi|와이-파이|비번|비밀번호|패스워드|마지막\s?주문|라스트|주소|위치|가격|얼마|[0-9]+\s?원|차지|콜키지|이벤트|프로모션|할인|쿠폰|영업|시간|몇\s?시|휴무|쉬는|연휴|예약|주차|전화|연락|급여|시급|계좌|통장|재고|발주|매입|도매|희망가|결제|카드|포스|pos|메뉴|오픈|마감|레시피|만드는|조리|식기|직원|사장|손님|정책|규정|규칙|스케줄|근무|청소|환불|영수|세금|하라고지페|매장|가게/i;
- var WEB_TOPIC=/와인|포도|품종|산지|생산지|생산자|와이너리|빈티지|보르도|부르고뉴|샴페인|샹파뉴|스파클링|샤르도네|소비뇽|피노|메를로|시라|쉬라즈|리슬링|템프라니요|말벡|가메|네비올로|산지오베제|모스카토|프로세코|까바|카바|포트|셰리|디캔터|디켄터|테이스팅|페어링|어울리|숙성|탄닌|타닌|산미|바디감|위스키|버번|스카치|진\s|럼|보드카|테킬라|사케|맥주|에일|라거|치즈|샤또|샤토|chateau|wine|grape/i;
+ // 주제 사전(공백·특수문자 제거한 질문에 부분 일치): 품종 표기 변형·오타, 산지, 주류·음료, 식재료·페어링, 맛 표현, 서비스 상식.
+ var WEB_TOPIC=/와인|포도|품종|산지|생산지|생산자|와이너리|빈티지|보르도|부르고뉴|버건디|샴페인|샹파뉴|스파클링|소비뇽|쇼비뇽|쏘비뇽|소비농|쇼비농|쏘비농|sauvignon|카베르네|까베르네|카버네|카베르넷|까베르넷|cabernet|샤르도네|샤도네|샤르도내|chardonnay|피노|삐노|pinot|리슬링|리즐링|riesling|메를로|메를롯|멜롯|멀롯|merlot|쉬라즈|시라|쉬라|syrah|shiraz|말벡|말백|malbec|템프라니요|산지오베제|산죠베제|네비올로|네비올|모스카토|모스까또|무스카|moscato|그르나슈|그레나체|가르나차|grenache|진판델|zinfandel|뮈스카|게뷔르츠|게부르츠|세미용|비오니에|알바리뇨|그뤼너|그리지오|소아베|가메|카르메네르|프리미티보|바르베라|도르첼토|트레비아노|베르델호|슈냉|프로세코|까바|카바|람브루스코|샤블리|상세르|메독|포므롤|생테밀리옹|바롤로|바르바레스코|키안티|리오하|나파|소노마|멘도사|바로사|말보로|알자스|모젤|피에몬테|토스카나|루아르|론밸리|포트와인|셰리|마데이라|베르무트|디캔터|디캔팅|디켄터|테이스팅|페어링|어울리|어울려|궁합|숙성|탄닌|타닌|산미|산도|당도|단맛|드라이|스위트|바디감|바디|풍미|아로마|부케|피니시|여운|과실|오크|미네랄|청포도|레드|화이트|로제|위스키|버번|스카치|싱글몰트|브랜디|코냑|꼬냑|진토닉|럼|보드카|테킬라|사케|소주|맥주|에일|라거|스타우트|ipa|막걸리|하이볼|칵테일|리큐르|리큐어|마티니|모히또|아페롤|캄파리|토닉|시럽|비터|치즈|하몽|살라미|올리브|초콜릿|견과|과일|허브|향신료|식재료|샤또|샤토|chateau|wine|grape|코르크|와인잔|서빙온도|보관법/i;
+ // 주제 밖 질문(날씨·뉴스·연예·코딩·정치·개인 상담 등). 주제 사전에 걸리면 이 목록은 무시한다.
+ var WEB_OFF=/날씨|기온|미세먼지|뉴스|속보|연예|아이돌|배우|가수|드라마|영화|주식|코인|비트코인|환율|부동산|정치|대통령|국회|선거|파이썬|자바스크립트|코딩|코드|프로그램|알고리즘|엑셀|번역|영작|숙제|논문|로또|운세|사주|타로|연애|고민|상담|우울|병원|증상|진료|법률|소송|축구|야구|농구|게임|롤|여행|맛집|비행기|항공|주가/i;
+ // 모호해도 웹 검색 대상으로 보는 질문 형태(특징·설명·뭐야·어떤 맛·차이·추천·어울려).
+ var WEB_PATTERN=/특징|설명|뭐야|뭔가요|뭐예요|무엇|어떤맛|무슨맛|맛이|차이|추천|어울|궁합|알려줘|뜻|의미|종류/;
  var WEB_NUM=/\d[\d\s-]{7,}\d/;
+ function webNorm(t){return String(t||'').toLowerCase().replace(/[^0-9a-z가-힣]/g,'');}
+ // 'ops' 매장 운영어, 'off' 주제 밖, 'web' 웹 검색 대상, 'other' 애매함(자동 전송 안 함, 수동 버튼만)
+ function webKind(q){
+  if(WEB_OPS.test(q))return 'ops';
+  var n=webNorm(q);if(!n)return 'other';
+  if(WEB_TOPIC.test(n))return 'web';
+  if(WEB_OFF.test(n))return 'off';
+  if(WEB_PATTERN.test(n))return 'web';
+  if(!/\s/.test(q.trim())&&n.length>=2&&n.length<=8)return 'web';
+  return 'other';
+ }
  function webAvailable(){return !!(CL_BASE&&typeof fetch==='function');}
  function webCandidate(q,a){
   if(!webAvailable()||!a||a.src!=='지식 문서에 없음')return false;
-  return WEB_TOPIC.test(q)&&!WEB_OPS.test(q);
+  return webKind(q)==='web';
+ }
+ // 내장 모름 카드 아래 수동 버튼: 운영어·주제 밖 질문에서는 숨긴다. 누르면 같은 방어(길이·숫자열·5초·분당 4회)를 거쳐 웹 검색.
+ function addWebBtn(host,q,a){
+  var k=webKind(q);if(!webAvailable()||!a||a.src!=='지식 문서에 없음'||k==='ops'||k==='off')return;
+  var b=button('웹 검색으로 찾기',function(){webGate(q,a,host);},'web-find');b.setAttribute('aria-label','같은 질문을 웹 검색으로 찾기');host.append(b);
+ }
+ function webGate(q,a,result){
+  var now=Date.now(),show=function(x){renderAnswer(result,x);addWebBtn(result,q,a);};
+  webTimes=webTimes.filter(function(t){return now-t<60000;});
+  if(q.length>WEB_MAX)show(webNote(a,'웹 검색은 '+WEB_MAX+'자까지. 짧게 줄여 질문.'));
+  else if(WEB_NUM.test(q))show(webNote(a,'숫자열이 있어 웹 검색 안 함. 개인정보 제외 후 질문.'));
+  else if(webLast.q===q&&now-webLast.t<5000)show(a);
+  else if(webTimes.length>=WEB_PER_MIN)show(webNote(a,'웹 검색은 1분에 '+WEB_PER_MIN+'회까지. 잠시 후 다시.'));
+  else webSearch(q,a,result);
  }
  function webContext(){return aiConversation.slice(-4);}
  function webText(t){return String(t||'').replace(/\[([^\]]+)\]\([^)]*\)/g,'$1').replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^\s*[-*]\s+/gm,'• ').trim();}
@@ -1613,7 +1643,7 @@ var recipeKind='안주',openFood='';
   var names=namedWineMatches(q).map(function(h){return h.entry.title;}).join(', ');
   var body={question:q,context:'',publicWineName:names||'공개 와인·주류 일반 지식 질문',messages:webContext()};
   var done=false;function finish(){if(done)return;done=true;clearTimeout(timer);if(epoch===responseEpoch){webBusyQ='';setWebBusy(false);}}
-  function fail(msg){finish();if(epoch!==responseEpoch)return;renderAnswer(host,webNote(a,msg));}
+  function fail(msg){finish();if(epoch!==responseEpoch)return;renderAnswer(host,webNote(a,msg));addWebBtn(host,q,a);}
   var limit=new Promise(function(res,rej){setTimeout(function(){rej(new Error('timeout'));},WEB_TIMEOUT_MS+500);});
   Promise.race([fetch(CL_BASE+'/api/chat',{method:'POST',headers:{'content-type':'application/json'},credentials:'omit',signal:ctl?ctl.signal:undefined,body:JSON.stringify(body)}).then(function(r){return r.json().catch(function(){return {};}).then(function(d){d.__status=r.status;return d;});}),limit]).then(function(d){
    if(epoch!==responseEpoch){finish();return;}
@@ -1635,16 +1665,13 @@ var recipeKind='안주',openFood='';
   if(webAvailable())tools.append(button('대화 지우기',function(){responseEpoch++;webBusyQ='';setWebBusy(false);aiConversation=[];log.hidden=true;log.replaceChildren();lastAsked='';}));
   log.append(tools);
   var result=el('div');log.append(result);
-  if(!keep&&webCandidate(q,a)){
-   var now=Date.now();webTimes=webTimes.filter(function(t){return now-t<60000;});
-   if(q.length>WEB_MAX)renderAnswer(result,webNote(a,'웹 검색은 '+WEB_MAX+'자까지. 짧게 줄여 질문.'));
-   else if(WEB_NUM.test(q))renderAnswer(result,webNote(a,'숫자열이 있어 웹 검색 안 함. 개인정보 제외 후 질문.'));
-   else if(webLast.q===q&&now-webLast.t<5000)renderAnswer(result,a);
-   else if(webTimes.length>=WEB_PER_MIN)renderAnswer(result,webNote(a,'웹 검색은 1분에 '+WEB_PER_MIN+'회까지. 잠시 후 다시.'));
-   else webSearch(q,a,result);
-   return true;
+  if(!keep&&webCandidate(q,a)){webGate(q,a,result);return true;}
+  renderAnswer(result,a);
+  if(a&&a.src==='지식 문서에 없음'){
+   if(webAvailable()&&webKind(q)==='off')renderAnswer(result,webNote(a,'매장 업무·와인·음료 질문만 웹 검색.'));
+   else addWebBtn(result,q,a);
   }
-  renderAnswer(result,a);return true;
+  return true;
  }
  // 발행본이 바뀌면 열려 있는 오픈/마감 순서 검색 결과를 다시 그린다(검색창에 입력 중이면 다음 검색부터 반영).
  function refreshSearch(){

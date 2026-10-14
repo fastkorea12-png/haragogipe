@@ -140,6 +140,66 @@ const server=http.createServer((req,res)=>{
    });
    await c.context.close(); }
  }
+ // (10/14 확장) 오타·변형·짧은 단어는 웹 검색, 운영어·주제 밖은 호출 없음, 수동 버튼
+ for(const profile of ['mobile','desktop']){
+  const A=profile+'·확장';
+  { const c=await open(profile);reset();
+   await check(A,'오타·변형·짧은 단어 4종은 웹 검색 호출',async()=>{
+    for(const q of ['쇼비뇽 블랑 특징','소비농 블랑이 뭐야','카베르네 소비뇽 차이','리슬링']){
+     const n=stub.hits.length;await ask(c.page,q);await c.page.waitForSelector('.web-badge');
+     assert.equal(stub.hits.length,n+1,q);assert.equal(stub.hits[n].question,q);assert.equal(await c.page.locator('.web-find').count(),0,'답변 카드에는 수동 버튼 없음');
+     if(A==='mobile·확장'&&q==='쇼비뇽 블랑 특징'){const f=shot('오타질문_웹답_500');await c.page.evaluate(()=>window.scrollTo(0,0));await c.page.screenshot({path:f,fullPage:true});shots.push(f);}
+    }
+   });
+   await c.context.close(); }
+  { const c=await open(profile);reset();
+   await check(A,'운영어는 호출·수동 버튼 없음',async()=>{
+    for(const q of ['와이파이 비번','마지막 주문 몇 시','쇼비뇽 블랑 가격 얼마','직원 시급 알려줘']){await ask(c.page,q);await c.page.waitForTimeout(250);assert.equal(c.page.locator('.web-find').count&&await c.page.locator('.web-find').count(),0,q);}
+    assert.equal(stub.hits.length,0);
+   });
+   await check(A,'주제 밖(날씨·파이썬 코드)은 호출·버튼 없음, 개조식 안내 한 줄',async()=>{
+    for(const q of ['오늘 날씨','파이썬 코드','연예인 뉴스 알려줘']){await ask(c.page,q);await c.page.waitForTimeout(250);const t=await logText(c.page);assert(t.includes(FALL)&&t.includes('매장 업무·와인·음료 질문만 웹 검색.'),q+t);assert.equal(await c.page.locator('.web-find').count(),0,q);}
+    assert.equal(stub.hits.length,0);
+    if(A==='mobile·확장'){const f=shot('범주밖_500');await c.page.screenshot({path:f,fullPage:true});shots.push(f);}
+   });
+   await c.context.close(); }
+  { const c=await open(profile);reset();
+   await check(A,'애매한 질문: 자동 전송 없이 모름 카드+수동 버튼, 클릭 시 같은 자리에 웹 답변',async()=>{
+    const q='마스카포네 대신 쓸 만한 거 있어?';
+    await ask(c.page,q);await c.page.waitForTimeout(250);assert.equal(stub.hits.length,0);assert((await logText(c.page)).includes(FALL));
+    assert.equal(await c.page.locator('.web-find').count(),1);assert.equal(await c.page.locator('.web-find').innerText(),'웹 검색으로 찾기');
+    if(A==='mobile·확장'){const f=shot('수동버튼_500');await c.page.screenshot({path:f,fullPage:true});shots.push(f);}
+    await c.page.locator('.web-find').click();await c.page.waitForSelector('.web-badge');
+    assert.equal(stub.hits.length,1);assert.equal(stub.hits[0].question,q);assert.equal(await c.page.locator('.web-find').count(),0);assert(!(await logText(c.page)).includes(FALL));
+    assert.equal(await c.page.locator('.web-source-list a').count(),2);
+   });
+   await c.context.close(); }
+  { const c=await open(profile);reset('500');
+   await check(A,'수동 버튼 클릭 후 서버 실패: 내장 답+버튼 복원(재시도), 429·오프라인도 내장 답',async()=>{
+    const q='마스카포네 대신 쓸 만한 거 있어?';await ask(c.page,q);await c.page.locator('.web-find').click();
+    await c.page.waitForFunction(()=>!document.querySelector('.pending')&&document.querySelector('#log').innerText.indexOf('아직 정해진 게 없어요')>=0);
+    assert.equal(await c.page.locator('.web-find').count(),1);assert.equal(await c.page.locator('.web-badge').count(),0);
+    stub.mode='429';await c.page.waitForTimeout(5100);await c.page.locator('.web-find').click();
+    await c.page.waitForFunction(()=>!document.querySelector('.pending')&&/많음/.test(document.querySelector('#log').innerText));
+    await c.context.setOffline(true);await c.page.waitForTimeout(5100);await c.page.locator('.web-find').click();
+    await c.page.waitForFunction(()=>!document.querySelector('.pending')&&/연결 안 됨/.test(document.querySelector('#log').innerText));
+    assert((await logText(c.page)).includes(FALL));
+   });
+   await c.context.close(); }
+  { const c=await open(profile);reset();
+   await check(A,'수동 버튼도 방어 적용: 숫자열·200자·분당 4회',async()=>{
+    await ask(c.page,'마스카포네 대신 쓸 만한 거 123456789012 있어?');await c.page.waitForTimeout(250);
+    assert.equal(await c.page.locator('.web-find').count(),1);await c.page.locator('.web-find').click();await c.page.waitForTimeout(250);assert.equal(stub.hits.length,0);assert(/숫자열/.test(await logText(c.page)));
+    assert.equal(await c.page.locator('.web-find').count(),1);
+    for(const q of ['쇼비뇽 블랑 특징','소비농 블랑이 뭐야','카베르네 소비뇽 차이','리슬링']){await ask(c.page,q);await c.page.waitForSelector('.web-badge');}
+    assert.equal(stub.hits.length,4);
+    await ask(c.page,'마스카포네 대신 쓸 만한 거 있어?');await c.page.locator('.web-find').click();await c.page.waitForTimeout(250);assert.equal(stub.hits.length,4);assert(/1분에 4회/.test(await logText(c.page)));
+   });
+   await c.context.close(); }
+  { const c=await open(profile,{off:true});reset();
+   await check(A,'서버 주소 없음: 수동 버튼 없음',async()=>{await ask(c.page,'마스카포네 대신 쓸 만한 거 있어?');await c.page.waitForTimeout(250);assert.equal(await c.page.locator('.web-find').count(),0);});
+   await c.context.close(); }
+ }
  await check('전체','서버 호출은 허용 목록(/api/chat·/api/checklist 스텁)만, 그 밖 외부 요청 0',()=>assert.deepEqual([...new Set(external)],[]));
  await check('전체','콘솔·페이지 JS 오류 0',()=>assert.deepEqual(errors,[]));
  // 허용 목록 밖 요청은 계속 실패해야 함: 서버 주소 없음 빌드에서 외부로 나가는 요청 없음은 위에서 확인
