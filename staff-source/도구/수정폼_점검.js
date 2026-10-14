@@ -38,7 +38,7 @@ const layout=async(page,id)=>{const l=await page.evaluate(()=>{window.scrollTo(0
   // 체크 기능은 그대로
   await row.locator('input').check();assert(await row.locator('input').isChecked());await row.locator('input').uncheck();
   // 2 레시피, 3 응대 멘트
-  await page.locator('[data-tab="recipes"]').click();
+  await page.locator('[data-tab="recipes"]').click();await page.locator('[data-recipe-kind="칵테일"]').click();
   await page.locator('.recipe-field .edit-btn').first().click();assert((await page.locator('#editTarget').innerText()).startsWith('레시피 · 칼리모초'));
   await page.locator('#editKinds button',{hasText:'삭제 요청'}).click();assert(!(await page.locator('#editText').isVisible()));
   await page.locator('#editMemo').fill('삭제 시험');await page.locator('#editSave').click();
@@ -74,7 +74,7 @@ const layout=async(page,id)=>{const l=await page.evaluate(()=>{window.scrollTo(0
   // 5 저장소 불가
   const ctx2=await browser.newContext({viewport:{width:500,height:900},timezoneId:'Asia/Seoul'});const p2=await ctx2.newPage();
   await p2.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw new Error('denied');}});});
-  await p2.goto(file);await p2.locator('[data-tab="recipes"]').click();await p2.locator('.recipe-field .edit-btn').first().click();
+  await p2.goto(file);await p2.locator('[data-tab="recipes"]').click();await p2.locator('[data-recipe-kind="칵테일"]').click();await p2.locator('.recipe-field .edit-btn').first().click();
   await p2.locator('#editText').fill('메모리 시험');await p2.locator('#editSave').click();await p2.locator('#reqGo').click();
   assert.equal(await p2.locator('.req-item').count(),1);assert(await p2.locator('#reqStorage').isVisible(),'저장 불가 안내');
   // 6 데스크톱

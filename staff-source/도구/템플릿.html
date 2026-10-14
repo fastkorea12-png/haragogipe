@@ -35,7 +35,7 @@ html{overflow-anchor:none}
 .task-label{font-size:15px}.recipe-grid{display:grid;gap:20px}.recipe-card,.phrase-card{border:1px solid var(--rule);background:white;border-radius:16px;overflow:hidden}
 .recipe-photo{display:block;width:100%;max-height:280px;object-fit:cover}.recipe-content{padding:22px}.recipe-content h3{font-size:20px;margin:0 0 14px;color:var(--wine)}.recipe-field{padding:10px 0;border-bottom:1px solid var(--rule);white-space:pre-wrap}.recipe-field strong{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}
 .food-tools{margin:0 0 14px}.food-tools input{width:100%;min-height:44px;padding:0 14px;border:1px solid var(--rule);border-radius:10px;font-size:16px;background:white;color:var(--ink)}.food-list{display:grid;gap:10px}.food-list[hidden],.food-tools[hidden],.recipe-grid[hidden]{display:none}.food-card{border:1px solid var(--rule);background:white;border-radius:14px;overflow:hidden}.food-head{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:52px;padding:12px 16px;border:0;background:transparent;text-align:left;color:var(--ink);font-size:16px}.food-head .food-name{flex:1;min-width:0;font-weight:700;color:var(--wine);overflow-wrap:anywhere}.food-head .food-price{font-size:13px;color:var(--muted);white-space:nowrap}.food-head .food-caret{color:var(--muted);font-size:13px}.food-body{padding:2px 16px 16px;border-top:1px solid var(--rule)}.food-body[hidden]{display:none}.food-photo{display:block;width:100%;max-height:280px;object-fit:cover;border-radius:10px;margin:12px 0 0}.food-field{position:relative;padding:10px 56px 10px 0;border-bottom:1px solid var(--rule);overflow-wrap:anywhere}.food-field>strong{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}.food-field.confirm{padding-left:12px;border-radius:8px;background:#FCF2D9}.food-field>.edit-btn{position:absolute;right:0;top:2px;padding:0 4px}.food-field.food-order{padding-right:0}.food-steps{margin:0;padding:0;list-style:none}.food-steps li{position:relative;padding:8px 56px 8px 28px;border-bottom:1px solid var(--rule);line-height:1.6;overflow-wrap:anywhere}.food-steps li:last-child{border-bottom:0}.food-steps li>b{position:absolute;left:0;top:8px;color:var(--wine);width:22px}.food-steps li>.edit-btn{position:absolute;right:0;top:6px;padding:0 4px}.food-empty{padding:18px;color:var(--muted);text-align:center}
-.recipe-field.confirm,.phrase-warning{padding:12px;border-radius:8px;background:#FCF2D9;white-space:pre-wrap}.recipe-note{font-size:12px;color:var(--muted);margin:14px 0 0}
+.recipe-field.confirm,.phrase-warning{padding:12px;border-radius:8px;background:#FCF2D9;white-space:pre-wrap}.recipe-etc-head{grid-column:1/-1;padding-top:6px}.recipe-sub{font-size:18px;margin:8px 0 0;color:var(--ink)}.recipe-etc{border-style:dashed}.recipe-note{font-size:12px;color:var(--muted);margin:14px 0 0}
 .phrase-group{margin:28px 0 10px;color:var(--wine);font-size:17px}.phrase-card{margin-bottom:10px;padding:16px}.phrase-card>summary{font-weight:600;line-height:1.6}.phrase-card>summary:focus-visible{outline-offset:4px}.phrase-speech{white-space:pre-wrap;font-size:17px;line-height:1.9;background:var(--soft);border-left:3px solid var(--gold);padding:16px;border-radius:8px;margin:16px 0 10px}.phrase-notes{white-space:pre-wrap;color:var(--muted);font-size:12px;margin:12px 0}.check-summary{display:flex;gap:12px;flex-wrap:wrap}.check-summary button{background:white;border:1px solid var(--rule);border-radius:10px;color:var(--wine);padding:10px 14px}
 @media(min-width:1100px){.recipe-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.recipe-content{padding:18px}.recipe-field{font-size:14px}}
 @media(max-width:850px){.workspace{display:block}.main-panel{display:block;padding:22px 18px 36px}#home,#log{margin-left:0;margin-right:0}#home{padding-top:0}#taste{order:initial;margin:0}#f{margin:0 0 20px;order:initial;padding:0}.home-grid{grid-template-columns:1fr 1fr}#app{padding-bottom:calc(90px + env(safe-area-inset-bottom))}.sidebar{z-index:10}#log{padding:14px}.recipe-grid{grid-template-columns:1fr}.section-title{font-size:22px}.home-card{padding:16px}.check-row{gap:10px}.skip-check{font-size:12px}.screen>h2{font-size:22px}.wine-card-head{flex-wrap:wrap}.home-footer{margin-bottom:20px}}
@@ -127,7 +127,7 @@ html{overflow-anchor:none}
 <section id="log" aria-live="polite" aria-label="검색 결과" hidden></section>
 <section id="screen-home" class="screen"><h2>필요한 업무 찾기</h2><p>자주 찾는 안내를 한눈에.</p><div class="home-grid" id="homeCards"></div><div class="progress-card"><h3>오늘의 체크리스트</h3><div class="check-summary" id="todayProgress"></div></div><p class="home-footer">체크는 오늘 날짜 기준으로 이 기기에 저장함.</p><img class="home-logo" src="/*LOGO_URL2*/" alt="" width="122" height="40"></section>
 <section id="screen-checklist" class="screen" hidden><h2>체크리스트</h2><p>항목별 확인. 격주 작업은 해당일에 ‘해당 없음’ 취소. 문구를 누르면 해당 없음·수정 요청.</p><div class="switcher"><button type="button" data-check-kind="오픈 순서">오픈</button><button type="button" data-check-kind="마감 순서">마감</button><button type="button" id="editEnter" class="edit-enter">편집</button></div><div id="applyStrip" class="apply-strip" hidden><span>초안 미리 적용 중 — 원본 아님, 이 기기에서만 보임</span><button type="button" id="applyOff">끄기</button></div><div id="checkContent" class="task-list"></div><div id="editRoot" class="edit-root" hidden></div></section>
-<section id="screen-recipes" class="screen" hidden><h2>레시피</h2><p id="recipeIntro">주문한 병 와인으로 만드는 칼리모초·키르·미모사.</p><div class="switcher recipe-kind" role="group" aria-label="레시피 구분"><button type="button" data-recipe-kind="칵테일" aria-pressed="true">칵테일</button><button type="button" data-recipe-kind="안주" aria-pressed="false">안주</button></div><div id="foodTools" class="food-tools" hidden><input id="foodFilter" type="search" aria-label="안주 이름 찾기" placeholder="안주 이름 찾기" autocomplete="off"></div><div id="recipeCards" class="recipe-grid"></div><div id="foodCards" class="food-list" hidden></div></section>
+<section id="screen-recipes" class="screen" hidden><h2>레시피</h2><p id="recipeIntro">매장 안주 만드는 법. 이름을 누르면 펼침.</p><div class="switcher recipe-kind" role="group" aria-label="레시피 구분"><button type="button" data-recipe-kind="안주" aria-pressed="true">안주</button><button type="button" data-recipe-kind="칵테일" aria-pressed="false">칵테일</button></div><div id="foodTools" class="food-tools"><input id="foodFilter" type="search" aria-label="안주 이름 찾기" placeholder="안주 이름 찾기" autocomplete="off"></div><div id="recipeCards" class="recipe-grid" hidden></div><div id="foodCards" class="food-list"></div></section>
 <section id="screen-wine" class="screen" hidden><h2>와인</h2><p>손님 취향·안주에 맞춰 선택.</p><details id="taste">
 <summary>와인 취향 &amp; 안주 페어링</summary><p class="taste-help">취향 3단계 선택. 와인 맛은 5칸 막대로 비교.</p>
 <div class="sliders">
@@ -473,7 +473,7 @@ function recipeCatalog(){
 }
 function recipeAnswer(q){
   var n=norm(q),intent=/레시피|만들|만드|조리|요리법|준비법|준비방법|어떻게|전자레인지|오븐|몇분|돌려|돌리|재료|순서/.test(n);
-  if(/와인|레드|화이트|스파클링|포트|칵테일|미모사|칼리모초|스프리처|뱅쇼|키르|키어|상그리아|벨리니|휴고|틴토/.test(n))return null;
+  if(/와인|레드|화이트|스파클링|포트|칵테일|미모사|칼리모초|스프리처|뱅쇼|키르|키어|상그리아|벨리니|휴고|틴토|블랙러시안|파우스트|크림소다|메론소다|멜론소다|기타음료|벽메모|벽레시피|벽에붙은/.test(n))return null;
   if(/응대|멘트|말해|설명해|대신|빼도|넣어도|대체|알레르기|없으면|없는데|부족|실수|손님/.test(n)&&!/레시피|만드는법|만드는순서|조리법/.test(n))return null;
   var catalog=recipeCatalog();
   var hits=catalog.map(function(r){var length=0;r.aliases.forEach(function(alias){var a=norm(alias);if(n.indexOf(a)>=0)length=Math.max(length,a.length);});return {recipe:r,length:length};}).filter(function(x){return x.length>0;}).sort(function(a,b){return b.length-a.length;});
@@ -865,7 +865,7 @@ if(typeof document!=="undefined"){
   });update();appendSubmitBox(host,previewOn);
   document.querySelectorAll('[data-check-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.checkKind===checkKind));});
  }
-var recipeKind='칵테일',openFood='';
+var recipeKind='안주',openFood='';
  function foodKey(n){return String(n).replace(/[\s&·]/g,'');}
  var FOOD_TOOLS=['전자레인지','오븐','토치','밧드','종이호일','피자 종이','머그컵','종지','작은 접시','흰 접시','앞접시','아이스크림 그릇','그릇','작은 잔','냅킨','접시','샐러드톱'];
  function foodCatalog(){
@@ -918,19 +918,22 @@ var recipeKind='칵테일',openFood='';
   recipeKind=kind;var food=kind==='안주';
   document.querySelectorAll('[data-recipe-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.recipeKind===kind));});
   document.getElementById('recipeCards').hidden=food;document.getElementById('foodCards').hidden=!food;document.getElementById('foodTools').hidden=!food;
-  document.getElementById('recipeIntro').textContent=food?'매장 안주 만드는 법. 이름을 누르면 펼침.':'주문한 병 와인으로 만드는 칼리모초·키르·미모사.';
+  document.getElementById('recipeIntro').textContent=food?'매장 안주 만드는 법. 이름을 누르면 펼침.':'주문한 병 와인으로 만드는 칼리모초·키르·미모사. 아래 기타 음료는 벽 메모(사장님 확인 전).';
   if(food)renderFoods();
  }
  function renderRecipes(){
   var host=document.getElementById('recipeCards');host.replaceChildren();
-  ['칼리모초','키르','미모사'].forEach(function(name){
-   var entry=KB.find(function(e){return e.file==='12_칵테일_레시피'&&e.title.indexOf(name+' 레시피')===0;}),card=el('article','recipe-card');
+  ['칼리모초','키르','미모사','@기타','메론소다','크림소다','블랙러시안','파우스트'].forEach(function(name){
+   if(name==='@기타'){var sub=el('h3','recipe-sub','기타 음료 (벽 메모)');sub.id='recipeEtc';var nt=el('p','recipe-note','벽에 붙은 손글씨 레시피를 사진 기준으로 옮긴 메모. 사장님 확인 전이고 단위가 사진에 없음 [확인].');var wrap=el('div','recipe-etc-head');wrap.append(sub,nt);host.append(wrap);return;}
+   var etc=['메론소다','크림소다','블랙러시안','파우스트'].indexOf(name)>=0;
+   var entry=KB.find(function(e){return e.file==='12_칵테일_레시피'&&e.title.indexOf(name+' 레시피')===0;}),card=el('article','recipe-card'+(etc?' recipe-etc':''));
+   if(etc)card.dataset.etc=name;
    if(RECIPE_PHOTOS[name]){var image=el('img','recipe-photo');image.src=RECIPE_PHOTOS[name];image.alt=name;image.loading='lazy';image.onerror=function(){image.remove();};card.append(image);}
    var content=el('div','recipe-content');content.append(el('h3','',name));
    entry.body.split('\n').filter(Boolean).forEach(function(line,li){
     var clean=line.replace(/^[•-]\s*/,''),m=clean.match(/^([^:]+):\s*([\s\S]*)$/),field=el('div','recipe-field'+(/\[확인\]/.test(clean)?' confirm':''));
     if(m){field.append(el('strong','',m[1]),el('span','',m[2]));}else field.textContent=clean;var rt={tab:'recipes',file:entry.file,section:entry.title,sub:'',index:li+1,unit:'줄',field:m?m[1]:'내용',current:m?m[2]:clean,label:'레시피 · '+name+' · '+(m?m[1]:'내용')};field.append(editMark(rt),editButton(rt,'✎ 수정'));content.append(field);
-   });content.append(el('p','recipe-note','출처 · '+entry.file+' / 주문한 병 와인 기준'));card.append(content);host.append(card);
+   });content.append(el('p','recipe-note',etc?'출처 · '+entry.file+' / 벽 메모(사진), 사장님 확인 전':'출처 · '+entry.file+' / 주문한 병 와인 기준'));card.append(content);host.append(card);
   });
  }
  function renderPhrases(){
@@ -1415,7 +1418,7 @@ var recipeKind='칵테일',openFood='';
  setInterval(function(){if((activeTab==='checklist'||(!log.hidden&&lastAsked))&&!document.hidden)fetchPublished();},POLL_MS);
  setInterval(function(){if(workDay!==localWorkDate()){workDay=localWorkDate();if(activeTab==='checklist')renderChecklist();refreshHome();}},60000);
   document.getElementById('taste').open=true;
-  initRequestUi();renderRecipes();document.querySelectorAll('[data-recipe-kind]').forEach(function(b){b.onclick=function(){showRecipeKind(b.dataset.recipeKind);};});document.getElementById('foodFilter').oninput=renderFoods;renderPhrases();refreshHome();updateReqUi();showTab('home');fetchPublished(true);
+  initRequestUi();renderRecipes();document.querySelectorAll('[data-recipe-kind]').forEach(function(b){b.onclick=function(){showRecipeKind(b.dataset.recipeKind);};});showRecipeKind('안주');document.getElementById('foodFilter').oninput=renderFoods;renderPhrases();refreshHome();updateReqUi();showTab('home');fetchPublished(true);
   if(draft.ui&&draft.ui.editing){document.body.classList.add('editmode');editMode=true;checkKind=draft.ui.kind||checkKind;document.getElementById('screen-checklist').classList.add('editing');showTab('checklist');}
 }
 

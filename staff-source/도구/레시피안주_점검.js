@@ -18,10 +18,34 @@ const key=s=>s.replace(/[\s&·]/g,'');
    await page.route(CL_URL,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"published":false}'}));
    await page.goto('file://'+path.join(root,'근무노트.html'));
    await page.locator('[data-tab="recipes"]').click();
-   // 칵테일 기본
+   // 기본은 안주
+   assert.equal(await page.locator('[data-recipe-kind="안주"]').getAttribute('aria-pressed'),'true');
+   assert.equal(await page.locator('[data-recipe-kind="칵테일"]').getAttribute('aria-pressed'),'false');
+   assert.deepEqual(await page.locator('[data-recipe-kind]').evaluateAll(b=>b.map(x=>x.textContent)),['안주','칵테일'],'칩 순서');
+   assert(await page.locator('#foodCards').isVisible());assert(await page.locator('#recipeCards').isHidden());
+   assert(await page.locator('.food-card').count()>=1,'처음 화면에 안주 목록');
+   if(label==='모바일')await page.screenshot({path:shotDir+'/레시피첫화면_안주.png'});
+   // 칵테일 구역: 한 번의 탭, 확정 3 + 기타 음료 4
+   await page.locator('[data-recipe-kind="칵테일"]').click();
    assert.equal(await page.locator('[data-recipe-kind="칵테일"]').getAttribute('aria-pressed'),'true');
-   assert.equal(await page.locator('#recipeCards .recipe-card').count(),3);assert(await page.locator('#foodCards').isHidden());
-   if(label==='모바일')await page.screenshot({path:shotDir+'/칵테일.png'});
+   assert(await page.locator('#foodCards').isHidden());
+   assert.equal(await page.locator('#recipeCards .recipe-card:not(.recipe-etc)').count(),3);
+   assert.equal(await page.locator('#recipeCards .recipe-card.recipe-etc').count(),4,'기타 음료 4장');
+   assert.equal((await page.locator('#recipeEtc').innerText()).trim(),'기타 음료 (벽 메모)');
+   assert.deepEqual(await page.locator('#recipeCards .recipe-etc h3').allInnerTexts(),['메론소다','크림소다','블랙러시안','파우스트']);
+   for(const n of ['메론소다','크림소다','블랙러시안','파우스트']){
+    const c=page.locator('.recipe-etc[data-etc="'+n+'"]');
+    assert(await c.locator('.recipe-field.confirm').count()>=1,n+' [확인] 표시');
+    assert(/\[확인\]/.test(await c.innerText()),n+' 확인 문구');
+    assert(await c.locator('.edit-btn').count()>=1,n+' 수정 요청 진입');
+   }
+   const bl=page.locator('.recipe-etc[data-etc="블랙러시안"]');
+   await bl.locator('.edit-btn').first().click();
+   assert.match(await page.locator('#editTarget').innerText(),/^레시피 · 블랙러시안/);
+   const cl0=page.locator('#editCancel,[data-edit-close],#formClose,#editClose').first();if(await cl0.count())await cl0.click();
+   const tx=await bl.innerText();assert(/포트 와인잔/.test(tx)&&/깔루아 1/.test(tx)&&/단위 없음/.test(tx));
+   if(label==='모바일'){await page.locator('#recipeEtc').scrollIntoViewIfNeeded();await page.screenshot({path:shotDir+'/칵테일_기타음료.png'});await bl.scrollIntoViewIfNeeded();await page.screenshot({path:shotDir+'/블랙러시안.png'});}
+   await page.locator('[data-recipe-kind="안주"]').click();
    // 안주 전환
    await page.locator('[data-recipe-kind="안주"]').click();
    assert(await page.locator('#recipeCards').isHidden());assert(await page.locator('#foodCards').isVisible());
@@ -65,7 +89,7 @@ const key=s=>s.replace(/[\s&·]/g,'');
    await page.fill('#foodFilter','없는안주');assert.equal(await page.locator('.food-card').count(),0);
    await page.fill('#foodFilter','');assert.equal(await page.locator('.food-card').count(),n);
    // 칵테일 복귀
-   await page.locator('[data-recipe-kind="칵테일"]').click();assert.equal(await page.locator('#recipeCards .recipe-card').count(),3);assert(await page.locator('#foodCards').isHidden());
+   await page.locator('[data-recipe-kind="칵테일"]').click();assert.equal(await page.locator('#recipeCards .recipe-card').count(),7);assert(await page.locator('#foodCards').isHidden());
    assert.equal(errors.length,0,'JS 오류 '+errors.join('|'));
    if(label==='데스크톱')await page.screenshot({path:shotDir+'/데스크톱_칵테일.png'});
    results.push(label+' 통과 (카드 '+n+')');await context.close();
