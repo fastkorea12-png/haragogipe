@@ -38,6 +38,29 @@ html{overflow-anchor:none}
 .phrase-group{margin:28px 0 10px;color:var(--wine);font-size:17px}.phrase-card{margin-bottom:10px;padding:16px}.phrase-card>summary{font-weight:600;line-height:1.6}.phrase-card>summary:focus-visible{outline-offset:4px}.phrase-speech{white-space:pre-wrap;font-size:17px;line-height:1.9;background:var(--soft);border-left:3px solid var(--gold);padding:16px;border-radius:8px;margin:16px 0 10px}.phrase-notes{white-space:pre-wrap;color:var(--muted);font-size:12px;margin:12px 0}.check-summary{display:flex;gap:12px;flex-wrap:wrap}.check-summary button{background:white;border:1px solid var(--rule);border-radius:10px;color:var(--wine);padding:10px 14px}
 @media(min-width:1100px){.recipe-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.recipe-content{padding:18px}.recipe-field{font-size:14px}}
 @media(max-width:850px){.workspace{display:block}.main-panel{display:block;padding:22px 18px 36px}#home,#log{margin-left:0;margin-right:0}#home{padding-top:0}#taste{order:initial;margin:0}#f{margin:0 0 20px;order:initial;padding:0}.home-grid{grid-template-columns:1fr 1fr}#app{padding-bottom:calc(90px + env(safe-area-inset-bottom))}.sidebar{z-index:10}#log{padding:14px}.recipe-grid{grid-template-columns:1fr}.section-title{font-size:22px}.home-card{padding:16px}.check-row{gap:10px}.skip-check{font-size:12px}.screen>h2{font-size:22px}.wine-card-head{flex-wrap:wrap}.home-footer{margin-bottom:20px}}
+/* 10/14 압축: 체크리스트·응대 멘트 2열 */
+#checkContent.task-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px;align-items:stretch}
+#checkContent>.check-tools,#checkContent>.check-progress,#checkContent>.task-group,#checkContent>.check-help{grid-column:1/-1}
+#checkContent>.check-tools{margin:10px 0 6px}#checkContent>.check-progress{margin-bottom:4px}
+#checkContent>.task-group{margin:14px 0 4px;padding-bottom:4px;font-size:15px;border-bottom:1px solid var(--rule)}
+#checkContent>.check-help{margin:2px 0}
+#checkContent .info-item{display:flex;align-items:center;gap:4px;min-height:44px;padding:2px 0 2px 2px;border:0;border-bottom:1px solid var(--rule);border-radius:0;background:transparent;box-shadow:none;margin:0}
+#checkContent .info-item.skip{background:var(--soft)}
+#checkContent .check-row{flex:1;min-width:0;gap:8px;min-height:44px;align-items:center}
+#checkContent .check-row input{width:20px;height:20px;margin:0}
+#checkContent .task-label{font-size:14px;line-height:1.35;overflow-wrap:anywhere}
+#checkContent .check-row:has(input:checked) .task-label{opacity:.45;text-decoration:line-through;color:var(--muted)}
+#checkContent .skip-check{flex:none;align-self:center;margin:0;min-height:32px;padding:2px 5px;border:0;background:transparent;color:var(--muted);font-size:10.5px;text-decoration:underline;white-space:nowrap;line-height:1.2;text-align:center}
+#checkContent .info-item.skip .skip-check{white-space:normal;width:48px;color:var(--wine);font-weight:600}
+@media(max-width:360px){#checkContent.task-list{grid-template-columns:1fr}}
+#phraseCards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#phraseCards>.phrase-group{grid-column:1/-1;margin:14px 0 0;font-size:15px}
+#phraseCards>.phrase-card{margin:0;padding:0;border-radius:10px}
+#phraseCards>.phrase-card>summary{display:flex;align-items:center;min-height:44px;padding:8px 12px;font-size:14px;line-height:1.35;font-weight:600;cursor:pointer}
+#phraseCards>.phrase-card[open]{grid-column:1/-1}
+#phraseCards>.phrase-card[open]>*:not(summary){margin-left:12px;margin-right:12px}
+#phraseCards>.phrase-card[open]>.phrase-notes{margin-bottom:12px}
+@media(max-width:360px){#phraseCards{grid-template-columns:1fr}}
 </style></head>
 <body><div id="app">
 <header><div class="brand"><img class="brand-logo" src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페"><p class="brand-subtitle">근무노트</p></div><button class="home-button" id="homeGo" type="button">홈</button></header>
