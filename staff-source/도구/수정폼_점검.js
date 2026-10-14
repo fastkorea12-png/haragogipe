@@ -1,6 +1,7 @@
 // 수정 요청 폼 시나리오 점검: 항목에서 열기 -> 입력 -> 저장 -> 목록 -> 복사 형식 -> 삭제, 저장소 불가 대체 동작, 레이아웃
 const fs=require('fs'),path=require('path'),os=require('os'),assert=require('assert/strict');
 const {chromium}=require(process.env.HARAGO_PLAYWRIGHT||'playwright');
+const CL_URL='https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev/api/checklist';// 근무노트가 읽는 공개 발행본 주소(이 점검에서는 미발행으로 모의)
 const root=path.join(__dirname,'..'),file='file://'+path.join(root,'근무노트.html'),shot=n=>path.join(os.tmpdir(),'근무노트_수정폼_'+n+'.png');
 const layout=async(page,id)=>{const l=await page.evaluate(()=>{window.scrollTo(0,document.documentElement.scrollHeight);const s=document.querySelector('.screen:not([hidden])');return {sw:document.documentElement.scrollWidth,w:innerWidth,b:s.getBoundingClientRect().bottom,n:document.querySelector('.sidebar').getBoundingClientRect().top};});assert(l.sw<=l.w,id+' 가로 넘침');if(l.w<=850)assert(l.b<=l.n+1,id+' 하단 탭 가림');await page.evaluate(()=>window.scrollTo(0,0));};
 (async()=>{
@@ -8,7 +9,7 @@ const layout=async(page,id)=>{const l=await page.evaluate(()=>{window.scrollTo(0
  try{
   const ctx=await browser.newContext({viewport:{width:500,height:900},timezoneId:'Asia/Seoul',acceptDownloads:true});
   const page=await ctx.newPage(),errors=[],external=[];
-  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))external.push(r.url());});
+  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url())&&r.url()!==CL_URL)external.push(r.url());});await page.route(CL_URL,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"published":false}'}));
   await page.addInitScript(()=>{Object.defineProperty(navigator,'clipboard',{value:{writeText:async t=>{window.copiedText=t;}}});});
   await page.goto(file);
   // 1 체크리스트 행에서 열기

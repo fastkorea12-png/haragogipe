@@ -1,5 +1,6 @@
 const fs=require('fs'),path=require('path'),os=require('os'),vm=require('vm'),assert=require('assert/strict');
 const {chromium}=require(process.env.HARAGO_PLAYWRIGHT||'playwright');
+const CL_URL='https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev/api/checklist';// 근무노트가 읽는 공개 발행본 주소(이 점검에서는 미발행으로 모의)
 const root=path.join(__dirname,'..'),html=fs.readFileSync(path.join(root,'근무노트.html'),'utf8');
 const ctx={};vm.createContext(ctx);vm.runInContext(html.match(/<script>([\s\S]*)<\/script>/)[1],ctx);
 const body=title=>ctx.KB.find(e=>e.file==='09_운영_매뉴얼'&&e.title===title).body;
@@ -15,7 +16,7 @@ for(let day=0;day<7;day++){
  assert(body('마감 순서').includes('오전·오후 표기 없음 [확인]'));
  totals.push({day,open:open.length,close:close.length});
 }
-assert(!html.includes('fetch('));
+assert.equal((html.match(/\bfetch\(/g)||[]).length,1,'서버 호출은 발행 체크리스트 읽기 1곳뿐');assert(html.includes('/api/checklist'));
 assert(!/fonts\.googleapis\.com|docs\.google\.com\/forms/.test(html));
 assert(ctx.PHRASES.some(p=>/^5-7\b/.test(p.title)));
 (async()=>{
@@ -23,7 +24,7 @@ assert(ctx.PHRASES.some(p=>/^5-7\b/.test(p.title)));
  try{
   const context=await browser.newContext({viewport:{width:500,height:900},timezoneId:'Asia/Seoul'});
   const page=await context.newPage(),errors=[],external=[];
-  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))external.push(r.url());});
+  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url())&&r.url()!==CL_URL)external.push(r.url());});await page.route(CL_URL,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"published":false}'}));
   await page.addInitScript(()=>{Object.defineProperty(navigator,'clipboard',{value:{writeText:async t=>{window.copiedText=t;}}});});
   await page.goto('file://'+path.join(root,'근무노트.html'));
   const shots=[];

@@ -1,6 +1,7 @@
 // 체크리스트 편집 화면 시나리오 점검: 원본 동등성 -> 편집 -> 변경 배지 -> 내보내기 -> 새로고침 유지 -> 미리 적용 -> 되돌리기 -> 저장소 불가 -> 레이아웃
 const fs=require('fs'),path=require('path'),os=require('os'),vm=require('vm'),assert=require('assert/strict');
 const {chromium}=require(process.env.HARAGO_PLAYWRIGHT||'playwright');
+const CL_URL='https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev/api/checklist';// 근무노트가 읽는 공개 발행본 주소(이 점검에서는 미발행으로 모의)
 const root=path.join(__dirname,'..'),htmlPath=path.join(root,'근무노트.html'),html=fs.readFileSync(htmlPath,'utf8'),file='file://'+htmlPath,shot=n=>path.join(os.tmpdir(),'근무노트_편집_'+n+'.png');
 // 1 원본 동등성: 편집 모델을 아무것도 안 고치고 변환하면 기존 체크리스트 로직과 같은 결과
 const ctx={};vm.createContext(ctx);vm.runInContext(html.match(/<script>([\s\S]*)<\/script>/)[1],ctx);
@@ -24,7 +25,7 @@ for(const kind of ['오픈 순서','마감 순서']){const e=ctx.KB.find(x=>x.fi
  try{
   const context=await browser.newContext({viewport:{width:500,height:900},timezoneId:'Asia/Seoul',acceptDownloads:true});
   const page=await context.newPage(),errors=[],external=[];
-  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url()))external.push(r.url());});
+  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url())&&r.url()!==CL_URL)external.push(r.url());});await page.route(CL_URL,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"published":false}'}));
   await page.addInitScript(()=>{if(!window.__copyInit){window.__copyInit=1;Object.defineProperty(navigator,'clipboard',{value:{writeText:async t=>{window.copiedText=t;}}});}});
   await page.goto(file);
   const layout=async id=>{const l=await page.evaluate(()=>{window.scrollTo(0,document.documentElement.scrollHeight);const s=document.querySelector('.screen:not([hidden])');return {sw:document.documentElement.scrollWidth,w:innerWidth,b:s.getBoundingClientRect().bottom,n:document.querySelector('.sidebar').getBoundingClientRect().top};});assert(l.sw<=l.w,id+' 가로 넘침');if(l.w<=850)assert(l.b<=l.n+1,id+' 하단 탭 가림');await page.evaluate(()=>window.scrollTo(0,0));};
