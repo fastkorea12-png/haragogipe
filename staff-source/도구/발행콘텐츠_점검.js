@@ -212,6 +212,22 @@ const resetStub=()=>{S.hits.length=0;S.props.length=0;S.chats.length=0;S.other.l
     await page.locator('.phrase-card').first().locator('summary').click();
     await page.waitForFunction(()=>document.querySelector('#phraseCards .phrase-card summary').textContent.includes('멘트 교체 v11'),null,{timeout:5000});
    });
+   await check(A,'③-2 응대 멘트 검색이 발행본 기준(v11 상황명·문구, 출처 서버 발행)',async()=>{
+    await tab(page,'home');
+    await page.locator('#q').fill('멘트 교체 v11 응대 멘트 알려줘');await page.locator('#q').press('Enter');
+    await page.waitForFunction(()=>document.getElementById('log').textContent.includes('서버 발행 v11'),null,{timeout:4000});
+    const t=await page.locator('#log').innerText();assert(t.includes(PH_NEW),t.slice(0,300));assert(t.includes('발행 멘트 확인 사항'));
+    await page.locator('#q').fill('');
+   });
+   await check(A,'③-2 응대 멘트 검색: 다른 상황은 내장 문구와 일치, 멘트 의도 없는 질문은 가로채지 않음',async()=>{
+    const it=B.phrases.sections[2].items[0];
+    await page.locator('#q').fill(it.situation+' 응대 멘트');await page.locator('#q').press('Enter');
+    await page.waitForFunction(()=>document.getElementById('log').textContent.includes('응대 멘트'),null,{timeout:4000});
+    const t=await page.locator('#log').innerText();assert(it.lines.some(l=>t.includes(l.text.slice(0,12))),t.slice(0,300));
+    await page.locator('#q').fill('교체 v11 상황 손님');await page.locator('#q').press('Enter');await page.waitForTimeout(300);
+    assert(!(await page.locator('#log').innerText()).includes('서버 발행 v11'));
+    await page.locator('#q').fill('');
+   });
    await check(A,'③ 해당 탭이 아닐 때는 콘텐츠를 재조회하지 않음',async()=>{await tab(page,'home');await page.waitForTimeout(400);const n=S.hits.filter(h=>h.path.startsWith('/api/content/')).length;await page.waitForTimeout(2600);assert.equal(S.hits.filter(h=>h.path.startsWith('/api/content/')).length,n);});
    await check(A,'③ 탭 복귀(visibilitychange) 시 재조회',async()=>{await tab(page,'recipes');setOk(mkRecipes(12,d=>{d.appetizers[0].name='복귀 안주 v12';}),mkPhrases(12));await page.evaluate(()=>document.dispatchEvent(new Event('visibilitychange')));await waitFood(page,'복귀 안주 v12',4000);});
    await check(A,'③ 재조회 요청은 GET·no-store',()=>{const h=S.hits.filter(x=>x.path==='/api/content/recipes').at(-1);assert.equal(h.method,'GET');assert.match(h.headers['cache-control']||'',/no-cache|no-store/);});

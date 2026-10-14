@@ -483,6 +483,25 @@ function recipeCatalog(){
   var aliases={'마르게리따 피자':['마르게리따','마르게리타','피자'],'소시지 구이':['소시지','소세지','소세지구이'],'멜론 프로슈토':['멜론하몽','하몽멜론','프로슈토','프로슈또'],'하몽 덮은 모짜':['하몽모짜','하몽모차','하몽덮은모짜','하몽덮은모짜렐라','하몽덮은모차렐라','보코치니'],'치즈 & 육포':['치즈육포','육포'],'아이스홍시':['홍시'],'알리오 올리오':['알리오','오일파스타'],'투움바 파스타':['투움바'],'라구 파스타':['라구'],'브리치즈 구이':['브리치즈','브리치즈구이'],'치즈 플레이트':['치즈플래터','치즈플레터']};
   recipes.forEach(function(r){r.aliases=[r.name].concat(aliases[r.name]||[]);});return recipes;
 }
+// 응대 멘트 검색: 13번 문서에는 키워드가 없어 내장 검색에 안 걸리므로, 화면과 같은 발행본(캐시 -> 내장 순) 데이터를 직접 맞춘다. 멘트 의도가 있는 질문만.
+function phraseAnswer(q){
+  var n=norm(q);
+  if(typeof phrasesData!=='function')return null;
+  if(!/응대|멘트|뭐라고|어떻게말|말해야|말할|대본|한마디|문장/.test(n))return null;
+  function bg(t){var o={},c=0;t=norm(t);for(var i=0;i<t.length-1;i++){var k=t.slice(i,i+2);if(!o[k]){o[k]=1;c++;}}return {set:o,count:c};}
+  var qb=bg(n),best=[],top=0;
+  phrasesData().sections.forEach(function(sec){sec.items.forEach(function(it){
+    var b=bg(it.situation),hit=0;Object.keys(b.set).forEach(function(k){if(qb.set[k])hit++;});
+    if(hit<3||!b.count||hit/b.count<0.5)return;
+    var sc=hit/b.count+hit/100;if(sc>top+1e-9){top=sc;best=[it];}else if(Math.abs(sc-top)<=1e-9)best.push(it);
+  });});
+  if(best.length!==1)return null;
+  var it=best[0],lines=[];
+  it.lines.forEach(function(l){lines.push('• '+(l.kind==='customer'?'손님: ':'직원: ')+l.text);});
+  if(it.note)lines.push('• '+it.note);
+  if(it.confirmNote)lines.push('• [확인] '+it.confirmNote);
+  return {phrase:true,title:it.situation+' · 응대 멘트',text:lines.join('\n'),src:ctSrc('phrases')+' · '+it.situation};
+}
 function recipeAnswer(q){
   var n=norm(q),intent=/레시피|만들|만드|조리|요리법|준비법|준비방법|어떻게|전자레인지|오븐|몇분|돌려|돌리|재료|순서/.test(n);
   if(/와인|레드|화이트|스파클링|포트|칵테일|미모사|칼리모초|스프리처|뱅쇼|키르|키어|상그리아|벨리니|휴고|틴토|블랙러시안|파우스트|크림소다|메론소다|멜론소다|기타음료|벽메모|벽레시피|벽에붙은/.test(n))return null;
@@ -567,6 +586,7 @@ function answerCore(q){
   var similar=similarWineAnswer(q);if(similar)return similar;
   var menu=wineMenuAnswer(q);if(menu)return menu;
   var recipe=recipeAnswer(q);if(recipe)return recipe;
+  var phr=phraseAnswer(q);if(phr)return phr;
   var fact=wineFactAnswer(q);if(fact)return fact;
   var info=wineInfoAnswer(q);if(info)return info;
   var wine=wineRecommend(q); if(wine) return wine;
@@ -1677,7 +1697,7 @@ var recipeKind='안주',openFood='';
  function refreshSearch(){
   if(log.hidden||!lastAsked)return;var qi=document.getElementById('q');
   if(qi&&qi.value)return;
-  var a=answer(lastAsked);if(!a||!(a.checklist||a.recipe||String(a.src||'').indexOf('12_칵테일_레시피 · ')===0))return;
+  var a=answer(lastAsked);if(!a||!(a.checklist||a.recipe||a.phrase||String(a.src||'').indexOf('12_칵테일_레시피 · ')===0))return;
   var sy=window.scrollY;ask(lastAsked,true);if(window.scrollY!==sy)window.scrollTo(0,sy);
  }
  [['home','홈','⌂'],['checklist','체크리스트','☑'],['recipes','레시피','♧'],['wine','와인','♢'],['phrases','응대 멘트','“']].forEach(function(tab){

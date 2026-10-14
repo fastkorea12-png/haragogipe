@@ -1075,6 +1075,24 @@ function slotsOf(kind,it){
   }
   return out;
 }
+// 삭제 제안이 항목 전체가 아니라 한 필드(입력칸)를 가리키면 그 필드만 비운다. 필드 지정은 대상 이름(항목 · 필드)이나 현재 문구가 입력칸과 맞는 경우.
+// 반환: null(항목 통삭제) 또는 {ok,name,run} / {ok:false,msg}. 필수 필드(이름·상황)와 마지막 멘트 줄은 비우지 않고 경고만 한다.
+function fieldDelete(kind,it,p){
+  var segs=String(p.targetLabel||"").split(" · "),labeled=segs.length>=3,want=(p.current||"").trim(),slots=slotsOf(kind,it),hit=null;
+  if(want)hit=slots.find(function(s){return String(s.get()||"").trim()===want;})||slots.find(function(s){return want.length>=4&&String(s.get()||"").indexOf(want)>=0;});
+  var req=kind==="recipes"?"name":"situation";
+  if(!labeled&&(!hit||hit.key===req))return null;
+  var fname=labeled?segs.slice(2).join(" · "):"선택한 입력칸";
+  if(!hit)return {ok:false,msg:"삭제할 입력칸(「"+fname+"」)을 현재 항목에서 찾지 못함. 항목은 삭제하지 않음. 수동 확인"};
+  if(hit.key===req)return {ok:false,msg:"「"+fname+"」는 필수 항목이라 비울 수 없음. 항목은 삭제하지 않음. 항목 통삭제 제안이 아니면 반려"};
+  var m=hit.key.match(/^(ingredients|steps|lines)\.(\d+)$/);
+  if(m){
+    var arr=it[m[1]],idx=Number(m[2]);
+    if(m[1]==="lines"&&arr.length<=1)return {ok:false,msg:"마지막 멘트 줄은 비울 수 없음. 항목은 삭제하지 않음. 항목 통삭제 제안이 아니면 반려"};
+    return {ok:true,name:fname,run:function(){arr.splice(idx,1);}};
+  }
+  return {ok:true,name:fname,run:function(){hit.set("");}};
+}
 function applyProposal(p){
   if(p.kind==="checklist")return applyChecklist(p);
   var kind=p.kind;if(!C[kind])return;
@@ -1093,7 +1111,14 @@ function applyProposal(p){
     if(!f){S.notice={cls:"warn",text:"대상 항목을 찾지 못함. 수동 반영",list:["대상: "+(p.targetLabel||p.targetId||"(없음)"),"제안: "+(p.proposed||"(삭제 제안)")]};c.open=null;render();window.scrollTo(0,0);return;}
     var q=Object.assign({},p);c.apply[p.id]=q;
     if(kind==="recipes")c.group=f.g.key;
-    if(p.type==="delete"){cDelete(kind,f.g,f.it);c.open=null;c.hl=f.it.id;render();window.scrollTo(0,0);return;}
+    if(p.type==="delete"){
+      var fd=fieldDelete(kind,f.it,p);
+      if(!fd){cDelete(kind,f.g,f.it);c.open=null;c.hl=f.it.id;render();window.scrollTo(0,0);return;}
+      c.open=f.it.id;c.hl=null;
+      if(fd.ok){fd.run();S.notice={cls:"ok",text:"「"+fd.name+"」만 비움. 항목은 그대로. 변경 확인 후 발행",list:[]};}
+      else{q.note=fd.msg;S.notice={cls:"warn",text:fd.msg,list:["대상: "+(p.targetLabel||p.targetId)]};}
+      render();window.scrollTo(0,0);return;
+    }
     c.open=f.it.id;c.hl=null;
     if(p.type==="edit"){
       var want=(p.current||"").trim(),slots=slotsOf(kind,f.it),hit=null;
