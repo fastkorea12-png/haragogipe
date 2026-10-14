@@ -20,7 +20,7 @@ form{display:flex;gap:8px;margin-top:auto;padding:14px 0;background:var(--paper)
 
 /* 로고와 독립 화면 */
 :root{--wine:#8D241C;--me:#8D241C}
-.brand{display:flex;align-items:center;gap:14px}.brand-logo{display:block;width:auto;height:40px;object-fit:contain}.home-logo{display:block;margin:0 auto 24px;height:28px;width:auto;opacity:.85}.brand-subtitle{font-size:12px!important;color:var(--wine);border-left:1px solid var(--rule);padding-left:14px}
+#brandLogo{touch-action:manipulation;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;outline:none}.brand{display:flex;align-items:center;gap:14px}.brand-logo{display:block;width:auto;height:40px;object-fit:contain}.home-logo{display:block;margin:0 auto 24px;height:28px;width:auto;opacity:.85}.brand-subtitle{font-size:12px!important;color:var(--wine);border-left:1px solid var(--rule);padding-left:14px}
 /* 독립 화면과 상단 검색 */
 html{overflow-anchor:none}
 .tab-icon{font-size:20px;line-height:1.2}
@@ -107,7 +107,7 @@ html{overflow-anchor:none}
 @media(min-width:851px){.edit-root{max-width:900px}}
 </style></head>
 <body><div id="app">
-<header><div class="brand"><img class="brand-logo" src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페"><p class="brand-subtitle">근무노트</p></div><div class="header-actions"><button class="home-button" id="reqGo" type="button">수정 요청<span class="count" id="reqCount" hidden></span></button><button class="home-button" id="homeGo" type="button">홈</button></div></header>
+<header><div class="brand"><img class="brand-logo" id="brandLogo" src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페" draggable="false"><p class="brand-subtitle">근무노트</p></div><div class="header-actions"><button class="home-button" id="reqGo" type="button">수정 요청<span class="count" id="reqCount" hidden></span></button><button class="home-button" id="homeGo" type="button">홈</button></div></header>
 <div class="workspace"><aside class="sidebar"><p class="eyebrow">근무노트</p><nav id="departments" aria-label="업무 선택"></nav><p class="sidebar-note">매장 매뉴얼·메뉴판 기준 안내.<br>[확인] 항목은 관리자 확인 필요.</p></aside>
 <main class="main-panel">
 <form id="f" role="search"><input id="q" aria-label="매장 업무 검색" placeholder="업무·레시피·와인 검색" autocomplete="off"><button type="submit">검색</button></form>
@@ -1036,6 +1036,8 @@ if(typeof document!=="undefined"){
  document.getElementById('tasteGo').after(button('취향 선택 초기화',function(){document.querySelectorAll('#taste .segmented').forEach(function(g){g.querySelectorAll('button')[1].click();});document.querySelectorAll('#taste .filter-pills').forEach(function(g){g.querySelector('button').click();});document.getElementById('wineResults').replaceChildren();},'filter-reset'));
  document.getElementById('f').onsubmit=function(ev){ev.preventDefault();var input=document.getElementById('q');if(ask(input.value))input.value='';};
  document.getElementById('homeGo').onclick=function(){showTab('home');};
+ (function(){var n=0,t0=0,tl=0,lg=document.getElementById('brandLogo');if(!lg)return;lg.addEventListener('contextmenu',function(e){e.preventDefault();});lg.addEventListener('dragstart',function(e){e.preventDefault();});
+  lg.addEventListener('click',function(){var now=Date.now();if(!n||now-tl>1000||now-t0>2500){n=0;t0=now;}n++;tl=now;if(n>=5){n=0;try{if(typeof persistDraft==='function')persistDraft();}catch(err){}location.href='admin/';}});})();
  setInterval(function(){if(workDay!==localWorkDate()){workDay=localWorkDate();if(activeTab==='checklist')renderChecklist();refreshHome();}},60000);
   document.getElementById('taste').open=true;
   initRequestUi();renderRecipes();renderPhrases();refreshHome();updateReqUi();showTab('home');
