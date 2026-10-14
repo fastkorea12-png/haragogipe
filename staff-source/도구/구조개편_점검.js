@@ -16,7 +16,7 @@ for(let day=0;day<7;day++){
  assert(body('마감 순서').includes('오전·오후 표기 없음 [확인]'));
  totals.push({day,open:open.length,close:close.length});
 }
-assert.equal((html.match(/\bfetch\(/g)||[]).length,2,'서버 호출은 발행 체크리스트 읽기·근무 제출 2곳뿐');assert((html.match(/fetch\(CL_BASE\+'\/api\/(checklist|shifts)'/g)||[]).length===2,'두 호출 모두 빌드에 심은 서버 주소(CL_BASE) 사용');assert(html.includes('/api/checklist'));
+assert.equal((html.match(/\bfetch\(/g)||[]).length,3,'서버 호출은 발행 체크리스트 읽기·근무 제출·웹 검색 3곳뿐');assert((html.match(/fetch\(CL_BASE\+'\/api\/(checklist|shifts|chat)'/g)||[]).length===3,'세 호출 모두 빌드에 심은 서버 주소(CL_BASE) 사용');assert(html.includes('/api/checklist'));
 assert(!/fonts\.googleapis\.com|docs\.google\.com\/forms/.test(html));
 assert(ctx.PHRASES.some(p=>/^5-7\b/.test(p.title)));
 (async()=>{

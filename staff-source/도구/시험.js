@@ -194,5 +194,5 @@ ${recipeRows.map((x,i)=>`| ${i+1} | ${x.q} | ${x.pass?'통과':'실패'} | ${x.a
 fs.writeFileSync(path.join(root,'시험질문.md'),md);
 console.log(md);
 
-const localSearchTest=(template.match(/fetch\(/g)||[]).length===2&&template.includes("fetch(CL_BASE+'/api/checklist'")&&template.includes("fetch(CL_BASE+'/api/shifts'")&&!template.includes('AI_ENDPOINT')&&template.includes('var a=answer(q)')&&['home','checklist','recipes','wine','phrases'].every(id=>template.includes('id="screen-'+id+'"'));
+const localSearchTest=(template.match(/\bfetch\(/g)||[]).length===3&&template.includes("fetch(CL_BASE+'/api/checklist'")&&template.includes("fetch(CL_BASE+'/api/shifts'")&&template.includes("fetch(CL_BASE+'/api/chat'")&&!template.includes('AI_ENDPOINT')&&template.includes('var a=answer(q)')&&['home','checklist','recipes','wine','phrases'].every(id=>template.includes('id="screen-'+id+'"'));
 if(bad||winePass!==10||opsPass!==10||recipePass!==10||!integrity||!menuPitchTest||!levelTest||!kindTest||!selectedFoodTest||!rotationTest||!localSearchTest)process.exitCode=1;
