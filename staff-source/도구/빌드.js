@@ -54,6 +54,7 @@ for(const name of photoNames){
 }
 const logo=require('./로고_축소.js')(fs.readFileSync(path.join(kdir,'로고.png')));
 const adminChecklist=require('./체크리스트_추출.js')(kb);
+const adminContent=require('./콘텐츠_추출.js')();
 const adminBase=(()=>{try{return new URL(process.env.HARAGO_AI_ENDPOINT).origin;}catch{return 'https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev';}})();
 const built=tpl.replace('/*LOGO_URL*/',logo.header).replace('/*LOGO_URL2*/',logo.header).replace('/*FAVICON_URL*/',logo.favicon).replace('/*KB_JSON*/[]',safe(kb)).replace('/*WINE_JSON*/[]',safe(wines)).replace('/*FOOD_JSON*/[]',safe(foods)).replace('/*WINE_MENU_JSON*/[]',safe(wineMenu)).replace('/*VERSION_JSON*/{}',safe({sourceHash})).replace('/*PHRASES_JSON*/[]',safe(phrases)).replace('/*PHOTOS_JSON*/{}',safe(recipePhotos)).replace('/*CHECKLIST_API_BASE*/""',()=>safe(adminBase)).replace('/*BUILTIN_CL_JSON*/{}',()=>safe(adminChecklist));
 fs.writeFileSync(path.join(root,'근무노트.html'),built);
@@ -61,5 +62,5 @@ console.log('항목',kb.length,'개 내장 / 응대 멘트',phrases.length,'개 
 
 // 어드민 페이지(근무노트와 별개 산출물): 현재 내장 체크리스트를 시작값으로 심는다.
 const adminTpl=fs.readFileSync(path.join(__dirname,'어드민.html'),'utf8');
-fs.writeFileSync(path.join(root,'어드민.html'),adminTpl.replace('/*LOGO_URL*/',logo.header).replace('/*FAVICON_URL*/',logo.favicon).replace('/*ADMIN_API_BASE*/""',safe(adminBase)).replace('/*CHECKLIST_JSON*/{}',()=>safe(adminChecklist)));
+fs.writeFileSync(path.join(root,'어드민.html'),adminTpl.replace('/*LOGO_URL*/',logo.header).replace('/*FAVICON_URL*/',logo.favicon).replace('/*ADMIN_API_BASE*/""',safe(adminBase)).replace('/*CHECKLIST_JSON*/{}',()=>safe(adminChecklist)).replace('/*CONTENT_JSON*/{}',()=>safe(adminContent)));
 console.log('어드민.html 생성 / 서버 주소',adminBase);
