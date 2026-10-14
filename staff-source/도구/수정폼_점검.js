@@ -1,7 +1,8 @@
-// 수정 요청 폼 시나리오 점검: 항목에서 열기 -> 입력 -> 저장 -> 목록 -> 복사 형식 -> 삭제, 저장소 불가 대체 동작, 레이아웃
+// 수정 제안 폼 시나리오 점검: 항목에서 열기 -> 입력 -> 저장 -> 목록 -> 복사 형식 -> 삭제, 저장소 불가 대체 동작, 레이아웃
 const fs=require('fs'),path=require('path'),os=require('os'),assert=require('assert/strict');
 const {chromium}=require(process.env.HARAGO_PLAYWRIGHT||'playwright');
 const CL_URL='https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev/api/checklist';// 근무노트가 읽는 공개 발행본 주소(이 점검에서는 미발행으로 모의)
+const H=require('./_점검공통.js');
 const root=path.join(__dirname,'..'),file='file://'+path.join(root,'근무노트.html'),shot=n=>path.join(os.tmpdir(),'근무노트_수정폼_'+n+'.png');
 const layout=async(page,id)=>{const l=await page.evaluate(()=>{window.scrollTo(0,document.documentElement.scrollHeight);const s=document.querySelector('.screen:not([hidden])');return {sw:document.documentElement.scrollWidth,w:innerWidth,b:s.getBoundingClientRect().bottom,n:document.querySelector('.sidebar').getBoundingClientRect().top};});assert(l.sw<=l.w,id+' 가로 넘침');if(l.w<=850)assert(l.b<=l.n+1,id+' 하단 탭 가림');await page.evaluate(()=>window.scrollTo(0,0));};
 (async()=>{
@@ -9,7 +10,7 @@ const layout=async(page,id)=>{const l=await page.evaluate(()=>{window.scrollTo(0
  try{
   const ctx=await browser.newContext({viewport:{width:500,height:900},timezoneId:'Asia/Seoul',acceptDownloads:true});
   const page=await ctx.newPage(),errors=[],external=[];
-  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url())&&r.url()!==CL_URL)external.push(r.url());});await page.route(CL_URL,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"published":false}'}));
+  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url())&&!H.ALLOWED.includes(r.url()))external.push(r.url());});await H.stub(page);
   await page.addInitScript(()=>{Object.defineProperty(navigator,'clipboard',{value:{writeText:async t=>{window.copiedText=t;}}});});
   await page.goto(file);
   // 1 체크리스트 행에서 열기
@@ -54,10 +55,10 @@ const layout=async(page,id)=>{const l=await page.evaluate(()=>{window.scrollTo(0
   assert.equal(await page.locator('.req-item').count(),3);
   await layout(page,'requests');await page.screenshot({path:shot('c_requests_500')});
   await page.locator('#reqCopy').click();const copied=await page.evaluate(()=>window.copiedText);
-  assert(copied.startsWith('# 근무노트 수정 요청'));assert(/- 생성일: \d{4}-\d{2}-\d{2}/.test(copied));assert(/- 앱 자료 버전: \w{10}/.test(copied));assert(copied.includes('- 요청 건수: 3건'));
-  for(const k of ['- 대상 파일: 지식/09_운영_매뉴얼.md','- 섹션: 오픈 순서 > ','번째 항목','- 현재 문구: '+rowText,'- 요청 종류: 문구 수정','- 수정 문구: '+rowText+' (시험 수정)','- 메모: 시험 메모','- 작성 시각: ','- 작성자 표시: 시험별명','대상 파일: 지식/12_칵테일_레시피.md','(삭제 요청)','지식/13_손님_응대_멘트.md','- 요청 종류: 항목 추가'])assert(copied.includes(k),'복사 형식 누락: '+k);
+  assert(copied.startsWith('# 근무노트 수정 제안'));assert(/- 생성일: \d{4}-\d{2}-\d{2}/.test(copied));assert(/- 앱 자료 버전: \w{10}/.test(copied));assert(copied.includes('- 제안 건수: 3건'));
+  for(const k of ['- 대상 파일: 지식/09_운영_매뉴얼.md','- 섹션: 오픈 순서 > ','번째 항목','- 현재 문구: '+rowText,'- 제안 종류: 문구 수정','- 수정 문구: '+rowText+' (시험 수정)','- 메모: 시험 메모','- 작성 시각: ','- 작성자 표시: 시험별명','대상 파일: 지식/12_칵테일_레시피.md','(삭제 요청)','지식/13_손님_응대_멘트.md','- 제안 종류: 항목 추가'])assert(copied.includes(k),'복사 형식 누락: '+k);
   assert((await page.locator('#reqMsg').innerText()).includes('복사 완료'));
-  const [dl]=await Promise.all([page.waitForEvent('download'),page.locator('#reqDownload').click()]);assert(/^근무노트_수정요청_\d{4}-\d{2}-\d{2}\.md$/.test(dl.suggestedFilename()));
+  const [dl]=await Promise.all([page.waitForEvent('download'),page.locator('#reqDownload').click()]);assert(/^근무노트_수정제안_\d{4}-\d{2}-\d{2}\.md$/.test(dl.suggestedFilename()));
   assert.equal(fs.readFileSync(await dl.path(),'utf8'),copied,'파일 내용 = 복사 내용');
   // 새로고침 후 유지, 체크 키와 분리
   await page.reload();assert.equal(await page.locator('#reqCount').innerText(),'3');
@@ -66,13 +67,13 @@ const layout=async(page,id)=>{const l=await page.evaluate(()=>{window.scrollTo(0
   await page.locator('#reqGo').click();await page.locator('.req-item').first().getByRole('button',{name:'편집'}).click();
   await page.locator('#editMemo').fill('편집됨');await page.locator('#editSave').click();assert((await page.locator('.req-item').first().innerText()).includes('편집됨'));
   const del=page.locator('.req-item').first().getByRole('button',{name:'삭제'});await del.click();assert.equal(await page.locator('.req-item').count(),3,'첫 클릭은 확인만');
-  await page.locator('.req-item').first().locator('.req-actions button').nth(1).click();assert.equal(await page.locator('.req-item').count(),2);
+  await page.locator('.req-item').first().getByRole('button',{name:/한 번 더 눌러 삭제/}).click();assert.equal(await page.locator('.req-item').count(),2);
   assert.equal(await page.locator('#reqCount').innerText(),'2');
   await page.locator('#reqClear').click();await page.locator('#reqClear').click();assert.equal(await page.locator('.req-empty').count(),1);
   // 홈 카드
-  await page.locator('[data-tab="home"]').click();assert(await page.locator('#homeCards .home-card',{hasText:'수정 요청 모아보기'}).isVisible());await layout(page,'home');
+  await page.locator('[data-tab="home"]').click();assert(await page.locator('#homeCards .home-card',{hasText:'내 수정 제안'}).isVisible());await layout(page,'home');
   // 5 저장소 불가
-  const ctx2=await browser.newContext({viewport:{width:500,height:900},timezoneId:'Asia/Seoul'});const p2=await ctx2.newPage();
+  const ctx2=await browser.newContext({viewport:{width:500,height:900},timezoneId:'Asia/Seoul'});const p2=await ctx2.newPage();await H.stub(p2);
   await p2.addInitScript(()=>{Object.defineProperty(window,'localStorage',{get(){throw new Error('denied');}});});
   await p2.goto(file);await p2.locator('[data-tab="recipes"]').click();await p2.locator('[data-recipe-kind="칵테일"]').click();await p2.locator('.recipe-field .edit-btn').first().click();
   await p2.locator('#editText').fill('메모리 시험');await p2.locator('#editSave').click();await p2.locator('#reqGo').click();

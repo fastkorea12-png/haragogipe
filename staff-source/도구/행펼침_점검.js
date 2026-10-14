@@ -2,6 +2,7 @@
 const path=require('path'),os=require('os'),assert=require('assert/strict');
 const {chromium}=require(process.env.HARAGO_PLAYWRIGHT||'playwright');
 const CL_URL='https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev/api/checklist';
+const H=require('./_점검공통.js');
 const file='file://'+path.join(__dirname,'..','근무노트.html'),shot=n=>path.join(os.tmpdir(),'근무노트_행펼침_'+n+'.png');
 const NEXT='xpath=following-sibling::*[1]';
 (async()=>{
@@ -10,7 +11,7 @@ const NEXT='xpath=following-sibling::*[1]';
  for(const [name,vp,touch] of [['모바일 390',{width:390,height:844},true],['모바일 500',{width:500,height:900},true],['데스크톱 1280',{width:1280,height:900},false]]){
   const ctx=await browser.newContext({viewport:vp,hasTouch:touch,timezoneId:'Asia/Seoul'});const page=await ctx.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(e.message));
-  await page.route(CL_URL,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"published":false}'}));
+  await H.stub(page);
   await page.addInitScript(()=>{const k='*{overflow-anchor:none!important}';document.addEventListener('DOMContentLoaded',()=>{const s=document.createElement('style');s.textContent=k;document.head.append(s);});});
   await page.goto(file);await page.locator('[data-tab="checklist"]').first().click();await page.waitForSelector('#checkContent .row-main');
   const items=page.locator('#checkContent .info-item'),main=i=>items.nth(i).locator('.row-main'),panel=i=>items.nth(i).locator(NEXT),cbox=i=>items.nth(i).locator('input'),
@@ -48,9 +49,9 @@ const NEXT='xpath=following-sibling::*[1]';
    await page.screenshot({path:shot(name.replace(/ /g,'_')+'_na')});
    await tap(sk);assert.equal((await sk.innerText()).trim(),'해당 없음');assert.equal(await items.nth(3).locator('.na-tag').isVisible(),false);assert.equal(await cbox(3).isDisabled(),false);assert.match(await prog(),/해당 없음 0/);
   });
-  await step(name+' 수정 요청 버튼 → 폼, 대상 정확', async()=>{
-   const label=(await items.nth(6).locator('.task-label').innerText()).replace('•','').replace('수정 요청 있음','').trim();await tap(main(6));const eb=panel(6).locator('.edit-btn');
-   const bb=await eb.boundingBox();assert(bb.height>=44,'수정 요청 버튼 높이');assert(await eb.evaluate(n=>parseFloat(getComputedStyle(n).fontSize)>=16),'글자 16px');assert.equal((await eb.innerText()).trim(),'수정 요청');
+  await step(name+' 수정 제안 버튼 → 폼, 대상 정확', async()=>{
+   const label=(await items.nth(6).locator('.task-label').innerText()).replace('•','').replace('수정 제안 있음','').trim();await tap(main(6));const eb=panel(6).locator('.edit-btn');
+   const bb=await eb.boundingBox();assert(bb.height>=44,'수정 제안 버튼 높이');assert(await eb.evaluate(n=>parseFloat(getComputedStyle(n).fontSize)>=16),'글자 16px');assert.equal((await eb.innerText()).trim(),'수정 제안');
    await tap(eb);assert(await page.locator('#editDialog').evaluate(d=>d.open));assert.equal((await page.locator('#editCurrent').innerText()).trim(),label);assert.match(await page.locator('#editTarget').innerText(),/체크리스트 · 오픈 순서 · .+ · 7번째|체크리스트 · 오픈 순서 · .+ · \d+번째 항목/);
    await page.keyboard.press('Escape');assert(!(await page.locator('#editDialog').evaluate(d=>d.open)));
   });

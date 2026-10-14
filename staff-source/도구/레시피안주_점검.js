@@ -2,6 +2,7 @@
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
 const {chromium}=require(process.env.HARAGO_PLAYWRIGHT||'playwright');
 const CL_URL='https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev/api/checklist';
+const H=require('./_점검공통.js');
 const root=path.join(__dirname,'..'),html=fs.readFileSync(path.join(root,'근무노트.html'),'utf8');
 const shotDir=process.env.HARAGO_SHOTS||'/private/tmp/harago-1014-shots';fs.mkdirSync(shotDir,{recursive:true});
 const doc=fs.readFileSync(path.join(root,'지식','10_안주_가이드.md'),'utf8');
@@ -15,7 +16,7 @@ const key=s=>s.replace(/[\s&·]/g,'');
    const context=await browser.newContext({viewport:vp,timezoneId:'Asia/Seoul'});
    const page=await context.newPage(),errors=[];
    page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&!/ERR_|Failed to load/.test(m.text()))errors.push(m.text());});
-   await page.route(CL_URL,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"published":false}'}));
+   await H.stub(page);
    await page.goto('file://'+path.join(root,'근무노트.html'));
    await page.locator('[data-tab="recipes"]').click();
    // 기본은 안주

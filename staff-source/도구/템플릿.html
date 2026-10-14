@@ -119,15 +119,25 @@ html{overflow-anchor:none}
 @media(min-width:851px){.edit-root{max-width:900px}}
 .check-lhs{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;min-width:0}.pub-mark{font-size:11px;color:#8A7F76;white-space:nowrap}.confirm-mark{display:inline-block;margin-left:6px;padding:0 6px;border-radius:8px;background:#FCF2D9;border:1px solid #DEC891;color:#7A5A12;font-size:10px;line-height:16px;font-weight:600;white-space:nowrap;text-decoration:none}.check-row span.confirm-mark{flex:none}.b-oc{background:#FCF2D9;color:#7A5A12;border:1px solid #DEC891}
 .web-badge{display:inline-block;align-self:flex-start;padding:3px 10px;border-radius:8px;background:#FCF2D9;border:1px solid #DEC891;color:#7A5A12;font-size:12px;font-weight:700}.web-sources{margin-top:10px;font-size:13px}.web-sources strong{display:block;color:var(--wine);margin-bottom:6px}.web-source-list{margin:0;padding-left:18px;display:grid;gap:6px;overflow-wrap:anywhere}.web-source-list a{color:var(--wine);text-decoration:underline;text-underline-offset:3px}.web-sources~.src{margin-top:8px}
+/* 10/14 발행 콘텐츠·수정 제안 전송·웹 답변 */
+.photo-box{position:relative;width:100%;aspect-ratio:16/9;max-height:280px;background:var(--soft);overflow:hidden;border-radius:10px;margin:12px 0 0}.photo-box img{position:absolute;inset:0;width:100%;height:100%;max-height:none;margin:0;border-radius:0;object-fit:cover}.recipe-card>.photo-box{margin:0;border-radius:0}
+.recipe-field.recipe-list{padding-right:0}.recipe-field .food-steps li:last-child{border-bottom:0}
+.phrase-staff{position:relative;margin:10px 0;padding:10px 56px 10px 12px;border-left:3px solid #B9AE9F;background:var(--paper);border-radius:0 8px 8px 0;font-size:14px;line-height:1.6;overflow-wrap:anywhere}.phrase-staff>strong{display:block;font-size:12px;color:var(--muted);margin-bottom:2px}.phrase-staff>.edit-btn{position:absolute;right:0;top:4px;padding:0 6px}.phrase-staff.confirm{background:#FCF2D9;border-left-color:#DEC891}
+#phraseCards .phrase-speech{margin-top:12px}
+.req-state{margin:0 0 8px;padding:3px 10px;display:inline-block;border-radius:8px;background:var(--soft);font-size:12px;font-weight:700;color:var(--muted);line-height:1.6;overflow-wrap:anywhere}.req-state.ok{background:#DDEBD9;color:#2D5A27}.req-state.warn{background:#FCF2D9;color:#7A5A12}.req-state.err{background:#F3D9D6;color:#7A1F18}
+.req-item .req-actions button.req-resend{border-color:var(--wine);background:var(--wine);color:white}.req-item .req-actions button:disabled{opacity:.55}
+.send-toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom));z-index:30;max-width:min(92vw,520px);margin:0;padding:10px 16px;border-radius:12px;background:#2B211B;color:white;font-size:14px;line-height:1.5;pointer-events:none;word-break:keep-all;overflow-wrap:anywhere;box-shadow:0 6px 18px #0004}.send-toast[hidden]{display:none}
+@media(min-width:851px){.send-toast{bottom:24px}}
+.web-body{position:relative;display:block;font-size:16px;line-height:1.75;overflow-wrap:anywhere}.web-body p{margin:0 0 6px}.web-body ul{margin:0 0 6px;padding-left:20px;display:grid;gap:4px}.web-body li.sub{margin-left:16px;list-style:circle}.web-body strong{font-weight:700;color:var(--wine)}.web-body.clamped{max-height:7em;overflow:hidden}.web-body.clamped.soft{-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}#log .info-heading{margin:6px 0}.web-badge{margin:2px 0 8px}.search-tools{flex-wrap:wrap}.search-tools button{white-space:nowrap;padding:0 14px}.search-tools h2{flex:1 1 200px;min-width:0}.web-more{display:block;margin:6px 0 0;border:1px solid #D9C9B5;border-radius:8px;background:white;color:var(--wine);padding:0 14px;font-size:14px}
 </style></head>
 <body><div id="app">
-<header><div class="brand"><img class="brand-logo" id="brandLogo" src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페" draggable="false"><p class="brand-subtitle">근무노트</p></div><div class="header-actions"><button class="home-button" id="reqGo" type="button">수정 요청<span class="count" id="reqCount" hidden></span></button><button class="home-button" id="homeGo" type="button">홈</button></div></header>
+<header><div class="brand"><img class="brand-logo" id="brandLogo" src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페" draggable="false"><p class="brand-subtitle">근무노트</p></div><div class="header-actions"><button class="home-button" id="reqGo" type="button">수정 제안<span class="count" id="reqCount" hidden></span></button><button class="home-button" id="homeGo" type="button">홈</button></div></header>
 <div class="workspace"><aside class="sidebar"><p class="eyebrow">근무노트</p><nav id="departments" aria-label="업무 선택"></nav><p class="sidebar-note">매장 매뉴얼·메뉴판 기준 안내.<br>[확인] 항목은 관리자 확인 필요.</p></aside>
 <main class="main-panel">
 <form id="f" role="search"><input id="q" maxlength="200" aria-label="매장 업무 검색" placeholder="업무·레시피·와인 검색" autocomplete="off"><button type="submit">검색</button></form>
 <section id="log" aria-live="polite" aria-label="검색 결과" hidden></section>
 <section id="screen-home" class="screen"><h2>필요한 업무 찾기</h2><p>자주 찾는 안내를 한눈에.</p><div class="home-grid" id="homeCards"></div><div class="progress-card"><h3>오늘의 체크리스트</h3><div class="check-summary" id="todayProgress"></div></div><p class="home-footer">체크는 오늘 날짜 기준으로 이 기기에 저장함.</p><img class="home-logo" src="/*LOGO_URL2*/" alt="" width="122" height="40"></section>
-<section id="screen-checklist" class="screen" hidden><h2>체크리스트</h2><p>항목별 확인. 격주 작업은 해당일에 ‘해당 없음’ 취소. 문구를 누르면 해당 없음·수정 요청.</p><div class="switcher"><button type="button" data-check-kind="오픈 순서">오픈</button><button type="button" data-check-kind="마감 순서">마감</button><button type="button" id="editEnter" class="edit-enter">편집</button></div><div id="applyStrip" class="apply-strip" hidden><span>초안 미리 적용 중 — 원본 아님, 이 기기에서만 보임</span><button type="button" id="applyOff">끄기</button></div><div id="checkContent" class="task-list"></div><div id="editRoot" class="edit-root" hidden></div></section>
+<section id="screen-checklist" class="screen" hidden><h2>체크리스트</h2><p>항목별 확인. 격주 작업은 해당일에 ‘해당 없음’ 취소. 문구를 누르면 해당 없음·수정 제안.</p><div class="switcher"><button type="button" data-check-kind="오픈 순서">오픈</button><button type="button" data-check-kind="마감 순서">마감</button><button type="button" id="editEnter" class="edit-enter">편집</button></div><div id="applyStrip" class="apply-strip" hidden><span>초안 미리 적용 중 — 원본 아님, 이 기기에서만 보임</span><button type="button" id="applyOff">끄기</button></div><div id="checkContent" class="task-list"></div><div id="editRoot" class="edit-root" hidden></div></section>
 <section id="screen-recipes" class="screen" hidden><h2>레시피</h2><p id="recipeIntro">매장 안주 만드는 법. 이름을 누르면 펼침.</p><div class="switcher recipe-kind" role="group" aria-label="레시피 구분"><button type="button" data-recipe-kind="안주" aria-pressed="true">안주</button><button type="button" data-recipe-kind="칵테일" aria-pressed="false">칵테일</button></div><div id="foodTools" class="food-tools"><input id="foodFilter" type="search" aria-label="안주 이름 찾기" placeholder="안주 이름 찾기" autocomplete="off"></div><div id="recipeCards" class="recipe-grid" hidden></div><div id="foodCards" class="food-list"></div></section>
 <section id="screen-wine" class="screen" hidden><h2>와인</h2><p>손님 취향·안주에 맞춰 선택.</p><details id="taste">
 <summary>와인 취향 &amp; 안주 페어링</summary><p class="taste-help">취향 3단계 선택. 와인 맛은 5칸 막대로 비교.</p>
@@ -146,9 +156,9 @@ html{overflow-anchor:none}
 <button id="tasteGo" type="button">이 취향으로 와인 추천</button>
 </details><div id="wineResults"></div></section>
 <section id="screen-phrases" class="screen" hidden><h2>응대 멘트</h2><p>상황별 안내 문장 확인·복사. [확인]과 이벤트 시작 조건 먼저 확인할 것.</p><div id="phraseCards"></div></section>
-<section id="screen-requests" class="screen" hidden><h2>수정 요청 모아보기</h2><p>이 기기에만 저장됨. 서버 전송 없음. 복사하거나 파일로 내려받아 팀장에게 전달할 것.</p><div class="req-tools"><button type="button" id="reqCopy" class="primary">전체 복사</button><button type="button" id="reqDownload">.md 내려받기</button><button type="button" id="reqClear">전체 비우기</button></div><p class="edit-msg" id="reqMsg" role="status"></p><p class="edit-msg warn" id="reqStorage" hidden>이 기기에서 저장소를 쓸 수 없음. 이 화면을 닫으면 요청이 사라지니 먼저 복사할 것.</p><div id="reqList" class="req-list"></div></section>
+<section id="screen-requests" class="screen" hidden><h2>내 수정 제안</h2><p id="reqIntro">직원은 제안만 가능. 매니저 확인 후 반영. 이 기기에 저장되고, 서버로 전송됨.</p><div class="req-tools"><button type="button" id="reqCopy" class="primary">전체 복사</button><button type="button" id="reqDownload">.md 내려받기</button><button type="button" id="reqResend" hidden>미전송 다시 보내기</button><button type="button" id="reqClear">전체 비우기</button></div><p class="edit-msg" id="reqMsg" role="status"></p><p class="edit-msg warn" id="reqStorage" hidden>이 기기에서 저장소를 쓸 수 없음. 이 화면을 닫으면 제안이 사라지니 먼저 복사할 것.</p><div id="reqList" class="req-list"></div></section>
 </main></div></div>
-<dialog id="editDialog" class="edit-dialog" aria-labelledby="editTitle"><div class="edit-head"><h2 id="editTitle">수정 요청</h2><button type="button" id="editClose">닫기</button></div><div class="edit-body"><p class="edit-note">고칠 내용을 적어 저장하면 이 기기에 쌓임. 지식 문서는 팀장이 반영함.</p><div class="edit-field"><span class="edit-label">대상</span><div class="edit-ro" id="editTarget"></div></div><div class="edit-field"><span class="edit-label">현재 문구</span><div class="edit-ro" id="editCurrent"></div></div><div class="edit-field"><span class="edit-label" id="editKindLabel">요청 종류</span><div class="edit-kinds" id="editKinds" role="group" aria-labelledby="editKindLabel"></div></div><div class="edit-field" id="editTextField"><label class="edit-label" for="editText" id="editTextLabel">수정할 문구</label><textarea id="editText" rows="4"></textarea></div><div class="edit-field"><label class="edit-label" for="editMemo">이유·메모 (선택)</label><textarea id="editMemo" rows="2"></textarea></div><div class="edit-field"><label class="edit-label" for="editNick">작성자 표시 (선택)</label><input id="editNick" maxlength="20" autocomplete="off"><small>별명만 입력. 실명·연락처 입력 금지.</small></div><p class="edit-msg" id="editError" role="alert"></p><p class="edit-msg warn" id="editStorage" hidden>이 기기에서 저장소를 쓸 수 없음. 이 화면을 닫으면 요청이 사라지니 먼저 복사할 것.</p></div><div class="edit-actions"><button type="button" class="primary" id="editSave">저장</button><button type="button" id="editCancel">닫기</button></div></dialog><dialog id="submitDialog" class="edit-dialog" aria-labelledby="subTitle"><div class="edit-head"><h2 id="subTitle">제출 확인</h2><button type="button" id="subClose">닫기</button></div><div class="edit-body"><p class="edit-note">이름·연락처 없이 근무일과 체크 상태만 저장.</p><div class="edit-field"><label class="edit-label" for="subDate">근무일</label><input id="subDate" type="date"><small>자정 이후 마감은 영업 시작일 선택.</small></div><div class="edit-field"><span class="edit-label">요약</span><div class="sub-sum" id="subSum"></div></div><div class="edit-field" id="subMissWrap"><span class="edit-label" id="subMissLabel">미완료 항목</span><ul class="sub-miss" id="subMiss" aria-labelledby="subMissLabel"></ul></div><p class="edit-msg" id="subMsg" role="status" aria-live="polite"></p></div><div class="edit-actions"><button type="button" class="primary" id="subSend">제출</button><button type="button" id="subBack">체크 수정하기</button></div></dialog><script>
+<dialog id="editDialog" class="edit-dialog" aria-labelledby="editTitle"><div class="edit-head"><h2 id="editTitle">수정 제안</h2><button type="button" id="editClose">닫기</button></div><div class="edit-body"><p class="edit-note" id="editNote">직원은 제안만 가능. 매니저 확인 후 반영.</p><div class="edit-field"><span class="edit-label">대상</span><div class="edit-ro" id="editTarget"></div></div><div class="edit-field"><span class="edit-label">현재 문구</span><div class="edit-ro" id="editCurrent"></div></div><div class="edit-field"><span class="edit-label" id="editKindLabel">제안 종류</span><div class="edit-kinds" id="editKinds" role="group" aria-labelledby="editKindLabel"></div></div><div class="edit-field" id="editTextField"><label class="edit-label" for="editText" id="editTextLabel">수정할 문구</label><textarea id="editText" rows="4"></textarea></div><div class="edit-field"><label class="edit-label" for="editMemo">이유·메모 (선택)</label><textarea id="editMemo" rows="2"></textarea></div><div class="edit-field"><label class="edit-label" for="editNick">작성자 표시 (선택)</label><input id="editNick" maxlength="20" autocomplete="off"><small>별명만 입력. 실명·연락처 입력 금지.</small><small id="editServerNote"></small></div><p class="edit-msg" id="editError" role="alert"></p><p class="edit-msg warn" id="editStorage" hidden>이 기기에서 저장소를 쓸 수 없음. 이 화면을 닫으면 제안이 사라지니 먼저 복사할 것.</p></div><div class="edit-actions"><button type="button" class="primary" id="editSave">저장</button><button type="button" id="editCancel">닫기</button></div></dialog><dialog id="submitDialog" class="edit-dialog" aria-labelledby="subTitle"><div class="edit-head"><h2 id="subTitle">제출 확인</h2><button type="button" id="subClose">닫기</button></div><div class="edit-body"><p class="edit-note">이름·연락처 없이 근무일과 체크 상태만 저장.</p><div class="edit-field"><label class="edit-label" for="subDate">근무일</label><input id="subDate" type="date"><small>자정 이후 마감은 영업 시작일 선택.</small></div><div class="edit-field"><span class="edit-label">요약</span><div class="sub-sum" id="subSum"></div></div><div class="edit-field" id="subMissWrap"><span class="edit-label" id="subMissLabel">미완료 항목</span><ul class="sub-miss" id="subMiss" aria-labelledby="subMissLabel"></ul></div><p class="edit-msg" id="subMsg" role="status" aria-live="polite"></p></div><div class="edit-actions"><button type="button" class="primary" id="subSend">제출</button><button type="button" id="subBack">체크 수정하기</button></div></dialog><p id="sendToast" class="send-toast" role="status" aria-live="polite" hidden></p><script>
 var KB = /*KB_JSON*/[];
 var WINE_DATA = /*WINE_JSON*/[];
 var FOOD_DATA = /*FOOD_JSON*/[];
@@ -156,6 +166,7 @@ var WINE_MENU_DATA = /*WINE_MENU_JSON*/[];
 var KB_VERSION = /*VERSION_JSON*/{};
 var CL_BASE = /*CHECKLIST_API_BASE*/"";
 var BUILTIN_CL = /*BUILTIN_CL_JSON*/{};
+var BUILTIN_CT = /*BUILTIN_CT_JSON*/{};
 var PUB = null, PUB_KEY = 'harago-published-checklist-v1';
 var PHRASES = /*PHRASES_JSON*/[];
 var RECIPE_PHOTOS = /*PHOTOS_JSON*/{};
@@ -855,62 +866,115 @@ if(typeof document!=="undefined"){
   entries.forEach(function(task){
    if(task.section){host.append(el('h3','task-group',task.text));return;}
    if(!task.task){host.append(el('p','check-help'+(/\[확인\]/.test(task.text)?' phrase-warning':''),task.text));return;}
-   var item=el('div','info-item'),row=el('div','check-row'),cb=el('label','check-cb'),input=el('input'),main=button('',null,'row-main'),text=el('span','task-label',task.text),tag=el('span','na-tag','해당 없음'),panel=el('div','row-panel'),tgt={tab:'checklist',file:'09_운영_매뉴얼',section:checkKind,sub:task.group,index:srcIdx[taskKey(task)]||0,unit:'항목',field:'',current:task.text,label:'체크리스트 · '+checkKind+' · '+task.group+' · '+(srcIdx[taskKey(task)]||'?')+'번째 항목'};if(task.confirm&&!/\[확인\]/.test(task.text))text.append(el('span','confirm-mark','[확인]'));
+   var item=el('div','info-item'),row=el('div','check-row'),cb=el('label','check-cb'),input=el('input'),main=button('',null,'row-main'),text=el('span','task-label',task.text),tag=el('span','na-tag','해당 없음'),panel=el('div','row-panel'),tgt={tab:'checklist',pkind:'checklist',targetId:task.id||clIdFor(checkKind,task.text),file:'09_운영_매뉴얼',section:checkKind,sub:task.group,index:srcIdx[taskKey(task)]||0,unit:'항목',field:'',current:task.text,label:'체크리스트 · '+checkKind+' · '+task.group+' · '+(srcIdx[taskKey(task)]||'?')+'번째 항목'};if(task.confirm&&!/\[확인\]/.test(task.text))text.append(el('span','confirm-mark','[확인]'));
    input.type='checkbox';input.setAttribute('aria-label',task.text);panel.id='rp'+(rowSeq++);panel.hidden=true;panel.setAttribute('role','group');panel.setAttribute('aria-label','항목 메뉴');main.setAttribute('aria-expanded','false');main.setAttribute('aria-controls',panel.id);main.onclick=function(){toggleRow(main,panel);};
-   if(!previewOn){var dot=el('span','req-dot','•');dot.dataset.tkey=targetKey(tgt);dot.title='수정 요청 있음';dot.hidden=!reqCountFor(tgt);text.append(dot);}
+   if(!previewOn){var dot=el('span','req-dot','•');dot.dataset.tkey=targetKey(tgt);dot.title='수정 제안 있음';dot.hidden=!reqCountFor(tgt);text.append(dot);}
    function sync(){input.checked=statusOf(task,state)===true;input.disabled=statusOf(task,state)==='na';item.classList.toggle('skip',input.disabled);tag.hidden=!input.disabled;skip.textContent=input.disabled?'해당 없음 취소':'해당 없음';}
    input.onchange=function(){if(localWorkDate()!==workDay){workDay=localWorkDate();renderChecklist();refreshHome();return;}state[taskKey(task)]=input.checked;update();save();};
    cb.append(input);main.append(text,tag);row.append(cb,main);item.append(row);
    var skip=button('해당 없음',function(){if(localWorkDate()!==workDay){workDay=localWorkDate();renderChecklist();refreshHome();return;}state[taskKey(task)]=statusOf(task,state)==='na'?false:'na';sync();update();save();},'skip-check');
-   panel.append(skip);if(!previewOn){panel.append(editButton(tgt,'수정 요청'),editMark(tgt));}host.append(item,panel);sync();
+   panel.append(skip);if(!previewOn){panel.append(editButton(tgt,'수정 제안'),editMark(tgt));}host.append(item,panel);sync();
   });update();appendSubmitBox(host,previewOn);
   document.querySelectorAll('[data-check-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.checkKind===checkKind));});
  }
 var recipeKind='안주',openFood='';
  function foodKey(n){return String(n).replace(/[\s&·]/g,'');}
- var FOOD_TOOLS=['전자레인지','오븐','토치','밧드','종이호일','피자 종이','머그컵','종지','작은 접시','흰 접시','앞접시','아이스크림 그릇','그릇','작은 잔','냅킨','접시','샐러드톱'];
- function foodCatalog(){
-  var secs=KB.filter(function(e){return e.file==='10_안주_가이드';}),ut={},price={},out=[];
-  var tools=secs.find(function(e){return e.title==='서빙 식기';}),list=secs.find(function(e){return e.title==='안주 목록과 가격';});
-  if(tools)tools.body.split('\n').forEach(function(l){var m=l.match(/^-\s*([^:]+):\s*(.+)$/);if(m)m[1].split(',').forEach(function(n){ut[foodKey(n)]=m[2].trim();});});
-  if(list){var pm=list.body.match(/([가-힣 ]+?)만 메뉴판에 ([\d,]+원)/);if(pm)price[foodKey(pm[1])]=pm[2];}
-  function make(name,text,entry){
-   var sentences=text.split(/\.\s*/).map(function(x){return x.trim();}).filter(Boolean).map(function(x){return x+'.';});
-   var steps=[],finish=[];sentences.forEach(function(t,i){var o={text:t,index:i+1};if(/마무리/.test(t)&&sentences.length>1)finish.push(o);else steps.push(o);});
-   var prep=[];FOOD_TOOLS.forEach(function(w){if(text.indexOf(w)>=0&&!prep.some(function(p){return p.indexOf(w)>=0;}))prep=prep.filter(function(p){return w.indexOf(p)<0;}).concat([w]);});
-   prep.sort(function(a,b){return text.indexOf(a)-text.indexOf(b);});
-   return {name:name,entry:entry,steps:steps,finish:finish,prep:prep,utensil:ut[foodKey(name)]||'',price:price[foodKey(name)]||''};
-  }
-  secs.forEach(function(e){
-   if(e.title==='서빙 식기'||e.title==='안주 목록과 가격')return;
-   var lines=e.body.split('\n').map(function(x){return x.trim();}).filter(Boolean),bullets=lines.filter(function(l){return /^-\s*[^:]+:/.test(l);});
-   if(bullets.length)bullets.forEach(function(l){var m=l.match(/^-\s*([^:]+):\s*(.+)$/);out.push(make(m[1].trim(),m[2].trim(),e));});
-   else out.push(make(e.title,lines.join(' '),e));
-  });
-  return out;
+ /* 발행 콘텐츠(레시피·응대 멘트): 첫 화면은 캐시/내장본으로 바로 그리고, 서버 응답이 오면 조용히 교체한다 */
+ var CT_KEYS={recipes:'harago-published-recipes-v1',phrases:'harago-published-phrases-v1'};
+ var CT={recipes:null,phrases:null},ctBusy={},ctLast={},ctPending={},PHOTO_RE=/^[a-f0-9]{24}$/;
+ function isStr(v){return typeof v==='string';}
+ function strList(a){return Array.isArray(a)&&a.every(isStr);}
+ function isObj(v){return !!v&&typeof v==='object'&&!Array.isArray(v);}
+ function validRecipes(d){
+  try{
+   if(!isObj(d))return false;
+   return ['appetizers','cocktails','others'].every(function(k){
+    return Array.isArray(d[k])&&d[k].every(function(it){
+     return isObj(it)&&isStr(it.id)&&isStr(it.name)&&it.name.trim()&&strList(it.ingredients)&&strList(it.steps)&&['price','utensil','glass','garnish','note','confirmNote'].every(function(f){return it[f]===undefined||isStr(it[f]);})&&(it.photoId===undefined||isStr(it.photoId))&&(k!=='cocktails'||it.status==='confirmed'||it.status==='candidate');
+    });
+   });
+  }catch(err){return false;}
  }
- function foodListNames(){var list=KB.find(function(e){return e.file==='10_안주_가이드'&&e.title==='안주 목록과 가격';}),m=list&&list.body.match(/만드는 법이 있는 안주:\s*(.+)/);return m?m[1].split(',').map(function(x){return x.trim();}):[];}
+ function validPhrases(d){
+  try{
+   if(!isObj(d)||!Array.isArray(d.sections))return false;
+   return d.sections.every(function(s){
+    return isObj(s)&&isStr(s.id)&&isStr(s.title)&&(s.note===undefined||isStr(s.note))&&Array.isArray(s.items)&&s.items.every(function(it){
+     return isObj(it)&&isStr(it.id)&&isStr(it.situation)&&(it.note===undefined||isStr(it.note))&&(it.confirmNote===undefined||isStr(it.confirmNote))&&Array.isArray(it.lines)&&it.lines.every(function(l){return isObj(l)&&(l.kind==='customer'||l.kind==='staff')&&isStr(l.text);});
+    });
+   });
+  }catch(err){return false;}
+ }
+ function validCt(kind,d){return kind==='recipes'?validRecipes(d):validPhrases(d);}
+ function loadCtCache(kind){try{var c=JSON.parse(localStorage.getItem(CT_KEYS[kind])||'null');return c&&Number.isInteger(c.version)&&validCt(kind,c.data)?{version:c.version,publishedAt:c.publishedAt||'',data:c.data}:null;}catch(err){return null;}}
+ CT.recipes=loadCtCache('recipes');CT.phrases=loadCtCache('phrases');
+ function recipesData(){return CT.recipes?CT.recipes.data:BUILTIN_CT.recipes;}
+ function phrasesData(){return CT.phrases?CT.phrases.data:BUILTIN_CT.phrases;}
+ function ctSrc(kind){return CT[kind]?'서버 발행 v'+CT[kind].version:'내장본';}
+ // 입력·제안 폼·펼침 중에는 화면을 바꾸지 않고, 닫힌 뒤 반영한다.
+ function contentHeld(kind){
+  if(editDialog.open)return true;
+  if(activeTab!==kind)return false;
+  if(kind==='recipes')return recipeKind==='안주'&&(openFood!==''||document.activeElement===document.getElementById('foodFilter'));
+  return !!document.querySelector('#phraseCards details.phrase-card[open]');
+ }
+ function applyContent(kind){
+  var p=ctPending[kind];if(!p||contentHeld(kind))return;ctPending[kind]=null;
+  if(CT[kind]&&CT[kind].version===p.version&&canon(CT[kind].data)===canon(p.data))return;
+  CT[kind]=p;
+  try{localStorage.setItem(CT_KEYS[kind],JSON.stringify({version:p.version,publishedAt:p.publishedAt,data:p.data,savedAt:new Date().toISOString()}));}catch(err){}
+  var sy=window.scrollY;
+  if(kind==='recipes'){renderRecipes();if(recipeKind==='안주')renderFoods();}else renderPhrases();
+  if(window.scrollY!==sy)window.scrollTo(0,sy);
+  updateReqUi();refreshSearch();
+ }
+ function applyContentAll(){applyContent('recipes');applyContent('phrases');}
+ function fetchContent(kind,force){
+  if(!CL_BASE||ctBusy[kind]||typeof fetch!=='function')return;
+  var now=Date.now();if(!force&&ctLast[kind]&&now-ctLast[kind]<Math.min(5000,POLL_MS)-50)return;ctLast[kind]=now;ctBusy[kind]=true;
+  var ctl=typeof AbortController==='function'?new AbortController():null,timer=setTimeout(function(){if(ctl)ctl.abort();},TIMEOUT_MS),released=false;
+  function release(){if(released)return;released=true;clearTimeout(timer);ctBusy[kind]=false;}
+  setTimeout(release,TIMEOUT_MS+500);
+  fetch(CL_BASE+'/api/content/'+kind,{cache:'no-store',credentials:'omit',signal:ctl?ctl.signal:undefined}).then(function(r){if(!r.ok)throw new Error('http');return r.json();}).then(function(d){
+   if(!d||d.published!==true||d.kind!==kind||!Number.isInteger(d.version)||!validCt(kind,d.data))return;
+   if(CT[kind]&&CT[kind].version===d.version&&!ctPending[kind])return;
+   ctPending[kind]={version:d.version,publishedAt:d.publishedAt||'',data:d.data};applyContent(kind);
+  }).catch(function(){}).then(release);
+ }
+ // 사진: 발행 데이터의 photoId 우선, 없으면 내장 사진, 둘 다 없으면 칸 없음. 불러오기 실패 시 내장 사진으로 바꾸고, 그것도 없으면 칸을 숨긴다.
+ function builtinPhoto(name){var key=Object.keys(RECIPE_PHOTOS).find(function(k){return foodKey(k)===foodKey(name);});return key?RECIPE_PHOTOS[key]:'';}
+ function photoBox(it,cls){
+  var id=CT.recipes&&CL_BASE&&isStr(it.photoId)&&PHOTO_RE.test(it.photoId)?it.photoId:'',built=builtinPhoto(it.name),src=id?CL_BASE+'/api/photo/'+id:built;
+  if(!src)return null;
+  var box=el('div','photo-box'),img=el('img',cls),usedBuilt=!id;img.alt=it.name;img.loading='lazy';img.decoding='async';
+  img.onerror=function(){if(!usedBuilt&&built){usedBuilt=true;img.src=built;}else box.remove();};
+  img.src=src;box.append(img);return box;
+ }
+ var RFILE={appetizers:'10_안주_가이드',cocktails:'12_칵테일_레시피',others:'12_칵테일_레시피'},RGROUP={appetizers:'안주',cocktails:'칵테일',others:'기타 음료'};
+ function rtgt(group,it,field,slot,n,current){
+  var step=/^steps/.test(slot);
+  return {tab:'recipes',pkind:'recipes',targetId:it.id,file:RFILE[group],section:RGROUP[group],sub:it.name,index:n||0,unit:n?(step?'단계':'줄'):'',field:field,slot:slot,current:current||'',label:'레시피 · '+it.name+' · '+field+(n?' '+n+(step?'단계':'번째 줄'):'')};
+ }
  function renderFoods(){
   var host=document.getElementById('foodCards');host.replaceChildren();
   var qv=norm((document.getElementById('foodFilter')||{}).value||''),shown=0;
-  foodCatalog().forEach(function(f){
+  recipesData().appetizers.forEach(function(f){
    if(qv&&norm(f.name).indexOf(qv)<0)return;shown++;
-   var card=el('article','food-card'),head=button('',null,'food-head'),body=el('div','food-body');card.dataset.food=f.name;body.hidden=openFood!==f.name;
-   head.setAttribute('aria-expanded',String(!body.hidden));head.append(el('span','food-name',f.name),el('span','food-price',f.price||'가격 미정'),el('span','food-caret',body.hidden?'펼치기':'접기'));
-   head.onclick=function(){openFood=openFood===f.name?'':f.name;host.querySelectorAll('.food-card').forEach(function(c){var open=c.dataset.food===openFood,b=c.querySelector('.food-body'),h=c.querySelector('.food-head');b.hidden=!open;h.setAttribute('aria-expanded',String(open));h.querySelector('.food-caret').textContent=open?'접기':'펼치기';});};
-   var photoKey=Object.keys(RECIPE_PHOTOS).find(function(k){return foodKey(k)===foodKey(f.name);});
-   if(photoKey){var image=el('img','food-photo');image.src=RECIPE_PHOTOS[photoKey];image.alt=f.name;image.loading='lazy';image.onerror=function(){image.remove();};body.append(image);}
+   var card=el('article','food-card'),head=button('',null,'food-head'),body=el('div','food-body');card.dataset.food=f.name;card.dataset.id=f.id;body.hidden=openFood!==f.name;
+   head.setAttribute('aria-expanded',String(!body.hidden));head.append(el('span','food-name',f.name),el('span','food-price',f.price?fmtPrice(f.price):'가격 미정'),el('span','food-caret',body.hidden?'펼치기':'접기'));
+   head.onclick=function(){openFood=openFood===f.name?'':f.name;host.querySelectorAll('.food-card').forEach(function(c){var open=c.dataset.food===openFood,b=c.querySelector('.food-body'),h=c.querySelector('.food-head');b.hidden=!open;h.setAttribute('aria-expanded',String(open));h.querySelector('.food-caret').textContent=open?'접기':'펼치기';});if(!openFood)applyContent('recipes');};
+   var ph=photoBox(f,'food-photo');if(ph)body.append(ph);
    function field(label,text,confirm){var d=el('div','food-field'+(confirm?' confirm':''));d.append(el('strong','',label),el('span','',text));return d;}
-   var file=f.entry.file,sec=f.entry.title;
-   function tgt(field,o,n){return {tab:'recipes',file:file,section:sec,sub:f.name,index:o?o.index:0,unit:o?'문장':'',field:field,current:o?o.text:'',label:'레시피 · '+f.name+' · '+field+(n?' '+n+'단계':'')};}
-   if(f.price)body.append(field('가격',f.price+' (메뉴판)'));
-   body.append(field('서빙 식기',f.utensil||'매뉴얼에 식기 안내 없음 [확인]',!f.utensil));
-   var prep=field('준비물 (도구·그릇)',f.prep.join(', ')||'단계 참고');prep.classList.add('food-prep');body.append(prep);
+   if(f.price)body.append(field('가격',fmtPrice(f.price)+' (메뉴판)'));
+   body.append(field('서빙 식기',f.utensil||'식기 안내 없음',!f.utensil));
+   if(f.confirm)body.append(field('확인','[확인] '+(f.confirmNote||'관리자 확인 필요'),true));
+   var prep=field('준비물 (도구·그릇)',f.ingredients.join(', ')||'단계 참고');prep.classList.add('food-prep');body.append(prep);
    var sw=el('div','food-field food-order');sw.append(el('strong','','만드는 순서'));var ol=el('ol','food-steps');
-   f.steps.forEach(function(o,i){var li=el('li','');li.append(el('b','',(i+1)+'.'),el('span','',o.text));var t=tgt('만드는 순서',o,i+1);li.append(editMark(t),editButton(t,'✎ 수정'));ol.append(li);});
+   f.steps.forEach(function(text,i){var li=el('li','');li.append(el('b','',(i+1)+'.'),el('span','',text));var t=rtgt('appetizers',f,'만드는 순서','steps.'+i,i+1,text);li.append(editMark(t),editButton(t,'✎ 제안'));ol.append(li);});
    sw.append(ol);body.append(sw);
-   if(f.finish.length){var fw=el('div','food-field food-finish');fw.append(el('strong','','마무리 (데코)'));f.finish.forEach(function(o){var d=el('div','');d.append(el('span','',o.text));var t=tgt('마무리',o,0);d.append(editMark(t),editButton(t,'✎ 수정'));d.style.position='relative';d.style.paddingRight='56px';fw.append(d);});fw.style.paddingRight='0';body.append(fw);}
-   var note=f.price?'':'가격은 매뉴얼에 없음 [확인].';body.append(el('p','recipe-note','참고 · 매뉴얼 기준 만드는 법. '+note+' 출처 · '+file+' / '+sec));
+   if(f.garnish){var fw=el('div','food-field food-finish');fw.append(el('strong','','마무리 (데코)'));var d=el('div','');d.append(el('span','',f.garnish));var gt=rtgt('appetizers',f,'마무리','garnish',0,f.garnish);d.append(editMark(gt),editButton(gt,'✎ 제안'));d.style.position='relative';d.style.paddingRight='56px';fw.append(d);fw.style.paddingRight='0';body.append(fw);}
+   if(f.note)body.append(field('메모',f.note));
+   body.append(el('p','recipe-note','참고 · 만드는 법. '+(f.price?'':'가격 정보 없음 [확인]. ')+'출처 · '+(CT.recipes?ctSrc('recipes'):'내장본 · 10_안주_가이드')));
    card.append(head,body);host.append(card);
   });
   if(!shown)host.append(el('div','food-empty','맞는 안주가 없음'));
@@ -920,34 +984,80 @@ var recipeKind='안주',openFood='';
   document.querySelectorAll('[data-recipe-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.recipeKind===kind));});
   document.getElementById('recipeCards').hidden=food;document.getElementById('foodCards').hidden=!food;document.getElementById('foodTools').hidden=!food;
   document.getElementById('recipeIntro').textContent=food?'매장 안주 만드는 법. 이름을 누르면 펼침.':'주문한 병 와인으로 만드는 칼리모초·키르·미모사. 아래 기타 음료는 벽 메모(사장님 확인 전).';
-  if(food)renderFoods();
+  if(food)renderFoods();else applyContent('recipes');
+ }
+ function rfield(group,it,label,value,slot,confirm){
+  var d=el('div','recipe-field'+(confirm?' confirm':'')),t=rtgt(group,it,label,slot,0,value);
+  d.append(el('strong','',label),el('span','',confirm?'[확인] '+value:value),editMark(t),editButton(t,'✎ 제안'));return d;
+ }
+ function rlist(group,it,label,arr,key,numbered){
+  var d=el('div','recipe-field recipe-list');d.append(el('strong','',label));var ol=el(numbered?'ol':'ul','food-steps');
+  arr.forEach(function(text,i){var li=el('li',''),t=rtgt(group,it,label,key+'.'+i,i+1,text);li.append(el('b','',numbered?(i+1)+'.':'·'),el('span','',text),editMark(t),editButton(t,'✎ 제안'));ol.append(li);});
+  d.append(ol);return d;
+ }
+ function recipeCard(group,it){
+  var etc=group==='others',card=el('article','recipe-card'+(etc?' recipe-etc':''));card.dataset.id=it.id;if(etc)card.dataset.etc=it.name;
+  var ph=photoBox(it,'recipe-photo');if(ph)card.append(ph);
+  var content=el('div','recipe-content');content.append(el('h3','',it.name));
+  if(it.glass)content.append(rfield(group,it,'잔',it.glass,'glass'));
+  if(it.ingredients.length)content.append(rlist(group,it,'재료',it.ingredients,'ingredients',false));
+  if(it.steps.length)content.append(rlist(group,it,'만드는 순서',it.steps,'steps',true));
+  if(it.garnish)content.append(rfield(group,it,'가니시',it.garnish,'garnish'));
+  if(it.note)content.append(rfield(group,it,'메모',it.note,'note'));
+  if(it.confirm){
+   if(it.confirmNote)content.append(rfield(group,it,'확인 사항',it.confirmNote,'confirmNote',true));
+   else{var cd=el('div','recipe-field confirm');cd.append(el('strong','','확인 사항'),el('span','','[확인] 관리자 확인 필요'));content.append(cd);}
+  }
+  content.append(el('p','recipe-note','출처 · '+ctSrc('recipes')+(CT.recipes?'':' · 12_칵테일_레시피')+(etc?' / 벽 메모(사진), 사장님 확인 전':' / 주문한 병 와인 기준')));
+  card.append(content);return card;
  }
  function renderRecipes(){
-  var host=document.getElementById('recipeCards');host.replaceChildren();
-  ['칼리모초','키르','미모사','@기타','메론소다','크림소다','블랙러시안','파우스트'].forEach(function(name){
-   if(name==='@기타'){var sub=el('h3','recipe-sub','기타 음료 (벽 메모)');sub.id='recipeEtc';var nt=el('p','recipe-note','벽에 붙은 손글씨 레시피를 사진 기준으로 옮긴 메모. 사장님 확인 전이고 단위가 사진에 없음 [확인].');var wrap=el('div','recipe-etc-head');wrap.append(sub,nt);host.append(wrap);return;}
-   var etc=['메론소다','크림소다','블랙러시안','파우스트'].indexOf(name)>=0;
-   var entry=KB.find(function(e){return e.file==='12_칵테일_레시피'&&e.title.indexOf(name+' 레시피')===0;}),card=el('article','recipe-card'+(etc?' recipe-etc':''));
-   if(etc)card.dataset.etc=name;
-   if(RECIPE_PHOTOS[name]){var image=el('img','recipe-photo');image.src=RECIPE_PHOTOS[name];image.alt=name;image.loading='lazy';image.onerror=function(){image.remove();};card.append(image);}
-   var content=el('div','recipe-content');content.append(el('h3','',name));
-   entry.body.split('\n').filter(Boolean).forEach(function(line,li){
-    var clean=line.replace(/^[•-]\s*/,''),m=clean.match(/^([^:]+):\s*([\s\S]*)$/),field=el('div','recipe-field'+(/\[확인\]/.test(clean)?' confirm':''));
-    if(m){field.append(el('strong','',m[1]),el('span','',m[2]));}else field.textContent=clean;var rt={tab:'recipes',file:entry.file,section:entry.title,sub:'',index:li+1,unit:'줄',field:m?m[1]:'내용',current:m?m[2]:clean,label:'레시피 · '+name+' · '+(m?m[1]:'내용')};field.append(editMark(rt),editButton(rt,'✎ 수정'));content.append(field);
-   });content.append(el('p','recipe-note',etc?'출처 · '+entry.file+' / 벽 메모(사진), 사장님 확인 전':'출처 · '+entry.file+' / 주문한 병 와인 기준'));card.append(content);host.append(card);
+  var host=document.getElementById('recipeCards');host.replaceChildren();var R=recipesData();
+  R.cocktails.filter(function(c){return c.status==='confirmed';}).forEach(function(it){host.append(recipeCard('cocktails',it));});
+  if(R.others.length){
+   var sub=el('h3','recipe-sub','기타 음료 (벽 메모)');sub.id='recipeEtc';var nt=el('p','recipe-note','벽에 붙은 손글씨 레시피를 사진 기준으로 옮긴 메모. 사장님 확인 전이고 단위가 사진에 없음 [확인].');var wrap=el('div','recipe-etc-head');wrap.append(sub,nt);host.append(wrap);
+   R.others.forEach(function(it){host.append(recipeCard('others',it));});
+  }
+ }
+ function ptgt(sec,it,field,slot,n,current){
+  return {tab:'phrases',pkind:'phrases',targetId:it.id,file:'13_손님_응대_멘트',section:sec.title,sub:it.situation,index:n||0,unit:n?'줄':'',field:field,slot:slot,current:current,label:'응대 멘트 · '+it.situation+(n?' · '+field+' '+n+'번째 줄':'')};
+ }
+ function phraseCard(sec,it){
+  var card=el('details','phrase-card');card.dataset.phraseTitle=it.situation;card.dataset.id=it.id;
+  var sum=el('summary','',it.situation),mark=el('span','edit-mark','수정 제안 있음');mark.dataset.tid='phrases|'+it.id;mark.hidden=!requests.some(function(r){return r.pkind==='phrases'&&r.targetId===it.id;});sum.append(mark);card.append(sum);
+  if(sec.note)card.append(el('p','phrase-warning',sec.note));
+  if(it.confirm)card.append(el('p','phrase-warning','[확인] '+(it.confirmNote||'관리자 확인 후 사용할 것.')));
+  var nc=0,ns=0;
+  it.lines.forEach(function(l,i){
+   if(l.kind==='customer'){
+    nc++;var t=ptgt(sec,it,'손님 말','lines.'+i,nc,l.text);
+    card.append(el('div','phrase-speech',l.text));
+    var tools=el('div','card-tools');addCopy(tools,l.text);tools.append(editMark(t),editButton(t,'✎ 수정 제안'));card.append(tools);
+   }else{
+    ns++;var t2=ptgt(sec,it,'직원 안내','lines.'+i,ns,l.text),row=el('div','phrase-staff'+(/\[확인\]/.test(l.text)?' confirm':''));
+    row.append(el('strong','','직원 안내'),el('span','',l.text),editMark(t2),editButton(t2,'✎ 제안'));card.append(row);
+   }
   });
+  if(it.note)card.append(el('p','phrase-notes',it.note));
+  return card;
+ }
+ function legacyPhraseCard(p,idx){
+  var card=el('details','phrase-card');card.dataset.phraseTitle=p.title;var id='kbx'+(idx+1);
+  var pt={tab:'phrases',pkind:'phrases',targetId:id,file:p.file||'13_손님_응대_멘트',section:p.section||p.title,sub:'',index:0,unit:'',field:'멘트',slot:'',current:String(p.speech||'').slice(0,500),label:'응대 멘트 · '+p.title},sum=el('summary','',p.title);sum.append(editMark(pt));card.append(sum);
+  if(p.notice)card.append(el('p','phrase-warning',p.notice));
+  card.append(el('div','phrase-speech',p.speech));
+  if(p.confirm&&!/\[확인\]/.test(p.speech+p.notes))card.append(el('p','phrase-warning','[확인] 관리자 확인 후 사용할 것.'));
+  var tools=el('div','card-tools');addCopy(tools,p.speech);tools.append(editButton(pt,'✎ 수정 제안'));card.append(tools,el('p','phrase-notes',p.notes));return card;
  }
  function renderPhrases(){
-  var host=document.getElementById('phraseCards');host.replaceChildren();var group='';
-  PHRASES.forEach(function(p){
-   if(group!==p.group){group=p.group;host.append(el('h3','phrase-group',group));}
-   var card=el('details','phrase-card');card.dataset.phraseTitle=p.title;var pt={tab:'phrases',file:p.file||'13_손님_응대_멘트',section:p.section||p.title,sub:'',index:0,unit:'',field:'멘트',current:p.speech,label:'응대 멘트 · '+p.title},sum=el('summary','',p.title);sum.append(editMark(pt));card.append(sum);
-   if(p.notice)card.append(el('p','phrase-warning',p.notice));
-   if(/^5-7\b/.test(p.title))card.append(el('p','phrase-warning','[확인] 새 응대 문장 · 말투 승인 전. 관리자 확인 후 사용할 것.'));
-   var speech=el('div','phrase-speech',p.speech);card.append(speech);
-   if(p.confirm&&!/\[확인\]/.test(p.speech+p.notes))card.append(el('p','phrase-warning','[확인] 관리자 확인 후 사용할 것.'));
-   var tools=el('div','card-tools');addCopy(tools,p.speech);tools.append(editButton(pt,'✎ 수정 요청'));card.append(tools,el('p','phrase-notes',p.notes));host.append(card);
+  var host=document.getElementById('phraseCards');host.replaceChildren();
+  phrasesData().sections.forEach(function(sec){
+   host.append(el('h3','phrase-group',sec.title));
+   sec.items.forEach(function(it){host.append(phraseCard(sec,it));});
   });
+  // 지식 04·05 문서에서 온 원문 3장은 발행 데이터에 없으므로 내장본 그대로 이어서 보여 준다.
+  var legacy=PHRASES.filter(function(p){return p.group==='전환·리뷰 원문';});
+  if(legacy.length){host.append(el('h3','phrase-group','전환·리뷰 원문'));legacy.forEach(function(p,i){host.append(legacyPhraseCard(p,i));});}
  }
  function renderWineCards(host,wines,meta){
   var cards=el('div','wine-results');cards.append(el('h3','wine-results-heading','추천 '+wines.length+'종'));
@@ -980,20 +1090,69 @@ var recipeKind='안주',openFood='';
   if(a.src)host.append(el('p','src','출처 · '+a.src));
  }
 
- var REQ_KEY='harago-edit-requests-v1',NICK_KEY='harago-edit-nick-v1',REQ_KINDS=['문구 수정','항목 추가','삭제 요청','순서·시간 변경'];
+ var REQ_KEY='harago-edit-requests-v1',NICK_KEY='harago-edit-nick-v1',REQ_KINDS=['문구 수정','항목 추가','삭제 요청','순서·시간 변경'],TYPE_MAP={'문구 수정':'edit','항목 추가':'add','삭제 요청':'delete','순서·시간 변경':'move'};
+ var PROP_TIMEOUT_MS=window.HARAGO_PROP_TIMEOUT_MS||10000,DUP_MS=5000,saveLast={sig:'',t:0},toastTimer=0;
  var requests=[],reqStorageOk=true,formTarget=null,editingId=null,formKind='문구 수정',textDirty=false;
- try{var rawReq=JSON.parse(localStorage.getItem(REQ_KEY)||'[]');if(Array.isArray(rawReq))requests=rawReq;}catch(err){reqStorageOk=false;}
+ try{var rawReq=JSON.parse(localStorage.getItem(REQ_KEY)||'[]');if(Array.isArray(rawReq))requests=rawReq.filter(function(r){return r&&typeof r==='object';});}catch(err){reqStorageOk=false;}
+ // 전송 중에 화면을 닫았다면 서버 도착 여부를 알 수 없으므로 '전송 대기/실패'로 돌려 다시 보내기를 열어 준다.
+ requests.forEach(function(r){if(r.st==='sending'){r.st='fail';r.smsg='전송 결과 미확인';}});
  function saveRequests(){try{localStorage.setItem(REQ_KEY,JSON.stringify(requests));}catch(err){reqStorageOk=false;}updateReqUi();}
- function targetKey(t){return [t.file,t.section,t.sub||'',t.index||'',t.field||''].join('|');}
+ function targetKey(t){return [t.pkind||'',t.targetId||'',t.slot||'',t.file||'',t.section||'',t.sub||'',t.index||'',t.field||''].join('|');}
  function reqCountFor(t){var k=targetKey(t);return requests.filter(function(r){return targetKey(r)===k;}).length;}
  function seoulStamp(){var v={};new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).forEach(function(p){v[p.type]=p.value;});return v.year+'-'+v.month+'-'+v.day+' '+v.hour+':'+v.minute;}
- function editMark(t){var m=el('span','edit-mark','수정 요청 있음');m.dataset.tkey=targetKey(t);m.hidden=!reqCountFor(t);return m;}
- function editButton(t,text){var b=button(text||'✎',function(ev){ev.preventDefault();ev.stopPropagation();openForm(t);},'edit-btn');b.setAttribute('aria-label','수정 요청: '+t.label);b.title='수정 요청';return b;}
+ function editMark(t){var m=el('span','edit-mark','수정 제안 있음');m.dataset.tkey=targetKey(t);m.hidden=!reqCountFor(t);return m;}
+ function editButton(t,text){var b=button(text||'✎',function(ev){ev.preventDefault();ev.stopPropagation();openForm(t);},'edit-btn');b.setAttribute('aria-label','수정 제안: '+t.label);b.title='수정 제안';return b;}
+ function canSend(r){return !!(r.pkind&&(r.targetId||r.kind==='항목 추가'));}
+ function resendable(r){var st=r.st||'local';return !!CL_BASE&&canSend(r)&&(st==='local'||st==='fail'||st==='rate');}
+ function stateInfo(r){
+  var st=r.st||'local';
+  if(st==='sent')return {cls:'ok',text:'보냄'};
+  if(st==='sending')return {cls:'',text:'전송 중…'};
+  if(st==='fail')return {cls:'warn',text:'전송 대기/실패'+(r.smsg?' · '+r.smsg:'')+' · 다시 보내기'};
+  if(st==='rej')return {cls:'err',text:'거절됨: '+(r.smsg||'서버가 받지 않음')};
+  if(st==='rate')return {cls:'warn',text:'횟수 초과 · '+(r.wait?r.wait+'분 뒤':'잠시 후')+' 다시 보내기'};
+  if(!CL_BASE)return {cls:'',text:'이 기기에만 저장 · 서버 연결 없음'};
+  return {cls:'',text:canSend(r)?'전송 전':'이 기기에만 저장 · 서버로 보낼 수 없는 예전 제안'};
+ }
  function updateReqUi(){
-  document.querySelectorAll('.edit-mark,.req-dot').forEach(function(m){var n=0,k=m.dataset.tkey;requests.forEach(function(r){if(targetKey(r)===k)n++;});m.hidden=!n;});
+  document.querySelectorAll('.edit-mark,.req-dot').forEach(function(m){var n=0,k=m.dataset.tkey,id=m.dataset.tid;requests.forEach(function(r){if(k?targetKey(r)===k:(id&&(r.pkind+'|'+r.targetId)===id))n++;});m.hidden=!n;});
   var c=document.getElementById('reqCount');c.textContent=requests.length;c.hidden=!requests.length;
-  var h=document.getElementById('homeReqSmall');if(h)h.textContent=requests.length?'쌓인 요청 '+requests.length+'건 · 복사·내려받기':'쌓인 요청 복사·내려받기';
+  var h=document.getElementById('homeReqSmall');if(h)h.textContent=requests.length?'내 제안 '+requests.length+'건 · 전송 상태·복사':'보낸 제안·전송 상태 확인';
   ['editStorage','reqStorage'].forEach(function(id){document.getElementById(id).hidden=reqStorageOk;});
+  var intro=document.getElementById('reqIntro');if(intro)intro.textContent='직원은 제안만 가능. 매니저 확인 후 반영. '+(CL_BASE?'저장하면 이 기기에 남고 서버로 전송됨.':'서버 연결 없음. 복사해서 전달.');
+  var rs=document.getElementById('reqResend');if(rs)rs.hidden=!requests.some(resendable);
+ }
+ function toast(msg){var t=document.getElementById('sendToast');t.textContent=msg;t.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.hidden=true;},4500);}
+ function refreshReqView(){updateReqUi();if(activeTab==='requests')renderRequests();}
+ // 서버 제안 접수: POST /api/proposals. 같은 제안은 한 번만 보낸다(보냄/전송 중이면 재전송 안 함).
+ function proposalBody(r){
+  return {kind:r.pkind,targetId:String(r.targetId||''),targetLabel:String(r.label||'').slice(0,200),type:TYPE_MAP[r.kind]||'edit',current:String(r.current||'').slice(0,500),proposed:r.kind==='삭제 요청'?'':String(r.text||''),reason:String(r.memo||''),nickname:String(r.nick||'')};
+ }
+ function serverReason(d){
+  var parts=[];if(d&&typeof d.error==='string'&&d.error)parts.push(d.error);
+  if(d&&Array.isArray(d.details))d.details.forEach(function(x){if(x&&typeof x.reason==='string'&&parts.join(' ').indexOf(x.reason)<0)parts.push(x.reason);});
+  return parts.join(' · ');
+ }
+ function sendProposal(r,done){
+  function end(){if(done)done();}
+  if(!CL_BASE||typeof fetch!=='function'||!canSend(r)||r.st==='sent'||r.st==='sending'){end();return;}
+  r.st='sending';r.smsg='';saveRequests();if(activeTab==='requests')renderRequests();
+  var ctl=typeof AbortController==='function'?new AbortController():null,timer=setTimeout(function(){if(ctl)ctl.abort();},PROP_TIMEOUT_MS);
+  fetch(CL_BASE+'/api/proposals',{method:'POST',headers:{'content-type':'application/json'},credentials:'omit',signal:ctl?ctl.signal:undefined,body:JSON.stringify(proposalBody(r))}).then(function(res){
+   return res.json().then(function(d){return {status:res.status,d:d||{}};},function(){return {status:res.status,d:{}};});
+  }).then(function(x){
+   var d=x.d;
+   if(x.status===201&&d.ok===true&&typeof d.id==='string'){r.st='sent';r.sid=d.id;r.smsg='';r.sentAt=seoulStamp();toast('제안 보냄. 매니저 확인 후 반영.');}
+   else if(x.status===429){r.st='rate';r.wait=Number(d.retryAfterMinutes)||0;r.smsg=serverReason(d);toast('횟수 초과. '+(r.wait?r.wait+'분 뒤':'잠시 후')+' 다시 보내기.');}
+   else if(x.status===400||x.status===413){r.st='rej';r.smsg=serverReason(d)||'서버가 받지 않음';toast('거절됨: '+r.smsg);}
+   else{r.st='fail';r.smsg=x.status===403?'서버가 이 주소의 전송을 허용하지 않음':'서버 응답 '+x.status;toast('전송 실패. 내 수정 제안에서 다시 보내기.');}
+  },function(){r.st='fail';r.smsg='연결 안 됨';toast('전송 실패. 내 수정 제안에서 다시 보내기.');}).then(function(){
+   clearTimeout(timer);saveRequests();refreshReqView();end();
+  });
+ }
+ function resendAll(){
+  var q=requests.filter(resendable);
+  (function next(){var r=q.shift();if(!r)return;sendProposal(r,function(){if(r.st==='rate')return;next();});})();
  }
  function checkSource(kind){
   if(PUB){var pc={},pm={};origModel(kind).sections.forEach(function(sec){var g=sec.title||'기본 준비';sec.entries.forEach(function(e){if(e.type!=='item')return;pc[g]=(pc[g]||0)+1;pm[e.key]=pc[g];});});return pm;}
@@ -1001,6 +1160,12 @@ var recipeKind='안주',openFood='';
   entry.body.split('\n').forEach(function(line){var s=line.trim();if(!s)return;if(/^### /.test(s)){group=s.slice(4);return;}
    if(/^-\s/.test(s)){count[group]=(count[group]||0)+1;map[taskKey({group:group,text:s.replace(/^-\s*/,'')})]=count[group];}});
   return map;
+ }
+ // 체크리스트 항목 번호: 발행본 항목 id. 내장본을 볼 때는 같은 문구의 내장 항목 id(어드민이 처음 불러오는 번호와 같음).
+ function clIdFor(kind,text){
+  var k=kind==='오픈 순서'?'open':'close',c=BUILTIN_CL&&BUILTIN_CL[k],id='';
+  if(c)c.sections.forEach(function(s){s.items.forEach(function(it){if(!id&&it.text===text)id=it.id;});});
+  return id;
  }
  var editDialog=document.getElementById('editDialog');
  function setFormKind(kind){
@@ -1013,7 +1178,9 @@ var recipeKind='안주',openFood='';
  }
  function openForm(t,existing){
   formTarget=t;editingId=existing?existing.id:null;textDirty=!!existing;
-  document.getElementById('editTitle').textContent=existing?'수정 요청 편집':'수정 요청';
+  document.getElementById('editTitle').textContent=existing?'수정 제안 편집':'수정 제안';
+  document.getElementById('editNote').textContent='직원은 제안만 가능. 매니저 확인 후 반영.';
+  document.getElementById('editServerNote').textContent=CL_BASE?'저장하면 서버로 전송됨. 전송 상태는 ‘내 수정 제안’에서 확인.':'서버 연결 없음. 복사해서 전달.';
   document.getElementById('editTarget').textContent=t.label;
   document.getElementById('editCurrent').textContent=t.current||'(해당 문구 없음)';
   document.getElementById('editText').value=existing?existing.text:'';
@@ -1027,26 +1194,38 @@ var recipeKind='안주',openFood='';
   if(!editDialog.open)editDialog.showModal();
   var area=document.getElementById('editText');if(!area.closest('[hidden]'))area.focus();
  }
- function closeForm(){document.body.classList.remove('formopen');if(editDialog.open)editDialog.close();applyPending();}
+ function closeForm(){document.body.classList.remove('formopen');if(editDialog.open)editDialog.close();applyPending();applyContentAll();}
+ // 개인정보 형태(전화번호·계좌번호 등 긴 숫자열, 이메일)는 저장 전에 막는다. 서버도 같은 검사를 한다.
+ function hasPii(s){var t=String(s).replace(/\b20\d{2}-\d{1,2}-\d{1,2}\b/g,' ');return /(\d[\s-]?){9,}/.test(t)||/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i.test(t);}
  function saveForm(){
   var text=document.getElementById('editText').value.trim(),memo=document.getElementById('editMemo').value.trim(),nick=document.getElementById('editNick').value.trim(),err=document.getElementById('editError');
   if(formKind!=='삭제 요청'){
    if(!text){err.textContent='수정할 문구를 입력할 것.';document.getElementById('editText').focus();return;}
    if(formKind==='문구 수정'&&text===String(formTarget.current).trim()){err.textContent='현재 문구와 같음. 고친 문구를 입력할 것.';document.getElementById('editText').focus();return;}
   }else text='';
-  var rec;
+  if(text.length>500||memo.length>500){err.textContent='문구·메모는 500자 이내로 줄일 것.';return;}
+  if(hasPii(text)||hasPii(memo)||hasPii(nick)){err.textContent='전화번호·계좌번호 같은 긴 숫자열, 이메일은 입력 불가. 개인정보 빼고 다시 저장.';return;}
+  var rec,sig=JSON.stringify([formTarget.pkind,formTarget.targetId,formTarget.slot,formKind,text,memo]);
   if(editingId){rec=requests.find(function(r){return r.id===editingId;});}
-  if(!rec){rec=Object.assign({},formTarget,{id:'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),at:seoulStamp()});requests.push(rec);}
-  rec.kind=formKind;rec.text=text;rec.memo=memo;rec.nick=nick;
+  if(!rec){
+   if(saveLast.sig===sig&&Date.now()-saveLast.t<DUP_MS){err.textContent='같은 내용을 방금 저장함. 중복 저장 안 함.';return;}
+   rec=Object.assign({},formTarget,{id:'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),at:seoulStamp(),st:'local'});requests.push(rec);
+  }else if(rec.st==='sent'||rec.st==='sending'){err.textContent='이미 보낸 제안은 고칠 수 없음. 새 제안으로 작성.';return;}
+  saveLast={sig:sig,t:Date.now()};
+  rec.kind=formKind;rec.text=text;rec.memo=memo;rec.nick=nick;if(rec.st==='rej'||rec.st==='fail'||rec.st==='rate'){rec.st='local';rec.smsg='';}
   try{localStorage.setItem(NICK_KEY,nick);}catch(e2){}
   saveRequests();if(activeTab==='requests')renderRequests();closeForm();
+  if(CL_BASE&&canSend(rec))sendProposal(rec);
  }
  function bullet(label,value){var lines=String(value===undefined||value===''?'-':value).split('\n');return '- '+label+': '+lines[0]+lines.slice(1).map(function(l){return '\n  '+l;}).join('');}
  function exportText(list){
   var sorted=list.slice().sort(function(a,b){return String(a.file).localeCompare(b.file)||String(a.section).localeCompare(b.section)||String(a.sub||'').localeCompare(b.sub||'')||(a.index||0)-(b.index||0)||String(a.at).localeCompare(b.at);});
-  var out=['# 근무노트 수정 요청','','- 생성일: '+localWorkDate(),'- 앱 자료 버전: '+(KB_VERSION.sourceHash||'-'),'- 요청 건수: '+sorted.length+'건',''];
+  var out=['# 근무노트 수정 제안','','- 생성일: '+localWorkDate(),'- 앱 자료 버전: '+(KB_VERSION.sourceHash||'-'),'- 제안 건수: '+sorted.length+'건',''];
   sorted.forEach(function(r,i){
-   out.push('## '+(i+1)+'. '+r.label,bullet('대상 파일','지식/'+r.file+'.md'),bullet('섹션',r.section+(r.sub?' > '+r.sub:'')),bullet('항목',(r.index?r.index+'번째 '+(r.unit||'항목'):'-')+(r.field?' · '+r.field:'')),bullet('현재 문구',r.current),bullet('요청 종류',r.kind),bullet('수정 문구',r.kind==='삭제 요청'?'(삭제 요청)':r.text),bullet('메모',r.memo),bullet('작성 시각',r.at),bullet('작성자 표시',r.nick),'');
+   out.push('## '+(i+1)+'. '+r.label,bullet('대상 파일','지식/'+r.file+'.md'),bullet('섹션',r.section+(r.sub?' > '+r.sub:'')),bullet('항목',(r.index?r.index+'번째 '+(r.unit||'항목'):'-')+(r.field?' · '+r.field:'')),bullet('현재 문구',r.current),bullet('제안 종류',r.kind),bullet('수정 문구',r.kind==='삭제 요청'?'(삭제 요청)':r.text),bullet('메모',r.memo),bullet('작성 시각',r.at),bullet('작성자 표시',r.nick),bullet('서버 전송',stateInfo(r).text));
+   if(r.targetId)out.push(bullet('대상 번호',r.pkind+' / '+r.targetId));
+   if(r.sid)out.push(bullet('서버 제안 번호',r.sid));
+   out.push('');
   });
   return out.join('\n');
  }
@@ -1057,11 +1236,15 @@ var recipeKind='안주',openFood='';
  }
  function renderRequests(){
   var host=document.getElementById('reqList');host.replaceChildren();updateReqUi();
-  if(!requests.length){host.append(el('div','req-empty','쌓인 수정 요청 없음. 체크리스트·레시피·응대 멘트의 수정 버튼으로 작성할 것.'));return;}
+  if(!requests.length){host.append(el('div','req-empty','쌓인 수정 제안 없음. 체크리스트·레시피·응대 멘트의 수정 제안 버튼으로 작성할 것.'));return;}
   requests.slice().reverse().forEach(function(r){
-   var card=el('article','req-item'),dl=el('dl');card.dataset.reqId=r.id;card.append(el('h3','',r.label),el('p','req-meta',r.kind+' · '+r.at+(r.nick?' · '+r.nick:'')));
-   [['현재',r.current],['수정',r.kind==='삭제 요청'?'(삭제 요청)':r.text],['메모',r.memo]].forEach(function(p){if(!p[1])return;dl.append(el('dt','',p[0]),el('dd','',p[1]));});card.append(dl);
-   var acts=el('div','req-actions');acts.append(button('편집',function(){openForm(r,r);}),(function(){var del=button('삭제',function(){confirmTwice(del,r.id,'삭제',function(){requests=requests.filter(function(x){return x.id!==r.id;});saveRequests();renderRequests();});});return del;})());card.append(acts);host.append(card);
+   var card=el('article','req-item'),dl=el('dl'),si=stateInfo(r);card.dataset.reqId=r.id;card.dataset.state=r.st||'local';card.append(el('h3','',r.label),el('p','req-meta',r.kind+' · '+r.at+(r.nick?' · '+r.nick:'')));
+   var badge=el('p','req-state '+si.cls,si.text);card.append(badge);
+   [['현재',r.current],['제안',r.kind==='삭제 요청'?'(삭제 요청)':r.text],['메모',r.memo]].forEach(function(p){if(!p[1])return;dl.append(el('dt','',p[0]),el('dd','',p[1]));});card.append(dl);
+   var acts=el('div','req-actions'),st=r.st||'local';
+   if(resendable(r)||st==='sending'){var rb=button(st==='sending'?'전송 중…':st==='rate'?'잠시 후 다시 보내기':st==='local'?'보내기':'다시 보내기',function(){sendProposal(r);},'req-resend');rb.disabled=st==='sending';acts.append(rb);}
+   if(st!=='sent'&&st!=='sending')acts.append(button('편집',function(){openForm(r,r);}));
+   acts.append((function(){var del=button('삭제',function(){confirmTwice(del,r.id,'삭제',function(){requests=requests.filter(function(x){return x.id!==r.id;});saveRequests();renderRequests();});});return del;})());card.append(acts);host.append(card);
   });
  }
  function copyText(text){
@@ -1077,16 +1260,17 @@ var recipeKind='안주',openFood='';
   editDialog.addEventListener('click',function(ev){if(ev.target===editDialog)closeForm();});
   editDialog.addEventListener('close',function(){document.body.classList.remove('formopen');});
   document.getElementById('reqGo').onclick=function(){showTab('requests');};
+  document.getElementById('reqResend').onclick=resendAll;
   document.getElementById('reqCopy').onclick=function(){
-   if(!requests.length){reqMessage('복사할 요청 없음.');return;}
+   if(!requests.length){reqMessage('복사할 제안 없음.');return;}
    copyText(exportText(requests)).then(function(){reqMessage('복사 완료. 카카오톡·메신저에 붙여 넣을 것.');},function(){reqMessage('복사 실패. .md 내려받기를 쓸 것.');});
   };
   document.getElementById('reqDownload').onclick=function(){
-   if(!requests.length){reqMessage('내려받을 요청 없음.');return;}
-   try{var url=URL.createObjectURL(new Blob([exportText(requests)],{type:'text/markdown;charset=utf-8'})),a=el('a');a.href=url;a.download='근무노트_수정요청_'+localWorkDate()+'.md';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},2000);reqMessage('내려받기 시작. 파일을 팀장에게 전달할 것.');}
+   if(!requests.length){reqMessage('내려받을 제안 없음.');return;}
+   try{var url=URL.createObjectURL(new Blob([exportText(requests)],{type:'text/markdown;charset=utf-8'})),a=el('a');a.href=url;a.download='근무노트_수정제안_'+localWorkDate()+'.md';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},2000);reqMessage('내려받기 시작. 서버에 안 간 제안은 파일을 매니저에게 전달할 것.');}
    catch(err){reqMessage('내려받기 실패. 전체 복사를 쓸 것.');}
   };
-  (function(){var b=document.getElementById('reqClear');b.onclick=function(){if(!requests.length){reqMessage('비울 요청 없음.');return;}confirmTwice(b,'clear','전체 비우기',function(){requests=[];saveRequests();renderRequests();reqMessage('전체 비움.');});};})();
+  (function(){var b=document.getElementById('reqClear');b.onclick=function(){if(!requests.length){reqMessage('비울 제안 없음.');return;}confirmTwice(b,'clear','전체 비우기',function(){requests=[];saveRequests();renderRequests();reqMessage('전체 비움.');});};})();
  }
  /* 체크리스트 편집 화면 */
  var draft={v:1,kinds:{},sigs:{},bases:{},srcs:{},memos:{},apply:false,ui:{editing:false,kind:'오픈 순서'}},draftOk=true,draftStale=false,draftConflicts=0,draftNote='',editMode=false,editView='rows',openDetail={},uidN=0,lastFocus=null,editMsg='';
@@ -1339,7 +1523,7 @@ var recipeKind='안주',openFood='';
   document.querySelectorAll('.screen').forEach(function(s){s.hidden=s.id!=='screen-'+id;});
   document.querySelectorAll('[data-tab]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.tab===id));});
   log.hidden=true;log.replaceChildren();
-  if(id==='checklist'){renderChecklist();fetchPublished();}if(id==='home')refreshHome();if(id==='requests'){reqMessage('');renderRequests();}window.scrollTo({top:0});
+  if(id==='checklist'){renderChecklist();fetchPublished();}if(id==='recipes')fetchContent('recipes');if(id==='phrases')fetchContent('phrases');if(id==='home')refreshHome();if(id==='requests'){reqMessage('');renderRequests();}window.scrollTo({top:0});
  }
  // 오픈/마감 순서 검색 결과: 서버 발행본이 있으면 발행본의 소제목·항목(오늘 요일 기준)으로 바꿔 보여 준다. 없으면 내장 답 그대로.
  function pubAnswer(a){
@@ -1353,6 +1537,28 @@ var recipeKind='안주',openFood='';
   var out={};Object.keys(a).forEach(function(k){out[k]=a[k];});
   out.text=lines.join('\n');out.src='서버 발행 v'+PUB.version+' · '+a.title;return out;
  }
+ // 안주·칵테일 레시피 검색 결과: 서버 발행 레시피가 있으면 발행 문구로 바꿔 보여 준다. 발행본에 없는 항목, 후보 칵테일, 응대 멘트(검색에 걸리는 건 04·05 문서뿐이라 발행 데이터에 없음)는 내장 답 그대로.
+ function pubContentAnswer(a){
+  if(!CT.recipes||!a)return a;
+  var R=CT.recipes.data,lines=[],out=null;
+  if(a.recipe&&a.recipeName){
+   var f=R.appetizers.find(function(x){return foodKey(x.name)===foodKey(a.recipeName);});
+   if(!f||!f.steps.length)return a;
+   lines=f.steps.map(function(t){return '• '+t;});if(f.garnish)lines.push('• '+f.garnish);if(f.confirm)lines.push('• [확인] '+(f.confirmNote||'관리자 확인 필요'));
+   out=Object.assign({},a,{text:lines.join('\n'),src:ctSrc('recipes')+' · '+f.name});
+  }else if(String(a.src||'').indexOf('12_칵테일_레시피 · ')===0&&a.title){
+   var name=a.title.replace(/\s*레시피.*$/,'').trim(),c=R.cocktails.filter(function(x){return x.status==='confirmed';}).concat(R.others).find(function(x){return x.name===name;});
+   if(!c)return a;
+   if(c.glass)lines.push('• 잔: '+c.glass);
+   if(c.ingredients.length)lines.push('• 재료: '+c.ingredients.join(', '));
+   c.steps.forEach(function(t,i){lines.push('• '+(i+1)+'단계: '+t);});
+   if(c.garnish)lines.push('• 가니시: '+c.garnish);
+   if(c.note)lines.push('• '+c.note);
+   if(c.confirm)lines.push('• [확인] '+(c.confirmNote||'관리자 확인 필요'));
+   out=Object.assign({},a,{title:name+' 레시피',text:lines.join('\n'),src:ctSrc('recipes')+' · '+name});
+  }
+  return out||a;
+ }
  var lastAsked='';
  /* 웹 검색 답변: 내장 검색이 '모름'일 때만, 공개 와인·주류 일반 지식 질문에 한해 서버 /api/chat(Gemini+구글 검색)으로 넘긴다. 매장 운영 사실은 보내지 않는다. */
  var WEB_MAX=200,WEB_PER_MIN=4,WEB_TIMEOUT_MS=window.HARAGO_WEB_TIMEOUT_MS||10000,webTimes=[],webLast={q:'',t:0},webBusyQ='';
@@ -1365,11 +1571,32 @@ var recipeKind='안주',openFood='';
   return WEB_TOPIC.test(q)&&!WEB_OPS.test(q);
  }
  function webContext(){return aiConversation.slice(-4);}
- function webText(t){return String(t||'').replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^[-*]\s+/gm,'• ').trim();}
+ function webText(t){return String(t||'').replace(/\[([^\]]+)\]\([^)]*\)/g,'$1').replace(/^#{1,6}\s+/gm,'').replace(/\*\*([^*]+)\*\*/g,'$1').replace(/^\s*[-*]\s+/gm,'• ').trim();}
+ // 가벼운 마크다운(목록·굵게)만 읽는다. 모든 글자는 textContent로 넣으므로 HTML은 해석되지 않고, 링크 주소는 버리고 출처 목록에서만 연다.
+ function inlineMd(parent,text){
+  String(text).replace(/\[([^\]]+)\]\([^)]*\)/g,'$1').split(/\*\*([^*]+)\*\*/).forEach(function(p,i){var t=p.replace(/\*+/g,'');if(!t)return;if(i%2)parent.append(el('strong','',t));else parent.append(document.createTextNode(t));});
+ }
+ function webBody(text){
+  var body=el('div','info-item web-body'),list=null,lines=0;
+  String(text||'').split('\n').forEach(function(raw){
+   var line=raw.replace(/\s+$/,'');if(!line.trim())return;
+   var m=line.match(/^(\s*)[-*•]\s+(.*)$/),h=line.match(/^\s*#{1,6}\s+(.*)$/);
+   if(m){if(!list){list=el('ul');body.append(list);}var li=el('li',m[1].length>=2?'sub':'');inlineMd(li,m[2]);list.append(li);}
+   else{list=null;var p=el('p');inlineMd(p,h?h[1]:line.trim());body.append(p);}
+   lines++;
+  });
+  return {node:body,lines:lines,chars:String(text||'').length};
+ }
  function renderWeb(host,d){
   host.replaceChildren();host.append(el('h3','info-heading','웹 검색 답변'));
   var badge=el('p','search-badge web-badge','웹 검색 참고 · 매장 확정 정보 아님');host.append(badge);
-  webText(d.text).split('\n').filter(Boolean).forEach(function(line){var c=line.replace(/^•\s*/,'');host.append(el('div','info-item',c));});
+  var wb=webBody(d.text);host.append(wb.node);
+  if(wb.lines>5||wb.chars>360){
+   // 4줄까지 보이게 접는다(줄 경계에서 자름). 줄이 적은데 글이 길면 7em에서 흐리게 접는다.
+   var cutPx=function(){var ls=wb.node.querySelectorAll('p,li');return ls.length>5?ls[3].offsetTop+ls[3].offsetHeight:0;};
+   wb.node.classList.add('clamped');var more=button('더 보기',function(){var c=wb.node.classList.toggle('clamped');wb.node.classList.toggle('soft',c&&!cutPx());wb.node.style.maxHeight=c&&cutPx()?cutPx()+'px':'';more.textContent=c?'더 보기':'접기';more.setAttribute('aria-expanded',String(!c));},'web-more');more.setAttribute('aria-expanded','false');host.append(more);
+   var cut=cutPx();if(cut)wb.node.style.maxHeight=cut+'px';else wb.node.classList.add('soft');
+  }
   var box=el('div','web-sources');box.append(el('strong','','참고 출처'));var ul=el('ul','web-source-list');
   d.sources.forEach(function(s){var li=el('li'),a=el('a','',s.title||'참고 출처');a.href=s.url;a.target='_blank';a.rel='noopener noreferrer';li.append(a);ul.append(li);});
   box.append(ul);host.append(box);
@@ -1401,7 +1628,7 @@ var recipeKind='안주',openFood='';
  function ask(q,keep){
   q=q.trim();if(!q)return false;
   if(webBusyQ&&!keep&&webBusyQ===q)return false;
-  var a=answer(q);a=pubAnswer(a);log.replaceChildren();log.hidden=false;lastAsked=q;
+  var a=answer(q);a=pubContentAnswer(pubAnswer(a));log.replaceChildren();log.hidden=false;lastAsked=q;
   if(!keep)fetchPublished();
   if(!keep&&webBusyQ){responseEpoch++;webBusyQ='';setWebBusy(false);}
   var tools=el('div','search-tools');tools.append(el('h2','','「'+q+'」 검색 결과'),button('닫기',function(){responseEpoch++;webBusyQ='';setWebBusy(false);log.hidden=true;log.replaceChildren();lastAsked='';}));
@@ -1423,13 +1650,13 @@ var recipeKind='안주',openFood='';
  function refreshSearch(){
   if(log.hidden||!lastAsked)return;var qi=document.getElementById('q');
   if(qi&&qi.value)return;
-  var a=answer(lastAsked);if(!a||!a.checklist)return;
+  var a=answer(lastAsked);if(!a||!(a.checklist||a.recipe||String(a.src||'').indexOf('12_칵테일_레시피 · ')===0))return;
   var sy=window.scrollY;ask(lastAsked,true);if(window.scrollY!==sy)window.scrollTo(0,sy);
  }
  [['home','홈','⌂'],['checklist','체크리스트','☑'],['recipes','레시피','♧'],['wine','와인','♢'],['phrases','응대 멘트','“']].forEach(function(tab){
   var b=button(tab[1],function(){showTab(tab[0]);});b.dataset.tab=tab[0];b.prepend(el('span','tab-icon',tab[2]));document.getElementById('departments').append(b);
  });
- [['checklist','체크리스트','오늘의 오픈과 마감'],['recipes','레시피','잔·재료·순서 한눈에'],['wine','와인','취향과 안주로 추천'],['phrases','응대 멘트','상황별 안내와 복사'],['requests','수정 요청 모아보기','쌓인 요청 복사·내려받기']].forEach(function(item){
+ [['checklist','체크리스트','오늘의 오픈과 마감'],['recipes','레시피','잔·재료·순서 한눈에'],['wine','와인','취향과 안주로 추천'],['phrases','응대 멘트','상황별 안내와 복사'],['requests','내 수정 제안','보낸 제안·전송 상태 확인']].forEach(function(item){
   var b=button('',function(){showTab(item[0]);},'home-card');var sm=el('small','',item[2]);if(item[0]==='requests'){sm.id='homeReqSmall';b.classList.add('featured');}b.append(el('strong','',item[1]),sm,el('span','card-action','열기 →'));document.getElementById('homeCards').append(b);
  });
  document.querySelectorAll('[data-check-kind]').forEach(function(b){b.onclick=function(){checkKind=b.dataset.checkKind;renderChecklist();};});
@@ -1473,11 +1700,11 @@ var recipeKind='안주',openFood='';
   refreshSearch();
   refreshHome();
  }
- document.addEventListener('visibilitychange',function(){if(!document.hidden)fetchPublished(true);});
- setInterval(function(){if((activeTab==='checklist'||(!log.hidden&&lastAsked))&&!document.hidden)fetchPublished();},POLL_MS);
+ document.addEventListener('visibilitychange',function(){if(!document.hidden){fetchPublished(true);if(activeTab==='recipes'||activeTab==='phrases')fetchContent(activeTab,true);}});
+ setInterval(function(){if((activeTab==='checklist'||(!log.hidden&&lastAsked))&&!document.hidden)fetchPublished();if((activeTab==='recipes'||activeTab==='phrases')&&!document.hidden)fetchContent(activeTab);},POLL_MS);
  setInterval(function(){if(workDay!==localWorkDate()){workDay=localWorkDate();if(activeTab==='checklist')renderChecklist();refreshHome();}},60000);
   document.getElementById('taste').open=true;
-  initRequestUi();renderRecipes();document.querySelectorAll('[data-recipe-kind]').forEach(function(b){b.onclick=function(){showRecipeKind(b.dataset.recipeKind);};});showRecipeKind('안주');document.getElementById('foodFilter').oninput=renderFoods;renderPhrases();refreshHome();updateReqUi();showTab('home');fetchPublished(true);
+  initRequestUi();renderRecipes();document.querySelectorAll('[data-recipe-kind]').forEach(function(b){b.onclick=function(){showRecipeKind(b.dataset.recipeKind);};});showRecipeKind('안주');document.getElementById('foodFilter').oninput=renderFoods;document.getElementById('foodFilter').addEventListener('blur',function(){applyContent('recipes');});renderPhrases();document.getElementById('phraseCards').addEventListener('toggle',function(){if(!document.querySelector('#phraseCards details.phrase-card[open]'))applyContent('phrases');},true);refreshHome();updateReqUi();showTab('home');fetchPublished(true);fetchContent('recipes',true);fetchContent('phrases',true);
   if(draft.ui&&draft.ui.editing){document.body.classList.add('editmode');editMode=true;checkKind=draft.ui.kind||checkKind;document.getElementById('screen-checklist').classList.add('editing');showTab('checklist');}
 }
 

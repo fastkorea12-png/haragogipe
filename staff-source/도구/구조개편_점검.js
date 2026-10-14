@@ -1,6 +1,7 @@
 const fs=require('fs'),path=require('path'),os=require('os'),vm=require('vm'),assert=require('assert/strict');
 const {chromium}=require(process.env.HARAGO_PLAYWRIGHT||'playwright');
 const CL_URL='https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev/api/checklist';// 근무노트가 읽는 공개 발행본 주소(이 점검에서는 미발행으로 모의)
+const H=require('./_점검공통.js');
 const root=path.join(__dirname,'..'),html=fs.readFileSync(path.join(root,'근무노트.html'),'utf8');
 const ctx={};vm.createContext(ctx);vm.runInContext(html.match(/<script>([\s\S]*)<\/script>/)[1],ctx);
 const body=title=>ctx.KB.find(e=>e.file==='09_운영_매뉴얼'&&e.title===title).body;
@@ -16,7 +17,7 @@ for(let day=0;day<7;day++){
  assert(body('마감 순서').includes('오전·오후 표기 없음 [확인]'));
  totals.push({day,open:open.length,close:close.length});
 }
-assert.equal((html.match(/\bfetch\(/g)||[]).length,3,'서버 호출은 발행 체크리스트 읽기·근무 제출·웹 검색 3곳뿐');assert((html.match(/fetch\(CL_BASE\+'\/api\/(checklist|shifts|chat)'/g)||[]).length===3,'세 호출 모두 빌드에 심은 서버 주소(CL_BASE) 사용');assert(html.includes('/api/checklist'));
+assert.equal((html.match(/\bfetch\(/g)||[]).length,5,'서버 호출은 발행 체크리스트·발행 레시피/멘트 읽기·근무 제출·웹 검색·수정 제안 5곳뿐');assert((html.match(/fetch\(CL_BASE\+'\/api\/(checklist|shifts|chat|proposals|content\/'\+kind)'?/g)||[]).length===5,'다섯 호출 모두 빌드에 심은 서버 주소(CL_BASE) 사용');assert(html.includes('/api/checklist'));
 assert(!/fonts\.googleapis\.com|docs\.google\.com\/forms/.test(html));
 assert(ctx.PHRASES.some(p=>/^5-7\b/.test(p.title)));
 (async()=>{
@@ -24,7 +25,7 @@ assert(ctx.PHRASES.some(p=>/^5-7\b/.test(p.title)));
  try{
   const context=await browser.newContext({viewport:{width:500,height:900},timezoneId:'Asia/Seoul'});
   const page=await context.newPage(),errors=[],external=[];
-  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url())&&r.url()!==CL_URL)external.push(r.url());});await page.route(CL_URL,r=>r.fulfill({status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},body:'{"published":false}'}));
+  page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url())&&!H.ALLOWED.includes(r.url()))external.push(r.url());});await H.stub(page);
   await page.addInitScript(()=>{Object.defineProperty(navigator,'clipboard',{value:{writeText:async t=>{window.copiedText=t;}}});});
   await page.goto('file://'+path.join(root,'근무노트.html'));
   const shots=[];
@@ -50,7 +51,7 @@ assert(ctx.PHRASES.some(p=>/^5-7\b/.test(p.title)));
   await page.locator('#checkContent .row-main').first().click();await page.locator('#checkContent .row-panel:not([hidden]) .skip-check').click();assert.equal(await page.locator('#checkContent input:disabled').count(),1);
   await page.locator('[data-tab="home"]').click();assert((await page.locator('#todayProgress').innerText()).includes('1/'));
   await page.locator('[data-tab="phrases"]').click();const phrase=page.locator('.phrase-card').first();await phrase.locator('summary').click();await phrase.locator('.copy-pitch').click();assert((await page.evaluate(()=>window.copiedText)).includes('반갑습니다'));
-  const refusal=page.locator('.phrase-card').filter({has:page.locator('summary', {hasText:'5-7 '})});await refusal.locator('summary').click();assert((await refusal.innerText()).includes('[확인] 새 응대 문장'));
+  const refusal=page.locator('.phrase-card').filter({has:page.locator('summary', {hasText:'리뷰를 안 쓰겠다는 손님'})});await refusal.locator('summary').click();assert((await refusal.innerText()).includes('[확인] 새 응대 문장'));
   await page.locator('[data-tab="wine"]').click();await page.locator('#tasteGo').click();assert.equal(await page.locator('#wineResults .wine-card').count(),6);
   await page.setViewportSize({width:1440,height:1000});assert((await page.locator('.sidebar').boundingBox()).width>=180);
   assert.equal(errors.length,0,errors.join('\n'));assert.equal(external.length,0,'unexpected external requests');

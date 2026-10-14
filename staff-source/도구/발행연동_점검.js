@@ -16,7 +16,7 @@ const check=async(area,name,fn)=>{try{await fn();rec(area,name,true,'');}catch(e
 
 // ---- 0. 정적 확인: 서버 주소·내장본 동등성 ----
 assert.match(html,new RegExp('var CL_BASE = "https://'+PROD_HOST.replace(/\./g,'\\.')+'";'),'빌드에 심은 서버 주소');
-assert.equal((html.match(/\bfetch\(/g)||[]).length,3);
+assert.equal((html.match(/\bfetch\(/g)||[]).length,5,'서버 호출 5곳(체크리스트·레시피/멘트 발행본 읽기·근무 제출·웹 검색·수정 제안)');
 checkSync('정적','발행본을 안 바꾸고 그대로 쓰면 화면 항목이 내장본과 같음(요일 7일)',()=>{
  for(const kind of ['오픈 순서','마감 순서'])for(let day=0;day<7;day++){
   const date=new Date('2026-10-'+String(11+day).padStart(2,'0')+'T12:00:00+09:00'),body=ctx.KB.find(e=>e.file==='09_운영_매뉴얼'&&e.title===kind).body;
@@ -80,8 +80,8 @@ const stripMeta=b=>{const c=JSON.parse(JSON.stringify(b));delete c._deleted;retu
   if(fixed)await context.clock.setFixedTime(new Date(fixed));
   const page=await context.newPage();
   page.on('pageerror',e=>allErrors.push(profile+': '+e.message));
-  page.on('request',r=>{if(/^https?:/.test(r.url())&&!r.url().startsWith(origin+'/api/checklist'))allExternal.push(r.url());});
-  page.on('requestfailed',r=>{if(!/\/api\/checklist/.test(r.url()))allExternal.push('failed '+r.url());});
+  page.on('request',r=>{if(/^https?:/.test(r.url())&&!['/api/checklist','/api/content/recipes','/api/content/phrases'].some(p=>r.url().startsWith(origin+p)))allExternal.push(r.url());});
+  page.on('requestfailed',r=>{if(!/\/api\/(checklist|content\/(recipes|phrases))/.test(r.url()))allExternal.push('failed '+r.url());});
   await page.addInitScript(({poll,storage})=>{if(poll)window.HARAGO_POLL_MS=poll;if(storage&&!sessionStorage.getItem('__seeded')){sessionStorage.setItem('__seeded','1');Object.keys(storage).forEach(k=>localStorage.setItem(k,storage[k]));}},{poll,storage});
   if(pre)await pre(page);
   await page.goto(file);
@@ -298,7 +298,7 @@ const stripMeta=b=>{const c=JSON.parse(JSON.stringify(b));delete c._deleted;retu
   await context.close();
  }
  await browser.close();server.close();
- await check('⑦','외부 요청은 서버 발행본 읽기뿐',()=>assert.deepEqual(allExternal,[]));
+ await check('⑦','외부 요청은 서버 발행본(체크리스트·레시피·멘트) 읽기뿐',()=>assert.deepEqual(allExternal,[]));
  await check('⑧','JS 오류 0',()=>assert.deepEqual(allErrors,[]));
  const bad=rows.filter(r=>!r.ok);
  console.log('| 영역 | 점검 | 결과 |\n|---|---|---|');

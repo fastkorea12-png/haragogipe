@@ -56,7 +56,7 @@ const logo=require('./로고_축소.js')(fs.readFileSync(path.join(kdir,'로고.
 const adminChecklist=require('./체크리스트_추출.js')(kb);
 const adminContent=require('./콘텐츠_추출.js')();
 const adminBase=(()=>{try{return new URL(process.env.HARAGO_AI_ENDPOINT).origin;}catch{return 'https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev';}})();
-const built=tpl.replace('/*LOGO_URL*/',logo.header).replace('/*LOGO_URL2*/',logo.header).replace('/*FAVICON_URL*/',logo.favicon).replace('/*KB_JSON*/[]',safe(kb)).replace('/*WINE_JSON*/[]',safe(wines)).replace('/*FOOD_JSON*/[]',safe(foods)).replace('/*WINE_MENU_JSON*/[]',safe(wineMenu)).replace('/*VERSION_JSON*/{}',safe({sourceHash})).replace('/*PHRASES_JSON*/[]',safe(phrases)).replace('/*PHOTOS_JSON*/{}',safe(recipePhotos)).replace('/*CHECKLIST_API_BASE*/""',()=>safe(adminBase)).replace('/*BUILTIN_CL_JSON*/{}',()=>safe(adminChecklist));
+const built=tpl.replace('/*LOGO_URL*/',logo.header).replace('/*LOGO_URL2*/',logo.header).replace('/*FAVICON_URL*/',logo.favicon).replace('/*KB_JSON*/[]',safe(kb)).replace('/*WINE_JSON*/[]',safe(wines)).replace('/*FOOD_JSON*/[]',safe(foods)).replace('/*WINE_MENU_JSON*/[]',safe(wineMenu)).replace('/*VERSION_JSON*/{}',safe({sourceHash})).replace('/*PHRASES_JSON*/[]',safe(phrases)).replace('/*PHOTOS_JSON*/{}',safe(recipePhotos)).replace('/*CHECKLIST_API_BASE*/""',()=>safe(adminBase)).replace('/*BUILTIN_CL_JSON*/{}',()=>safe(adminChecklist)).replace('/*BUILTIN_CT_JSON*/{}',()=>safe(adminContent));
 fs.writeFileSync(path.join(root,'근무노트.html'),built);
 console.log('항목',kb.length,'개 내장 / 응대 멘트',phrases.length,'개 / 사진',Object.keys(recipePhotos).length,'개 / 로고',logo.headerBytes,'bytes / 파비콘',logo.faviconBytes,'bytes');
 
