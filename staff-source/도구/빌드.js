@@ -41,7 +41,9 @@ for(const [file,title] of [['04_칵테일_전환_가격','안내 멘트 (손님�
  if(entry)phrases.push({group:'전환·리뷰 원문',title,speech:entry.body,notes:file,file,section:title,notice:'[확인] 이벤트 시작 여부·기간 확인 후 사용할 것.',confirm:true});
 }
 const recipePhotos={};
-for(const name of ['칼리모초','키르','미모사']){
+const photoDir=path.join(kdir,'사진');
+const photoNames=[...new Set((fs.existsSync(photoDir)?fs.readdirSync(photoDir):[]).filter(f=>/\.(jpg|png)$/i.test(f)).map(f=>f.replace(/\.(jpg|png)$/i,'')))];
+for(const name of photoNames){
  const source=['jpg','png'].map(ext=>path.join(kdir,'사진',name+'.'+ext)).find(f=>fs.existsSync(f));
  if(!source)continue;
  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'harago-photo-')),out=path.join(tmp,'photo.jpg');

@@ -34,6 +34,7 @@ html{overflow-anchor:none}
 .task-group{margin:24px 0 12px;font-size:17px;color:var(--wine)}.task-list{display:grid;gap:10px}.task-list .info-item{padding:13px 16px}.check-tools{margin-top:16px}
 .task-label{font-size:15px}.recipe-grid{display:grid;gap:20px}.recipe-card,.phrase-card{border:1px solid var(--rule);background:white;border-radius:16px;overflow:hidden}
 .recipe-photo{display:block;width:100%;max-height:280px;object-fit:cover}.recipe-content{padding:22px}.recipe-content h3{font-size:20px;margin:0 0 14px;color:var(--wine)}.recipe-field{padding:10px 0;border-bottom:1px solid var(--rule);white-space:pre-wrap}.recipe-field strong{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}
+.food-tools{margin:0 0 14px}.food-tools input{width:100%;min-height:44px;padding:0 14px;border:1px solid var(--rule);border-radius:10px;font-size:16px;background:white;color:var(--ink)}.food-list{display:grid;gap:10px}.food-list[hidden],.food-tools[hidden],.recipe-grid[hidden]{display:none}.food-card{border:1px solid var(--rule);background:white;border-radius:14px;overflow:hidden}.food-head{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:52px;padding:12px 16px;border:0;background:transparent;text-align:left;color:var(--ink);font-size:16px}.food-head .food-name{flex:1;min-width:0;font-weight:700;color:var(--wine);overflow-wrap:anywhere}.food-head .food-price{font-size:13px;color:var(--muted);white-space:nowrap}.food-head .food-caret{color:var(--muted);font-size:13px}.food-body{padding:2px 16px 16px;border-top:1px solid var(--rule)}.food-body[hidden]{display:none}.food-photo{display:block;width:100%;max-height:280px;object-fit:cover;border-radius:10px;margin:12px 0 0}.food-field{position:relative;padding:10px 56px 10px 0;border-bottom:1px solid var(--rule);overflow-wrap:anywhere}.food-field>strong{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}.food-field.confirm{padding-left:12px;border-radius:8px;background:#FCF2D9}.food-field>.edit-btn{position:absolute;right:0;top:2px;padding:0 4px}.food-field.food-order{padding-right:0}.food-steps{margin:0;padding:0;list-style:none}.food-steps li{position:relative;padding:8px 56px 8px 28px;border-bottom:1px solid var(--rule);line-height:1.6;overflow-wrap:anywhere}.food-steps li:last-child{border-bottom:0}.food-steps li>b{position:absolute;left:0;top:8px;color:var(--wine);width:22px}.food-steps li>.edit-btn{position:absolute;right:0;top:6px;padding:0 4px}.food-empty{padding:18px;color:var(--muted);text-align:center}
 .recipe-field.confirm,.phrase-warning{padding:12px;border-radius:8px;background:#FCF2D9;white-space:pre-wrap}.recipe-note{font-size:12px;color:var(--muted);margin:14px 0 0}
 .phrase-group{margin:28px 0 10px;color:var(--wine);font-size:17px}.phrase-card{margin-bottom:10px;padding:16px}.phrase-card>summary{font-weight:600;line-height:1.6}.phrase-card>summary:focus-visible{outline-offset:4px}.phrase-speech{white-space:pre-wrap;font-size:17px;line-height:1.9;background:var(--soft);border-left:3px solid var(--gold);padding:16px;border-radius:8px;margin:16px 0 10px}.phrase-notes{white-space:pre-wrap;color:var(--muted);font-size:12px;margin:12px 0}.check-summary{display:flex;gap:12px;flex-wrap:wrap}.check-summary button{background:white;border:1px solid var(--rule);border-radius:10px;color:var(--wine);padding:10px 14px}
 @media(min-width:1100px){.recipe-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.recipe-content{padding:18px}.recipe-field{font-size:14px}}
@@ -126,7 +127,7 @@ html{overflow-anchor:none}
 <section id="log" aria-live="polite" aria-label="검색 결과" hidden></section>
 <section id="screen-home" class="screen"><h2>필요한 업무 찾기</h2><p>자주 찾는 안내를 한눈에.</p><div class="home-grid" id="homeCards"></div><div class="progress-card"><h3>오늘의 체크리스트</h3><div class="check-summary" id="todayProgress"></div></div><p class="home-footer">체크는 오늘 날짜 기준으로 이 기기에 저장함.</p><img class="home-logo" src="/*LOGO_URL2*/" alt="" width="122" height="40"></section>
 <section id="screen-checklist" class="screen" hidden><h2>체크리스트</h2><p>항목별 확인. 격주 작업은 해당일에 ‘해당 없음’ 취소. 문구를 누르면 해당 없음·수정 요청.</p><div class="switcher"><button type="button" data-check-kind="오픈 순서">오픈</button><button type="button" data-check-kind="마감 순서">마감</button><button type="button" id="editEnter" class="edit-enter">편집</button></div><div id="applyStrip" class="apply-strip" hidden><span>초안 미리 적용 중 — 원본 아님, 이 기기에서만 보임</span><button type="button" id="applyOff">끄기</button></div><div id="checkContent" class="task-list"></div><div id="editRoot" class="edit-root" hidden></div></section>
-<section id="screen-recipes" class="screen" hidden><h2>레시피</h2><p>주문한 병 와인으로 만드는 칼리모초·키르·미모사.</p><div id="recipeCards" class="recipe-grid"></div></section>
+<section id="screen-recipes" class="screen" hidden><h2>레시피</h2><p id="recipeIntro">주문한 병 와인으로 만드는 칼리모초·키르·미모사.</p><div class="switcher recipe-kind" role="group" aria-label="레시피 구분"><button type="button" data-recipe-kind="칵테일" aria-pressed="true">칵테일</button><button type="button" data-recipe-kind="안주" aria-pressed="false">안주</button></div><div id="foodTools" class="food-tools" hidden><input id="foodFilter" type="search" aria-label="안주 이름 찾기" placeholder="안주 이름 찾기" autocomplete="off"></div><div id="recipeCards" class="recipe-grid"></div><div id="foodCards" class="food-list" hidden></div></section>
 <section id="screen-wine" class="screen" hidden><h2>와인</h2><p>손님 취향·안주에 맞춰 선택.</p><details id="taste">
 <summary>와인 취향 &amp; 안주 페어링</summary><p class="taste-help">취향 3단계 선택. 와인 맛은 5칸 막대로 비교.</p>
 <div class="sliders">
@@ -864,6 +865,62 @@ if(typeof document!=="undefined"){
   });update();appendSubmitBox(host,previewOn);
   document.querySelectorAll('[data-check-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.checkKind===checkKind));});
  }
+var recipeKind='칵테일',openFood='';
+ function foodKey(n){return String(n).replace(/[\s&·]/g,'');}
+ var FOOD_TOOLS=['전자레인지','오븐','토치','밧드','종이호일','피자 종이','머그컵','종지','작은 접시','흰 접시','앞접시','아이스크림 그릇','그릇','작은 잔','냅킨','접시','샐러드톱'];
+ function foodCatalog(){
+  var secs=KB.filter(function(e){return e.file==='10_안주_가이드';}),ut={},price={},out=[];
+  var tools=secs.find(function(e){return e.title==='서빙 식기';}),list=secs.find(function(e){return e.title==='안주 목록과 가격';});
+  if(tools)tools.body.split('\n').forEach(function(l){var m=l.match(/^-\s*([^:]+):\s*(.+)$/);if(m)m[1].split(',').forEach(function(n){ut[foodKey(n)]=m[2].trim();});});
+  if(list){var pm=list.body.match(/([가-힣 ]+?)만 메뉴판에 ([\d,]+원)/);if(pm)price[foodKey(pm[1])]=pm[2];}
+  function make(name,text,entry){
+   var sentences=text.split(/\.\s*/).map(function(x){return x.trim();}).filter(Boolean).map(function(x){return x+'.';});
+   var steps=[],finish=[];sentences.forEach(function(t,i){var o={text:t,index:i+1};if(/마무리/.test(t)&&sentences.length>1)finish.push(o);else steps.push(o);});
+   var prep=[];FOOD_TOOLS.forEach(function(w){if(text.indexOf(w)>=0&&!prep.some(function(p){return p.indexOf(w)>=0;}))prep=prep.filter(function(p){return w.indexOf(p)<0;}).concat([w]);});
+   prep.sort(function(a,b){return text.indexOf(a)-text.indexOf(b);});
+   return {name:name,entry:entry,steps:steps,finish:finish,prep:prep,utensil:ut[foodKey(name)]||'',price:price[foodKey(name)]||''};
+  }
+  secs.forEach(function(e){
+   if(e.title==='서빙 식기'||e.title==='안주 목록과 가격')return;
+   var lines=e.body.split('\n').map(function(x){return x.trim();}).filter(Boolean),bullets=lines.filter(function(l){return /^-\s*[^:]+:/.test(l);});
+   if(bullets.length)bullets.forEach(function(l){var m=l.match(/^-\s*([^:]+):\s*(.+)$/);out.push(make(m[1].trim(),m[2].trim(),e));});
+   else out.push(make(e.title,lines.join(' '),e));
+  });
+  return out;
+ }
+ function foodListNames(){var list=KB.find(function(e){return e.file==='10_안주_가이드'&&e.title==='안주 목록과 가격';}),m=list&&list.body.match(/만드는 법이 있는 안주:\s*(.+)/);return m?m[1].split(',').map(function(x){return x.trim();}):[];}
+ function renderFoods(){
+  var host=document.getElementById('foodCards');host.replaceChildren();
+  var qv=norm((document.getElementById('foodFilter')||{}).value||''),shown=0;
+  foodCatalog().forEach(function(f){
+   if(qv&&norm(f.name).indexOf(qv)<0)return;shown++;
+   var card=el('article','food-card'),head=button('',null,'food-head'),body=el('div','food-body');card.dataset.food=f.name;body.hidden=openFood!==f.name;
+   head.setAttribute('aria-expanded',String(!body.hidden));head.append(el('span','food-name',f.name),el('span','food-price',f.price||'가격 미정'),el('span','food-caret',body.hidden?'펼치기':'접기'));
+   head.onclick=function(){openFood=openFood===f.name?'':f.name;host.querySelectorAll('.food-card').forEach(function(c){var open=c.dataset.food===openFood,b=c.querySelector('.food-body'),h=c.querySelector('.food-head');b.hidden=!open;h.setAttribute('aria-expanded',String(open));h.querySelector('.food-caret').textContent=open?'접기':'펼치기';});};
+   var photoKey=Object.keys(RECIPE_PHOTOS).find(function(k){return foodKey(k)===foodKey(f.name);});
+   if(photoKey){var image=el('img','food-photo');image.src=RECIPE_PHOTOS[photoKey];image.alt=f.name;image.loading='lazy';image.onerror=function(){image.remove();};body.append(image);}
+   function field(label,text,confirm){var d=el('div','food-field'+(confirm?' confirm':''));d.append(el('strong','',label),el('span','',text));return d;}
+   var file=f.entry.file,sec=f.entry.title;
+   function tgt(field,o,n){return {tab:'recipes',file:file,section:sec,sub:f.name,index:o?o.index:0,unit:o?'문장':'',field:field,current:o?o.text:'',label:'레시피 · '+f.name+' · '+field+(n?' '+n+'단계':'')};}
+   if(f.price)body.append(field('가격',f.price+' (메뉴판)'));
+   body.append(field('서빙 식기',f.utensil||'매뉴얼에 식기 안내 없음 [확인]',!f.utensil));
+   var prep=field('준비물 (도구·그릇)',f.prep.join(', ')||'단계 참고');prep.classList.add('food-prep');body.append(prep);
+   var sw=el('div','food-field food-order');sw.append(el('strong','','만드는 순서'));var ol=el('ol','food-steps');
+   f.steps.forEach(function(o,i){var li=el('li','');li.append(el('b','',(i+1)+'.'),el('span','',o.text));var t=tgt('만드는 순서',o,i+1);li.append(editMark(t),editButton(t,'✎ 수정'));ol.append(li);});
+   sw.append(ol);body.append(sw);
+   if(f.finish.length){var fw=el('div','food-field food-finish');fw.append(el('strong','','마무리 (데코)'));f.finish.forEach(function(o){var d=el('div','');d.append(el('span','',o.text));var t=tgt('마무리',o,0);d.append(editMark(t),editButton(t,'✎ 수정'));d.style.position='relative';d.style.paddingRight='56px';fw.append(d);});fw.style.paddingRight='0';body.append(fw);}
+   var note=f.price?'':'가격은 매뉴얼에 없음 [확인].';body.append(el('p','recipe-note','참고 · 매뉴얼 기준 만드는 법. '+note+' 출처 · '+file+' / '+sec));
+   card.append(head,body);host.append(card);
+  });
+  if(!shown)host.append(el('div','food-empty','맞는 안주가 없음'));
+ }
+ function showRecipeKind(kind){
+  recipeKind=kind;var food=kind==='안주';
+  document.querySelectorAll('[data-recipe-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.recipeKind===kind));});
+  document.getElementById('recipeCards').hidden=food;document.getElementById('foodCards').hidden=!food;document.getElementById('foodTools').hidden=!food;
+  document.getElementById('recipeIntro').textContent=food?'매장 안주 만드는 법. 이름을 누르면 펼침.':'주문한 병 와인으로 만드는 칼리모초·키르·미모사.';
+  if(food)renderFoods();
+ }
  function renderRecipes(){
   var host=document.getElementById('recipeCards');host.replaceChildren();
   ['칼리모초','키르','미모사'].forEach(function(name){
@@ -1358,7 +1415,7 @@ if(typeof document!=="undefined"){
  setInterval(function(){if((activeTab==='checklist'||(!log.hidden&&lastAsked))&&!document.hidden)fetchPublished();},POLL_MS);
  setInterval(function(){if(workDay!==localWorkDate()){workDay=localWorkDate();if(activeTab==='checklist')renderChecklist();refreshHome();}},60000);
   document.getElementById('taste').open=true;
-  initRequestUi();renderRecipes();renderPhrases();refreshHome();updateReqUi();showTab('home');fetchPublished(true);
+  initRequestUi();renderRecipes();document.querySelectorAll('[data-recipe-kind]').forEach(function(b){b.onclick=function(){showRecipeKind(b.dataset.recipeKind);};});document.getElementById('foodFilter').oninput=renderFoods;renderPhrases();refreshHome();updateReqUi();showTab('home');fetchPublished(true);
   if(draft.ui&&draft.ui.editing){document.body.classList.add('editmode');editMode=true;checkKind=draft.ui.kind||checkKind;document.getElementById('screen-checklist').classList.add('editing');showTab('checklist');}
 }
 
