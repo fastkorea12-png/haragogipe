@@ -16,7 +16,7 @@ const check=async(area,name,fn)=>{try{await fn();rec(area,name,true,'');}catch(e
 
 // ---- 0. 정적 확인: 서버 주소·내장본 동등성 ----
 assert.match(html,new RegExp('var CL_BASE = "https://'+PROD_HOST.replace(/\./g,'\\.')+'";'),'빌드에 심은 서버 주소');
-assert.equal((html.match(/\bfetch\(/g)||[]).length,1);
+assert.equal((html.match(/\bfetch\(/g)||[]).length,2);
 checkSync('정적','발행본을 안 바꾸고 그대로 쓰면 화면 항목이 내장본과 같음(요일 7일)',()=>{
  for(const kind of ['오픈 순서','마감 순서'])for(let day=0;day<7;day++){
   const date=new Date('2026-10-'+String(11+day).padStart(2,'0')+'T12:00:00+09:00'),body=ctx.KB.find(e=>e.file==='09_운영_매뉴얼'&&e.title===kind).body;
@@ -256,7 +256,7 @@ const stripMeta=b=>{const c=JSON.parse(JSON.stringify(b));delete c._deleted;retu
   {
    send(mkPub(2));
    const {context,page}=await open(profile,{poll:1200});await goChecklist(page);await waitMark(page,2);
-   await rowOf(page,'입구 잔디밭 청소').locator('.edit-btn').click();
+   await rowOf(page,'입구 잔디밭 청소').locator('.row-main').click();await rowOf(page,'입구 잔디밭 청소').locator('xpath=following-sibling::*[1]').locator('.edit-btn').click();
    await page.waitForSelector('#editDialog[open]');
    await check(A,'④ 수정 요청 폼: 현재 문구가 발행본 문구',async()=>{assert.equal((await page.locator('#editCurrent').innerText()).trim(),'입구 잔디밭 청소');assert.match(await page.locator('#editTarget').innerText(),/오픈 순서 · 오픈 전 · \d+번째 항목/);});
    send(mkPub(3));await page.waitForTimeout(2500);
@@ -272,7 +272,7 @@ const stripMeta=b=>{const c=JSON.parse(JSON.stringify(b));delete c._deleted;retu
    assert(labs.includes('검증 오늘 항목'));assert(!labs.includes('검증 다른 요일 항목'));
    const c0=await counts(page);
    await check(A,'⑤ 격주 항목은 기본 해당 없음',async()=>{assert.equal(await rowOf(page,'검증 격주 항목').locator('input').isDisabled(),true);});
-   await rowOf(page,'검증 격주 항목').locator('.skip-check').click();
+   await rowOf(page,'검증 격주 항목').locator('.row-main').click();await rowOf(page,'검증 격주 항목').locator('xpath=following-sibling::*[1]').locator('.skip-check').click();
    const c1=await counts(page);
    await check(A,'⑤ 해당 없음 취소 시 분모+1',()=>assert.equal(c1.total,c0.total+1));
    await rowOf(page,'검증 격주 항목').locator('input').check();

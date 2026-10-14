@@ -16,7 +16,7 @@ for(let day=0;day<7;day++){
  assert(body('마감 순서').includes('오전·오후 표기 없음 [확인]'));
  totals.push({day,open:open.length,close:close.length});
 }
-assert.equal((html.match(/\bfetch\(/g)||[]).length,1,'서버 호출은 발행 체크리스트 읽기 1곳뿐');assert(html.includes('/api/checklist'));
+assert.equal((html.match(/\bfetch\(/g)||[]).length,2,'서버 호출은 발행 체크리스트 읽기·근무 제출 2곳뿐');assert((html.match(/fetch\(CL_BASE\+'\/api\/(checklist|shifts)'/g)||[]).length===2,'두 호출 모두 빌드에 심은 서버 주소(CL_BASE) 사용');assert(html.includes('/api/checklist'));
 assert(!/fonts\.googleapis\.com|docs\.google\.com\/forms/.test(html));
 assert(ctx.PHRASES.some(p=>/^5-7\b/.test(p.title)));
 (async()=>{
@@ -47,7 +47,7 @@ assert(ctx.PHRASES.some(p=>/^5-7\b/.test(p.title)));
   await page.locator('#checkContent input[type=checkbox]').first().check();await page.reload();
   await page.locator('[data-tab="checklist"]').click();assert(await page.locator('#checkContent input[type=checkbox]').first().isChecked());
   await page.locator('[data-check-kind="마감 순서"]').click();assert.equal(await page.locator('#checkContent input:disabled').count(),2);
-  await page.locator('#checkContent .skip-check').first().click();assert.equal(await page.locator('#checkContent input:disabled').count(),1);
+  await page.locator('#checkContent .row-main').first().click();await page.locator('#checkContent .row-panel:not([hidden]) .skip-check').click();assert.equal(await page.locator('#checkContent input:disabled').count(),1);
   await page.locator('[data-tab="home"]').click();assert((await page.locator('#todayProgress').innerText()).includes('1/'));
   await page.locator('[data-tab="phrases"]').click();const phrase=page.locator('.phrase-card').first();await phrase.locator('summary').click();await phrase.locator('.copy-pitch').click();assert((await page.evaluate(()=>window.copiedText)).includes('반갑습니다'));
   const refusal=page.locator('.phrase-card').filter({has:page.locator('summary', {hasText:'5-7 '})});await refusal.locator('summary').click();assert((await refusal.innerText()).includes('[확인] 새 응대 문장'));

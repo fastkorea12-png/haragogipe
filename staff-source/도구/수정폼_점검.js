@@ -15,11 +15,12 @@ const layout=async(page,id)=>{const l=await page.evaluate(()=>{window.scrollTo(0
   // 1 체크리스트 행에서 열기
   await page.locator('[data-tab="checklist"]').click();
   const row=page.locator('#checkContent .info-item').first();
-  const box=await row.locator('.edit-btn').boundingBox();assert(box.height>=44,'수정 버튼 높이');
+  assert.equal(await row.locator('.edit-btn:visible').count(),0,'행에는 수정 버튼이 보이지 않음');await row.locator('.row-main').click();const panel=row.locator('xpath=following-sibling::*[1]');
+  const box=await panel.locator('.edit-btn').boundingBox();assert(box.height>=44,'수정 요청 버튼 높이');
   const rowText=(await row.locator('.task-label').innerText()).trim();
   assert.equal(await page.locator('#checkContent .check-row').first().evaluate(n=>n.getBoundingClientRect().width>80),true);
   await layout(page,'checklist');await page.screenshot({path:shot('a_checklist_500')});
-  await row.locator('.edit-btn').click();
+  await panel.locator('.edit-btn').click();
   assert(await page.locator('#editDialog').evaluate(d=>d.open));
   assert.equal((await page.locator('#editCurrent').innerText()).trim(),rowText);
   assert((await page.locator('#editTarget').innerText()).includes('체크리스트 · 오픈 순서'));
@@ -32,7 +33,7 @@ const layout=async(page,id)=>{const l=await page.evaluate(()=>{window.scrollTo(0
   await page.locator('#editText').fill(rowText+' (시험 수정)');await page.locator('#editMemo').fill('시험 메모');await page.locator('#editNick').fill('시험별명');
   await page.screenshot({path:shot('b_form_500')});
   await page.locator('#editSave').click();assert(!(await page.locator('#editDialog').evaluate(d=>d.open)));
-  assert.equal(await page.locator('#checkContent .edit-mark:visible').count(),1,'수정 요청 있음 표시');
+  assert.equal(await page.locator('#checkContent .edit-mark:visible').count(),1,'수정 요청 있음 표시(펼침 영역)');assert.equal(await page.locator('#checkContent .req-dot:visible').count(),1,'수정 요청 있음 점(•) 표시');
   assert.equal(await page.locator('#reqCount').innerText(),'1');
   // 체크 기능은 그대로
   await row.locator('input').check();assert(await row.locator('input').isChecked());await row.locator('input').uncheck();
@@ -77,7 +78,7 @@ const layout=async(page,id)=>{const l=await page.evaluate(()=>{window.scrollTo(0
   await p2.locator('#editText').fill('메모리 시험');await p2.locator('#editSave').click();await p2.locator('#reqGo').click();
   assert.equal(await p2.locator('.req-item').count(),1);assert(await p2.locator('#reqStorage').isVisible(),'저장 불가 안내');
   // 6 데스크톱
-  await page.setViewportSize({width:1280,height:900});await page.locator('[data-tab="checklist"]').click();await page.locator('#checkContent .edit-btn').first().click();
+  await page.setViewportSize({width:1280,height:900});await page.locator('[data-tab="checklist"]').click();await page.locator('#checkContent .row-main').first().click();await page.locator('#checkContent .row-panel:not([hidden]) .edit-btn').click();
   await page.screenshot({path:shot('d_form_1280')});await page.keyboard.press('Escape');
   assert.equal(errors.length,0,errors.join('\n'));assert.equal(external.length,0,'외부 요청');
   console.log(JSON.stringify({ok:true,screenshots:['a_checklist_500','b_form_500','c_requests_500','d_form_1280'].map(shot)},null,1));
