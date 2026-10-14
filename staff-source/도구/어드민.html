@@ -70,6 +70,10 @@ textarea.bad{border-color:var(--wine)}
 .row.inv{padding:10px 12px}
 select{font:inherit;font-size:16px;min-height:44px;border:1px solid #CFC4B8;border-radius:10px;padding:0 8px;background:#fff;color:inherit;max-width:100%}
 #invChips{flex-wrap:wrap}
+.nrow{display:grid;gap:4px;background:var(--bot);border:1px solid var(--rule);border-left:4px solid var(--warn);border-radius:10px;padding:8px 12px;margin-bottom:8px}.nrow.none{border-left-color:var(--wine)}.nsub{color:var(--muted);display:flex;gap:6px 10px;align-items:center;flex-wrap:wrap}
+.tag[data-stale]{background:#FBF3E2;color:var(--warn)}
+.sech{margin:16px 0 6px;font-weight:700;color:var(--muted)}
+details.un{margin:16px 0 0;background:var(--bot);border:1px solid var(--rule);border-radius:12px;padding:8px 14px}details.un summary{min-height:44px;display:flex;align-items:center;font-weight:700;color:var(--muted);cursor:pointer}details.un ul{margin:0 0 8px;padding-left:20px}details.un li{overflow-wrap:anywhere}
 [hidden]{display:none!important}
 @media(min-width:900px){main{max-width:880px}.row{padding:10px 14px}}
 </style></head><body>
@@ -1221,8 +1225,8 @@ function viewInv(){
   if(INV.loading&&!INV.loaded){box.append(h("div",{class:"card",text:"불러오는 중"}));return box;}
   if(INV.error)box.append(h("div",{class:"msg err",id:"invError"},INV.error,h("div",{class:"acts"},h("button",{class:"btn",type:"button",id:"invRetry",text:"다시 불러오기",onclick:function(){INV.loaded=false;loadInv(true);}}))));
   var tb=function(id,key,label,extra){return h("button",{type:"button",id:id,"aria-pressed":String(INV.sub===key),onclick:function(){INV.sub=key;INV.detail=null;INV.w.pendingRestore=null;S.notice=null;render();}},label,extra);};
-  box.append(h("div",{class:"tabs sub"},tb("invTabStatus","status","현황"),tb("invTabHist","history","조사 이력"),tb("invTabWines","wines","와인 목록 편집",wDirty()?h("span",{class:"nbadge",text:String(wDirty())}):null)));
-  box.append(INV.sub==="status"?viewInvStatus():INV.sub==="history"?viewInvHistory():viewInvWines());
+  box.append(h("div",{class:"tabs sub"},tb("invTabStatus","status","현황"),tb("invTabNeed","need","필요 목록"),tb("invTabHist","history","조사 이력"),tb("invTabWines","wines","와인 목록 편집",wDirty()?h("span",{class:"nbadge",text:String(wDirty())}):null)));
+  box.append(INV.sub==="status"?viewInvStatus():INV.sub==="need"?viewInvNeed():INV.sub==="history"?viewInvHistory():viewInvWines());
   return box;
 }
 function invGroups(){return INV.w.orig?INV.w.orig.groups:[];}
@@ -1235,6 +1239,59 @@ function viewInvStatus(){
   box.append(chips,h("div",{class:"bar"},search),h("div",{class:"bar"},low,h("span",{class:"sp"}),h("button",{class:"btn",type:"button",id:"invRefresh",text:"새로고침",onclick:function(){INV.loaded=false;loadInv(true);}})));
   box.append(h("div",{id:"invRows"},invRowNodes()));
   box.append(h("p",{class:"hint",text:"상태는 냉장고 수량 기준: 0 없음 · 1~(기준-1) 필요 · 기준 이상 충분. 기준은 '와인 목록 편집'에서 와인별로 바꿈."}));
+  return box;
+}
+// ---- 필요 목록: 냉장고 수량 기준 필요·없음만. 냉장고 조사 기록이 없으면 미조사로 따로 둔다. 복사 텍스트는 이름·상태·수량·조사일만.
+function invToday(){return new Date(Date.now()+9*3600000).toISOString().slice(0,10);}
+function invDayDiff(a,b){var x=a.split("-"),y=b.split("-");return Math.round((Date.UTC(+x[0],+x[1]-1,+x[2])-Date.UTC(+y[0],+y[1]-1,+y[2]))/86400000);}
+function invStale(d){return !!d&&invDayDiff(invToday(),d)>=7;}
+function invMD(d){var m=/^\d{4}-(\d\d)-(\d\d)$/.exec(d||"");return m?(+m[1])+"/"+(+m[2]):"";}
+function invNeedData(){
+  var groups=[],un=[];
+  invGroups().forEach(function(g){
+    var rows=[];
+    g.items.forEach(function(it){
+      var c=INV.items[it.id]||{},f=c.fridge,st=c.storage;
+      if(!f){un.push(it);return;}
+      var min=Number.parseInt(it.min,10)||3;
+      if(f.qty>=min)return;
+      rows.push({it:it,f:f.qty,s:st?st.qty:null,date:f.surveyDate||"",none:f.qty<=0});
+    });
+    if(rows.length)groups.push({name:g.name,rows:rows});
+  });
+  return {groups:groups,un:un};
+}
+function invNeedText(d){
+  var latest="";d.groups.forEach(function(g){g.rows.forEach(function(r){if(r.date>latest)latest=r.date;});});
+  var out=["필요 와인"+(latest?" (조사일 "+invMD(latest)+")":"")];
+  d.groups.forEach(function(g){
+    out.push("["+g.name+"]");
+    g.rows.forEach(function(r){out.push("- "+r.it.name+" ("+(r.none?"없음":"필요")+", 냉장고 "+r.f+"·창고 "+(r.s==null?"-":r.s)+(r.date&&r.date!==latest?", 조사 "+invMD(r.date):"")+")");});
+  });
+  return out.join("\n");
+}
+function invCopy(text){
+  if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);
+  return new Promise(function(ok,fail){var a=document.createElement("textarea");a.value=text;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();var done=false;try{done=document.execCommand("copy");}catch(e){}a.remove();done?ok():fail(new Error("copy"));});
+}
+function viewInvNeed(){
+  if(INV.error)return h("div",{class:"msg warn",id:"needState",text:"최신 수량 없음. 필요 목록 표시 불가"});
+  var box=h("div",{}),d=invNeedData(),total=d.groups.reduce(function(n,g){return n+g.rows.length;},0);
+  var msg=h("span",{class:"small",id:"needCopyMsg",role:"status"});
+  box.append(h("div",{class:"bar"},h("b",{class:"count",id:"needCount",text:"필요·없음 "+total+"종"}),h("span",{class:"sp"}),
+    total?h("button",{type:"button",class:"btn primary",id:"needCopy",text:"목록 복사",onclick:function(){invCopy(invNeedText(invNeedData())).then(function(){msg.textContent="복사됨. 메신저에 붙여넣기";},function(){msg.textContent="복사 실패. 직접 선택해 복사";});}}):null,
+    h("button",{class:"btn",type:"button",id:"invRefresh",text:"새로고침",onclick:function(){INV.loaded=false;loadInv(true);}})),h("div",{},msg));
+  if(!total)box.append(h("div",{class:"card",id:"needEmpty",text:"지금 필요한 와인이 없어요"}));
+  d.groups.forEach(function(g){
+    box.append(h("div",{class:"sech","data-ngroup":g.name,text:g.name+" "+g.rows.length+"종"}));
+    g.rows.forEach(function(r){
+      box.append(h("div",{class:"nrow"+(r.none?" none":""),"data-need":r.it.id},
+        h("div",{},h("b",{text:r.it.name}),r.it.confirm?h("span",{class:"tag",text:" 확인 필요"}):null),
+        h("div",{class:"nsub"},h("span",{class:"badge "+(r.none?"st-none":"st-low"),text:r.none?"✕ 없음":"▲ 필요"}),h("span",{text:"냉장고 "+r.f+" · 창고 "+(r.s==null?"-":r.s)}),h("span",{text:"조사 "+(r.date?invMD(r.date):"-")}),invStale(r.date)?h("span",{class:"tag","data-stale":"1",text:"오래됨"}):null)));
+    });
+  });
+  if(d.un.length)box.append(h("details",{class:"un",id:"needUn"},h("summary",{text:"미조사 "+d.un.length+"종 (필요 목록에 넣지 않음)"}),h("ul",{},d.un.map(function(it){return h("li",{text:it.name});}))));
+  box.append(h("p",{class:"hint",text:"냉장고 수량 기준: 0 없음 · 1~(기준-1) 필요. 냉장고 조사 기록이 없는 와인은 미조사."}));
   return box;
 }
 function invRenderRows(){var host=document.getElementById("invRows");if(host)host.replaceChildren.apply(host,invRowNodes());}

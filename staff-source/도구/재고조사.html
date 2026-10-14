@@ -51,6 +51,9 @@ dialog::backdrop{background:#2b211b66}
 dialog ul{padding-left:20px;margin:6px 0}dialog li{margin:4px 0;overflow-wrap:anywhere}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .pending{border-color:var(--warn);background:var(--warnbg)}
+.nrow{display:grid;gap:4px;background:var(--bot);border:1px solid var(--rule);border-left:4px solid var(--warn);border-radius:10px;padding:8px 12px}.nrow.none{border-left-color:var(--wine)}
+.nsub{color:var(--muted);display:flex;gap:6px 10px;align-items:center;flex-wrap:wrap}
+details.un{margin:16px 0 0;background:var(--bot);border:1px solid var(--rule);border-radius:12px;padding:8px 14px}details.un summary{min-height:44px;display:flex;align-items:center;font-weight:700;color:var(--muted);cursor:pointer}details.un ul{margin:0 0 8px;padding-left:20px}details.un li{overflow-wrap:anywhere}
 [hidden]{display:none!important}
 </style></head><body>
 <header><div class="brand"><img src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페"><p>재고 조사</p></div><a href="../" id="toNote">근무노트로</a></header>
@@ -58,10 +61,12 @@ dialog ul{padding-left:20px;margin:6px 0}dialog li{margin:4px 0;overflow-wrap:an
 <div id="net" class="msg warn" role="status" hidden>오프라인. 입력은 이 기기에 보존됨. 연결 후 제출</div>
 <div id="pendingBox"></div>
 <div id="stock" class="msg warn" role="status" hidden></div>
+<div class="seg" id="views" role="group" aria-label="보기 선택"><button type="button" data-view="input" aria-pressed="true">수량 입력</button><button type="button" data-view="need" aria-pressed="false">필요 목록</button></div>
 <label class="f" for="q" style="margin-top:0">와인 이름 검색</label>
 <input type="search" id="q" maxlength="40" autocomplete="off" autocapitalize="off" enterkeyhint="search" placeholder="예: 후안길, 포트" aria-label="와인 이름 검색">
 <section id="results" hidden aria-live="polite"></section>
 <section id="detail" hidden></section>
+<section id="need" hidden aria-live="polite"></section>
 <section id="survey">
   <div class="sech">칸 선택</div>
   <div class="chips" id="chips" role="group" aria-label="칸 선택"></div>
@@ -89,7 +94,7 @@ var DRAFT_KEY="harago-inv-draft",PENDING_KEY="harago-inv-pending";
 var LOCS=[["fridge","냉장고"],["storage","창고"]];
 var LOC_NAME={fridge:"냉장고",storage:"창고"};
 var DEFAULT_MIN=3,MAX_PAST_DAYS=7,STALE_DAYS=7;
-var S={groups:[],counts:null,stockState:"loading",gid:null,loc:"fridge",digits:"",date:"",manual:{},query:"",detail:null,dEdit:null,sending:false};
+var S={groups:[],counts:null,stockState:"loading",gid:null,loc:"fridge",digits:"",date:"",manual:{},query:"",detail:null,dEdit:null,sending:false,view:"input"};
 var mem={};
 var $=function(id){return document.getElementById(id);};
 
@@ -303,11 +308,71 @@ function bump(id,d){
 }
 function updateBar(v){
   var bar=$("bar");
-  var show=!!v&&!S.query;
+  var show=!!v&&!S.query&&S.view==="input";
   bar.hidden=!show;
   if(!show)return;
   $("sum").textContent=v.g.name+" · "+LOC_NAME[S.loc]+" · 조사 "+fmtDate(S.date)+" · 입력 "+v.input+"/"+v.g.items.length+"종 · 변경 "+v.changed+"종";
   $("submitBtn").disabled=v.blocked||S.sending;
+}
+
+// ---------- 필요 목록 ----------
+// 냉장고 수량 기준 필요·없음만. 냉장고 조사 기록이 없는 와인은 미조사로 따로 둔다. 복사 텍스트는 이름·상태·수량·조사일만.
+function needData(){
+  var groups=[],un=[];
+  S.groups.forEach(function(g){
+    var rows=[];
+    g.items.forEach(function(it){
+      var f=cnt(it.id,"fridge"),st=cnt(it.id,"storage");
+      if(!f){un.push(it);return;}
+      var s=statusOf(f.qty,it.min);
+      if(s.cls!=="s-none"&&s.cls!=="s-low")return;
+      rows.push({it:it,f:f.qty,s:st?st.qty:null,date:f.surveyDate||"",status:s});
+    });
+    if(rows.length)groups.push({name:g.name,rows:rows});
+  });
+  return {groups:groups,un:un};
+}
+function needText(d){
+  var latest="";d.groups.forEach(function(g){g.rows.forEach(function(r){if(r.date>latest)latest=r.date;});});
+  var out=["필요 와인"+(latest?" (조사일 "+fmtDate(latest)+")":"")];
+  d.groups.forEach(function(g){
+    out.push("["+g.name+"]");
+    g.rows.forEach(function(r){out.push("- "+r.it.name+" ("+r.status.text.replace(/^\S+\s/,"")+", 냉장고 "+r.f+"·창고 "+(r.s==null?"-":r.s)+(r.date&&r.date!==latest?", 조사 "+fmtDate(r.date):"")+")");});
+  });
+  return out.join("\n");
+}
+function copyText(text){
+  if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);
+  return new Promise(function(ok,fail){var a=document.createElement("textarea");a.value=text;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();var done=false;try{done=document.execCommand("copy");}catch(e){}a.remove();done?ok():fail(new Error("copy"));});
+}
+function renderNeed(){
+  var box=$("need"),kids=[];
+  if(S.stockState==="loading"){box.replaceChildren(h("div",{class:"msg",id:"needState",text:"최신 수량 불러오는 중"}));return;}
+  if(!S.counts||S.stockState==="fail"){box.replaceChildren(h("div",{class:"msg warn",id:"needState",text:"최신 수량 없음. 필요 목록 표시 불가. 연결 후 새로고침"}));return;}
+  var d=needData(),total=d.groups.reduce(function(n,g){return n+g.rows.length;},0);
+  if(!total)kids.push(h("div",{class:"msg ok",id:"needEmpty",text:"지금 필요한 와인이 없어요"}));
+  else{
+    var msg=h("div",{id:"needCopyMsg",class:"hint",role:"status"});
+    kids.push(h("div",{class:"acts",style:"margin:0 0 8px;align-items:center"},h("b",{id:"needCount",text:"필요·없음 "+total+"종"}),h("button",{type:"button",class:"btn primary",id:"needCopy",text:"목록 복사",onclick:function(){
+      copyText(needText(needData())).then(function(){msg.textContent="복사됨. 메신저에 붙여넣기";},function(){msg.textContent="복사 실패. 직접 선택해 복사";});
+    }})),msg);
+    d.groups.forEach(function(g){
+      kids.push(h("div",{class:"sech","data-ngroup":g.name,text:g.name+" "+g.rows.length+"종"}));
+      kids.push(h("div",{class:"rows"},g.rows.map(function(r){
+        return h("div",{class:"nrow"+(r.status.cls==="s-none"?" none":""),"data-need":r.it.id},
+          h("div",{class:"rname",text:r.it.name}),
+          h("div",{class:"nsub"},h("span",{class:"badge "+r.status.cls,text:r.status.text}),h("span",{text:"냉장고 "+r.f+" · 창고 "+(r.s==null?"-":r.s)}),h("span",{text:"조사 "+(r.date?fmtDate(r.date):"-")}),r.date?staleTag(r.date):null));
+      })));
+    });
+  }
+  if(d.un.length)kids.push(h("details",{class:"un",id:"needUn"},h("summary",{text:"미조사 "+d.un.length+"종 (필요 목록에 넣지 않음)"}),h("ul",{},d.un.map(function(it){return h("li",{text:it.name});}))));
+  box.replaceChildren.apply(box,kids);
+}
+function setView(v){
+  S.view=v;
+  Array.prototype.forEach.call(document.querySelectorAll("#views button"),function(b){b.setAttribute("aria-pressed",String(b.getAttribute("data-view")===v));});
+  if(v==="need")renderNeed();
+  renderSearch();
 }
 
 // ---------- 검색 ----------
@@ -325,7 +390,7 @@ function searchItems(q){
 function lastDate(id){var best="";LOCS.forEach(function(l){var c=cnt(id,l[0]);if(c&&c.surveyDate&&c.surveyDate>best)best=c.surveyDate;});return best;}
 function renderSearch(){
   var q=S.query.trim(),res=$("results"),det=$("detail");
-  $("survey").hidden=!!q;
+  $("survey").hidden=!!q||S.view!=="input";$("need").hidden=!!q||S.view!=="need";
   if(!q){res.hidden=true;det.hidden=true;S.detail=null;renderPanelBar();return;}
   updateBar(null);
   if(S.detail){res.hidden=true;det.hidden=false;renderDetail();return;}
@@ -505,6 +570,7 @@ function loadStock(){
 
 // ---------- 연결 ----------
 $("digits").addEventListener("input",function(ev){S.digits=ev.target.value;renderPreview();saveDraft();});
+Array.prototype.forEach.call(document.querySelectorAll("#views button"),function(b){b.addEventListener("click",function(){setView(b.getAttribute("data-view"));});});
 $("q").addEventListener("input",function(ev){S.query=ev.target.value;S.detail=null;S.dEdit=null;renderSearch();});
 $("surveyDate").addEventListener("change",function(ev){pickDate(ev.target.value);});
 function recheckDay(){var was=S.date;if(S.dayAt&&S.dayAt!==todayKST()){S.dayAt=todayKST();if(S.date===S.dayPrev||!validDate(S.date)){S.date=todayKST();setDateNote("날짜를 오늘로 맞춤");}}else if(!validDate(S.date)){S.date=todayKST();setDateNote("날짜를 오늘로 맞춤");}S.dayPrev=todayKST();if(was!==S.date){applyDateUi();renderPanel();}else applyDateUi();}
@@ -523,7 +589,7 @@ window.addEventListener("beforeunload",function(){clearTimeout(draftTimer);if(S.
   renderChips();renderPanel();renderPendingBox();
   if(navigator.onLine===false)showNet(true);
   loadStock().then(function(){
-    renderChips();
+    renderChips();renderNeed();
     var a=document.activeElement;
     if(a&&a.closest&&a.closest("#rows")){var v=view();if(v)v.rows.forEach(function(r){updateRow(r.it.id,true);});}else renderPanel();
     if(S.query&&!S.detail)renderSearch();
