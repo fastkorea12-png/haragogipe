@@ -9,7 +9,7 @@ for(const q of ['라로쉬 산도는?','라로쉬 산미가 높아?','Laroche ac
 const selected=ctx.answer('라로쉬 당도와 바디');assert.match(selected.text,/당도: .*1\/5/);assert.match(selected.text,/바디: .*3\/5/);assert.doesNotMatch(selected.text,/산도:/);
 assert.equal(ctx.answer('후안길 산도').wineAmbiguous,true);
 assert.match(ctx.answer('후안길 옐로 라벨 산도').title,/옐로/);
-assert.match(ctx.answer('군터록 산도').text,/점수가 기재되지 않아/);
+assert.match(ctx.answer('군터록 산도').text,/점수 미기재/);
 const comparison=ctx.answer('라로쉬와 간치아 아스티 산도 비교');assert.match(comparison.text,/라로쉬[\s\S]*4\/5/);assert.match(comparison.text,/간치아 아스티[\s\S]*2\/5/);
 ctx.aiConversation=[{role:'user',text:'라로쉬 산도는?'},{role:'model',text:'라로쉬 샤르도네 리저브\n• 산도: 4/5'}];
 assert.equal(ctx.answer('그럼 당도는?').text,'• 당도: '+ctx.bar(Number(row[source[0].indexOf('당도')])));

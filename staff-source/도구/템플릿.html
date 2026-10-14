@@ -61,18 +61,39 @@ html{overflow-anchor:none}
 #phraseCards>.phrase-card[open]>*:not(summary){margin-left:12px;margin-right:12px}
 #phraseCards>.phrase-card[open]>.phrase-notes{margin-bottom:12px}
 @media(max-width:360px){#phraseCards{grid-template-columns:1fr}}
+/* 10/14 수정 요청 */
+.header-actions{display:flex;gap:8px;align-items:center}.header-actions .home-button{white-space:nowrap}#reqGo .count{display:inline-block;min-width:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:var(--wine);color:white;font-size:11px;line-height:18px;text-align:center}#reqGo .count[hidden]{display:none}
+.edit-btn{flex:none;border:0;background:transparent;color:var(--muted);font-size:12px;padding:0 8px;min-height:44px;position:relative;white-space:nowrap}.edit-btn:hover{color:var(--wine)}
+#checkContent .edit-btn{width:32px;min-width:32px;padding:0;font-size:15px;line-height:1;color:#A99C92}#checkContent .edit-btn::after{content:"";position:absolute;inset:0 -6px}
+.edit-mark{display:inline-block;margin-left:6px;padding:0 6px;border-radius:8px;background:#FCF2D9;border:1px solid #DEC891;color:#7A5A12;font-size:10px;line-height:16px;font-weight:600;white-space:nowrap;text-decoration:none;vertical-align:middle}
+.check-row span.edit-mark{flex:none}
+.recipe-field{position:relative;padding-right:56px}.recipe-field>.edit-btn{position:absolute;right:0;top:2px;padding:0 4px}
+.card-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;margin-bottom:10px}.card-tools .copy-pitch{margin-top:0}.card-tools .edit-btn{border:1px solid #D9C9B5;border-radius:8px;min-height:32px;padding:0 12px;color:var(--wine)}
+.phrase-card>summary .edit-mark{margin-left:8px}
+.edit-dialog{border:0;padding:0;width:min(560px,100vw);max-width:100vw;max-height:92dvh;margin:auto auto 0;border-radius:18px 18px 0 0;background:var(--paper);color:var(--ink);overflow:hidden}.edit-dialog[open]{display:flex;flex-direction:column}.edit-dialog::backdrop{background:#2b211b66}
+@media(min-width:851px){.edit-dialog{margin:auto;border-radius:18px;max-height:88dvh}}
+.edit-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--rule);background:var(--bot)}.edit-head h2{margin:0;font-size:18px;color:var(--wine)}.edit-head button{border:0;background:transparent;color:var(--wine);padding:0 6px}
+.edit-body{overflow:auto;padding:14px 18px;-webkit-overflow-scrolling:touch}.edit-note{margin:0 0 12px;font-size:13px;color:var(--muted);line-height:1.6}
+.edit-field{margin:0 0 14px}.edit-label{display:block;font-size:13px;font-weight:700;color:var(--wine);margin-bottom:5px}.edit-ro{font-size:15px;line-height:1.6;padding:10px 12px;border-radius:10px;background:var(--soft);white-space:pre-wrap;overflow-wrap:anywhere;max-height:22dvh;overflow:auto}
+.edit-field textarea,.edit-field input{width:100%;font-size:16px;line-height:1.6;padding:10px 12px;border:1px solid var(--rule);border-radius:10px;background:var(--bot);color:var(--ink);font-family:inherit;resize:vertical}.edit-field small{display:block;margin-top:4px;font-size:12px;color:var(--muted)}
+.edit-kinds{display:flex;flex-wrap:wrap;gap:6px}.edit-kinds button{border:1px solid var(--rule);background:var(--bot);color:var(--wine);border-radius:999px;padding:0 14px;font-size:14px}.edit-kinds button[aria-pressed=true]{background:var(--wine);border-color:var(--wine);color:white;font-weight:700}
+.edit-msg{font-size:13px;margin:0 0 8px;min-height:0;color:var(--wine)}.edit-msg:empty{display:none}.edit-msg.warn{color:#7A5A12;background:#FCF2D9;border-radius:8px;padding:8px 10px}
+.edit-actions{display:flex;gap:10px;padding:12px 18px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--rule);background:var(--bot)}.edit-actions button{flex:1;border-radius:10px;border:1px solid var(--rule);background:var(--bot);color:var(--wine);font-size:15px}.edit-actions button.primary{border:0;background:var(--wine);color:white;font-weight:700}
+.req-tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}.req-tools button{border:1px solid var(--rule);background:var(--bot);color:var(--wine);border-radius:10px;padding:0 14px;font-size:14px}.req-tools button.primary{background:var(--wine);color:white;border:0}
+.req-list{display:grid;gap:10px}.req-item{border:1px solid var(--rule);background:var(--bot);border-radius:12px;padding:14px 16px}.req-item h3{margin:0 0 4px;font-size:15px;color:var(--wine);line-height:1.5}.req-meta{font-size:12px;color:var(--muted);margin:0 0 8px}.req-item dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:14px;line-height:1.6}.req-item dt{color:var(--muted);font-size:12px;padding-top:2px}.req-item dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}.req-item .req-actions{display:flex;gap:8px;margin-top:8px}.req-item .req-actions button{border:1px solid var(--rule);background:transparent;border-radius:8px;color:var(--wine);font-size:13px;padding:0 12px;min-height:36px}
+.req-empty{padding:22px;text-align:center;color:var(--muted);background:var(--soft);border-radius:12px;font-size:14px}
 </style></head>
 <body><div id="app">
-<header><div class="brand"><img class="brand-logo" src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페"><p class="brand-subtitle">근무노트</p></div><button class="home-button" id="homeGo" type="button">홈</button></header>
-<div class="workspace"><aside class="sidebar"><p class="eyebrow">근무노트</p><nav id="departments" aria-label="업무 선택"></nav><p class="sidebar-note">매장 매뉴얼과 메뉴판을 바탕으로 안내합니다.<br>[확인] 항목은 관리자에게 확인해 주세요.</p></aside>
+<header><div class="brand"><img class="brand-logo" src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페"><p class="brand-subtitle">근무노트</p></div><div class="header-actions"><button class="home-button" id="reqGo" type="button">수정 요청<span class="count" id="reqCount" hidden></span></button><button class="home-button" id="homeGo" type="button">홈</button></div></header>
+<div class="workspace"><aside class="sidebar"><p class="eyebrow">근무노트</p><nav id="departments" aria-label="업무 선택"></nav><p class="sidebar-note">매장 매뉴얼·메뉴판 기준 안내.<br>[확인] 항목은 관리자 확인 필요.</p></aside>
 <main class="main-panel">
 <form id="f" role="search"><input id="q" aria-label="매장 업무 검색" placeholder="업무·레시피·와인 검색" autocomplete="off"><button type="submit">검색</button></form>
 <section id="log" aria-live="polite" aria-label="검색 결과" hidden></section>
-<section id="screen-home" class="screen"><h2>지금 필요한 업무를 찾아보세요</h2><p>자주 찾는 안내를 한눈에.</p><div class="home-grid" id="homeCards"></div><div class="progress-card"><h3>오늘의 체크리스트</h3><div class="check-summary" id="todayProgress"></div></div><p class="home-footer">체크는 오늘 날짜 기준으로 이 기기에 저장돼요.</p><img class="home-logo" src="/*LOGO_URL2*/" alt="" width="122" height="40"></section>
-<section id="screen-checklist" class="screen" hidden><h2>체크리스트</h2><p>한 가지씩 확인해요. 격주 작업은 해당하는 날에 ‘해당 없음 취소’를 눌러요.</p><div class="switcher"><button type="button" data-check-kind="오픈 순서">오픈</button><button type="button" data-check-kind="마감 순서">마감</button></div><div id="checkContent" class="task-list"></div></section>
+<section id="screen-home" class="screen"><h2>필요한 업무 찾기</h2><p>자주 찾는 안내를 한눈에.</p><div class="home-grid" id="homeCards"></div><div class="progress-card"><h3>오늘의 체크리스트</h3><div class="check-summary" id="todayProgress"></div></div><p class="home-footer">체크는 오늘 날짜 기준으로 이 기기에 저장함.</p><img class="home-logo" src="/*LOGO_URL2*/" alt="" width="122" height="40"></section>
+<section id="screen-checklist" class="screen" hidden><h2>체크리스트</h2><p>항목별 확인. 격주 작업은 해당일에 ‘해당 없음’ 취소.</p><div class="switcher"><button type="button" data-check-kind="오픈 순서">오픈</button><button type="button" data-check-kind="마감 순서">마감</button></div><div id="checkContent" class="task-list"></div></section>
 <section id="screen-recipes" class="screen" hidden><h2>레시피</h2><p>주문한 병 와인으로 만드는 칼리모초·키르·미모사.</p><div id="recipeCards" class="recipe-grid"></div></section>
-<section id="screen-wine" class="screen" hidden><h2>와인</h2><p>손님의 취향과 안주에 맞춰 함께 골라요.</p><details id="taste">
-<summary>와인 취향 &amp; 안주 페어링</summary><p class="taste-help">취향은 3단계로 선택하고, 와인의 맛은 5칸 막대로 비교해요.</p>
+<section id="screen-wine" class="screen" hidden><h2>와인</h2><p>손님 취향·안주에 맞춰 선택.</p><details id="taste">
+<summary>와인 취향 &amp; 안주 페어링</summary><p class="taste-help">취향 3단계 선택. 와인 맛은 5칸 막대로 비교.</p>
 <div class="sliders">
 <div class="taste-row">당도 <input type="range" min="1" max="3" aria-hidden="true" tabindex="-1" value="2" data-score="sweetness"><output>중간</output></div>
 <div class="taste-row">산도 <input type="range" min="1" max="3" aria-hidden="true" tabindex="-1" value="2" data-score="acidity"><output>중간</output></div>
@@ -87,8 +108,10 @@ html{overflow-anchor:none}
 </label>
 <button id="tasteGo" type="button">이 취향으로 와인 추천</button>
 </details><div id="wineResults"></div></section>
-<section id="screen-phrases" class="screen" hidden><h2>응대 멘트</h2><p>상황을 눌러 안내 문장을 확인하고 복사해요. [확인]과 이벤트 시작 조건을 먼저 확인해 주세요.</p><div id="phraseCards"></div></section>
-</main></div></div><script>
+<section id="screen-phrases" class="screen" hidden><h2>응대 멘트</h2><p>상황별 안내 문장 확인·복사. [확인]과 이벤트 시작 조건 먼저 확인할 것.</p><div id="phraseCards"></div></section>
+<section id="screen-requests" class="screen" hidden><h2>수정 요청 모아보기</h2><p>이 기기에만 저장됨. 서버 전송 없음. 복사하거나 파일로 내려받아 팀장에게 전달할 것.</p><div class="req-tools"><button type="button" id="reqCopy" class="primary">전체 복사</button><button type="button" id="reqDownload">.md 내려받기</button><button type="button" id="reqClear">전체 비우기</button></div><p class="edit-msg" id="reqMsg" role="status"></p><p class="edit-msg warn" id="reqStorage" hidden>이 기기에서 저장소를 쓸 수 없음. 이 화면을 닫으면 요청이 사라지니 먼저 복사할 것.</p><div id="reqList" class="req-list"></div></section>
+</main></div></div>
+<dialog id="editDialog" class="edit-dialog" aria-labelledby="editTitle"><div class="edit-head"><h2 id="editTitle">수정 요청</h2><button type="button" id="editClose">닫기</button></div><div class="edit-body"><p class="edit-note">고칠 내용을 적어 저장하면 이 기기에 쌓임. 지식 문서는 팀장이 반영함.</p><div class="edit-field"><span class="edit-label">대상</span><div class="edit-ro" id="editTarget"></div></div><div class="edit-field"><span class="edit-label">현재 문구</span><div class="edit-ro" id="editCurrent"></div></div><div class="edit-field"><span class="edit-label" id="editKindLabel">요청 종류</span><div class="edit-kinds" id="editKinds" role="group" aria-labelledby="editKindLabel"></div></div><div class="edit-field" id="editTextField"><label class="edit-label" for="editText" id="editTextLabel">수정할 문구</label><textarea id="editText" rows="4"></textarea></div><div class="edit-field"><label class="edit-label" for="editMemo">이유·메모 (선택)</label><textarea id="editMemo" rows="2"></textarea></div><div class="edit-field"><label class="edit-label" for="editNick">작성자 표시 (선택)</label><input id="editNick" maxlength="20" autocomplete="off"><small>별명만 입력. 실명·연락처 입력 금지.</small></div><p class="edit-msg" id="editError" role="alert"></p><p class="edit-msg warn" id="editStorage" hidden>이 기기에서 저장소를 쓸 수 없음. 이 화면을 닫으면 요청이 사라지니 먼저 복사할 것.</p></div><div class="edit-actions"><button type="button" class="primary" id="editSave">저장</button><button type="button" id="editCancel">닫기</button></div></dialog><script>
 var KB = /*KB_JSON*/[];
 var WINE_DATA = /*WINE_JSON*/[];
 var FOOD_DATA = /*FOOD_JSON*/[];
@@ -152,10 +175,10 @@ function wineFactAnswer(q){
   if(!hits.length)return null;
   function name(e){return e.title.replace(/\s*\([^)]*\)$/,'');}
   var ambiguous=hits.some(function(hit){return hits.some(function(other){return other.entry!==hit.entry&&other.start===hit.start&&other.length===hit.length;});});
-  if(ambiguous)return {wineFact:true,wineAmbiguous:true,title:'와인 제품 확인',src:'와인추천 참고자료 최신화 · 제품명',text:'어떤 제품을 말씀하시는지 골라 주세요.\n'+hits.map(function(h){return '• '+name(h.entry);}).join('\n')};
+  if(ambiguous)return {wineFact:true,wineAmbiguous:true,title:'와인 제품 확인',src:'와인추천 참고자료 최신화 · 제품명',text:'제품 선택 필요.\n'+hits.map(function(h){return '• '+name(h.entry);}).join('\n')};
   var text=hits.map(function(hit){
     var estimated=hit.entry.status==='웹 자료 기준 추정';
-    var lines=requested.map(function(f){var match=hit.entry.body.match(new RegExp(f[0]+'\\s+([1-5])/5'));return '• '+f[0]+': '+(match?bar(Number(match[1])):'점수가 기재되지 않아 관리자 확인이 필요해요.')+(estimated?' · 웹 자료 기준 추정':'');});
+    var lines=requested.map(function(f){var match=hit.entry.body.match(new RegExp(f[0]+'\\s+([1-5])/5'));return '• '+f[0]+': '+(match?bar(Number(match[1])):'점수 미기재. 관리자 확인 필요.')+(estimated?' · 웹 자료 기준 추정':'');});
     return (hits.length>1?name(hit.entry)+'\n':'')+lines.join('\n');
   }).join('\n\n');
   return {wineFact:true,title:hits.length===1?name(hits[0].entry):'와인 맛 점수 비교',text:text,src:'와인추천 참고자료 최신화 · 맛 점수'};
@@ -169,16 +192,16 @@ function wineInfoAnswer(q){
   if(!hits.length)return null;
   function name(e){return e.title.replace(/\s*\([^)]*\)$/,'');}
   var ambiguous=hits.some(function(hit){return hits.some(function(other){return other.entry!==hit.entry&&other.start===hit.start&&other.length===hit.length;});});
-  if(ambiguous)return {wineFact:true,wineAmbiguous:true,title:'와인 제품 확인',text:'제품을 골라 주세요.\n'+hits.map(function(h){return '• '+name(h.entry);}).join('\n'),src:'와인추천 참고자료 최신화 · 제품명'};
+  if(ambiguous)return {wineFact:true,wineAmbiguous:true,title:'와인 제품 확인',text:'제품 선택 필요.\n'+hits.map(function(h){return '• '+name(h.entry);}).join('\n'),src:'와인추천 참고자료 최신화 · 제품명'};
   function field(e,label){var line=e.body.split('\n').find(function(s){return s.indexOf('- '+label+': ')===0;});return line?line.slice(('- '+label+': ').length).trim():'';}
   var text=hits.map(function(hit){var e=hit.entry,lines=[];requested.forEach(function(f){
     if(f[0]==='품종'){
       var source=field(e,'품종 (와인 참고자료)'),menu=field(e,'품종 (메뉴판)');
       if(source)lines.push('• 품종 · 와인 참고자료: '+source);
       if(menu&&wineNameNorm(menu)!==wineNameNorm(source))lines.push('• 품종 · 메뉴판: '+menu);
-      if(!source&&!menu)lines.push('• 품종: 자료에 기재되어 있지 않아 관리자 확인이 필요해요.');
-      if(source&&menu&&wineNameNorm(menu)!==wineNameNorm(source))lines.push('• 두 자료의 품종 표기가 달라요. 정확한 구성·혼합 비율은 병 라벨이나 관리자 확인이 필요해요.');
-    }else{var label=f[0]==='국가'||f[0]==='영문명'?f[0]:f[0]==='가격'?'가격 원문 (메뉴판)':f[0]+' (메뉴판)';var value=field(e,label);lines.push('• '+f[0]+': '+(value||'자료에 기재되어 있지 않아 관리자 확인이 필요해요.'));}
+      if(!source&&!menu)lines.push('• 품종: 자료 미기재. 관리자 확인 필요.');
+      if(source&&menu&&wineNameNorm(menu)!==wineNameNorm(source))lines.push('• 두 자료의 품종 표기 상이. 정확한 구성·혼합 비율은 병 라벨 또는 관리자 확인 필요.');
+    }else{var label=f[0]==='국가'||f[0]==='영문명'?f[0]:f[0]==='가격'?'가격 원문 (메뉴판)':f[0]+' (메뉴판)';var value=field(e,label);lines.push('• '+f[0]+': '+(value||'자료 미기재. 관리자 확인 필요.'));}
   });return (hits.length>1?name(e)+'\n':'')+lines.join('\n');}).join('\n\n');
   return {wineFact:true,allowAi:requested.some(function(f){return f[0]!=='가격';}),title:hits.length===1?name(hits[0].entry):'와인 기본 정보 비교',text:text,src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List · 허용 열'};
 }
@@ -249,7 +272,7 @@ function wineRecommend(q){
       '\n  선택 이유: 아로마 '+(w.aromas||'정보 없음')+'; 안주 '+(w.pairing||'정보 없음')+'.';
   });
   lines.push('재고는 직접 확인.');
-  var note=picked.length<6?'메뉴판의 해당 조건에서 확인되는 '+picked.length+'종을 보여 드려요. 재고는 직접 확인.':'재고는 직접 확인.';
+  var note=picked.length<6?'메뉴판 해당 조건 확인 '+picked.length+'종 표시. 재고는 직접 확인.':'재고는 직접 확인.';
   return {text:lines.join('\n\n'),wines:picked,stockNote:note,src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
 }
 function bar(v){return '■'.repeat(v)+'□'.repeat(5-v)+' '+v+'/5';}
@@ -334,11 +357,11 @@ function wineMenuAnswer(q){
   var n=norm(q);if(!/페어링|안주|음식|같이먹|곁들|어울리는메뉴|매장메뉴/.test(n))return null;
   var hits=namedWineMatches(q);
   if(!hits.length&&/^(그럼|그와인|이와인|그건|그거|그러면|그리고)/.test(n))aiConversation.slice(-2).reverse().some(function(m){hits=namedWineMatches(m.text);return hits.length>0;});
-  if(!hits.length){if(!/와인/.test(n)||!/페어링|와인별|매장메뉴/.test(n))return null;return {menuPairing:true,title:'와인별 매장 메뉴 페어링',text:'와인을 선택하면 하라고지페 메뉴판의 안주를 최대 3종 제안해요.',pairingOptions:KB.filter(function(e){return e.file==='12_와인_추가_설명';}).map(function(e){return e.title.replace(/\s*\([^)]*\)$/,'');}),src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};}
+  if(!hits.length){if(!/와인/.test(n)||!/페어링|와인별|매장메뉴/.test(n))return null;return {menuPairing:true,title:'와인별 매장 메뉴 페어링',text:'와인 선택 시 하라고지페 메뉴판 안주를 최대 3종 제안.',pairingOptions:KB.filter(function(e){return e.file==='12_와인_추가_설명';}).map(function(e){return e.title.replace(/\s*\([^)]*\)$/,'');}),src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};}
   var ambiguous=hits.some(function(hit){return hits.some(function(other){return other.entry!==hit.entry&&other.start===hit.start&&other.length===hit.length;});});
-  if(ambiguous)return {menuPairing:true,title:'와인 제품 선택',text:'같은 이름의 제품이 여러 개예요. 제품을 골라 주세요.',pairingOptions:hits.map(function(h){return h.entry.title.replace(/\s*\([^)]*\)$/,'');}),src:'와인추천 참고자료 최신화 · 제품명'};
+  if(ambiguous)return {menuPairing:true,title:'와인 제품 선택',text:'같은 이름의 제품 다수. 제품 선택 필요.',pairingOptions:hits.map(function(h){return h.entry.title.replace(/\s*\([^)]*\)$/,'');}),src:'와인추천 참고자료 최신화 · 제품명'};
   var wines=hits.map(function(h){var e=h.entry,name=e.title.replace(/\s*\([^)]*\)$/,''),matched=WINE_DATA.find(function(w){return norm(w.sourceName||w.name)===norm(e.kw[0])||norm(w.name)===norm(name);});var pairing=(e.body.match(/^- 안주:\s*(.*)$/m)||[])[1]||'';var w=matched||{name:name,pairing:pairing,wineKind:/화이트/.test(e.title)?'white':/레드/.test(e.title)?'red':''};return {name:name,pairing:pairing,menus:menuPairings(w)};});
-  return {menuPairing:true,title:'하라고지페 메뉴 페어링',pairingWines:wines,text:wines.map(function(w){return w.name+'\n'+(w.menus.length?w.menus.map(function(m){return '• '+m.name+' — '+m.reason;}).join('\n'):'• 현재 자료에서 연결할 매장 메뉴가 없어요. 관리자에게 확인해 주세요.');}).join('\n\n'),src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List · 운영 매뉴얼'};
+  return {menuPairing:true,title:'하라고지페 메뉴 페어링',pairingWines:wines,text:wines.map(function(w){return w.name+'\n'+(w.menus.length?w.menus.map(function(m){return '• '+m.name+' — '+m.reason;}).join('\n'):'• 현재 자료에 연결할 매장 메뉴 없음. 관리자 확인 필요.');}).join('\n\n'),src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List · 운영 매뉴얼'};
 }
 function winePitch(w){
   var text=String(w.serviceDescription||w.description||'').replace(/\s+/g,' ').trim();
@@ -363,13 +386,13 @@ function tasteRecommend(values,kind,food){
   var weights={sweetness:1,acidity:1,tannin:1,body:1};
   var criteria={targets:values,weights:weights,food:food?[food]:[],kind:{selected:kind||'all'}};
   var sorted=rankDiverse(candidates,criteria,'slider:'+JSON.stringify(criteria));
-  if(!sorted.length)return {text:'선택한 와인 종류와 안주에 맞는 조합을 찾지 못했어요. 안주나 와인 종류를 바꿔 보세요.',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
+  if(!sorted.length)return {text:'선택한 와인 종류·안주에 맞는 조합 없음. 안주 또는 와인 종류 변경 필요.',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
   return {text:sorted.map(function(w){
     return '• '+w.name+' ('+w.category+')'+scoreLabel(w)+' · 가격 원문 '+(w.price||'미기재')+
       '\n  당도 '+bar(w.sweetness)+' · 산도 '+bar(w.acidity)+' · 타닌 '+bar(w.tannin)+' · 바디 '+bar(w.body)+
       '\n  손님께 추천 멘트: “'+winePitch(w)+'”'+
       '\n  아로마: '+(w.aromas||'정보 없음')+' · 어울리는 안주: '+(w.pairing||'정보 없음')+'.';
-  }).join('\n\n')+'\n\n재고는 직접 확인.',wines:sorted,stockNote:sorted.length<6?'메뉴판의 해당 조건에서 확인되는 '+sorted.length+'종을 보여 드려요. 재고는 직접 확인.':'재고는 직접 확인.',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
+  }).join('\n\n')+'\n\n재고는 직접 확인.',wines:sorted,stockNote:sorted.length<6?'메뉴판 해당 조건 확인 '+sorted.length+'종 표시. 재고는 직접 확인.':'재고는 직접 확인.',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
 }
 function formatKnowledge(body,title){
   var text=String(body||'').trim().replace(/\s+(?=\d+[)]\s)/g,'\n');
@@ -424,10 +447,10 @@ function recipeAnswer(q){
     if(hits.length===1){var r=hits[0].recipe;return {recipe:true,recipeName:r.name,title:r.name+' · 만드는 법',text:formatKnowledge(r.body,r.name),src:r.entry.file+' · '+r.entry.title};}
   }
   var missing=['라자냐','카프레제','훈제통후추삼겹살'].find(function(name){return n.indexOf(name)>=0;});
-  if(missing)return {recipe:true,title:'조리법 확인 필요',text:'• '+missing+'는 매뉴얼에 식기 안내만 있고 조리법은 기재되어 있지 않아요.\n• 만드는 법은 관리자에게 확인해 주세요.',src:'10_안주_가이드 · 서빙 식기'};
+  if(missing)return {recipe:true,title:'조리법 확인 필요',text:'• '+missing+'는 매뉴얼에 식기 안내만 있고 조리법 미기재.\n• 만드는 법은 관리자 확인 필요.',src:'10_안주_가이드 · 서빙 식기'};
   if(!hits.length&&!/레시피|안주가이드|파스타|디저트|치즈|안주.*만들|안주.*조리/.test(n))return null;
   var options=hits.length?hits.map(function(x){return x.recipe.name;}):catalog.filter(function(r){return /파스타/.test(n)?/파스타|짜파게티/.test(r.name):/디저트/.test(n)?/아이스크림|초콜릿|홍시/.test(r.name):/치즈/.test(n)?/치즈/.test(r.name):true;}).map(function(r){return r.name;});
-  return {recipe:true,recipeOptions:options,title:'안주 레시피 선택',text:'매뉴얼에 있는 메뉴를 골라 주세요. 만드는 법과 조리 시간을 보여 드릴게요.',src:'10_안주_가이드 · 만드는 법'};
+  return {recipe:true,recipeOptions:options,title:'안주 레시피 선택',text:'매뉴얼 수록 메뉴 선택. 만드는 법·조리 시간 표시.',src:'10_안주_가이드 · 만드는 법'};
 }
 // "○○랑 비슷한 와인"은 웹 검색 없이 우리 메뉴판의 맛 점수로만 고른다.
 var GRAPE_PROFILES=[
@@ -485,8 +508,8 @@ function similarWineAnswer(q){
   if(same.length)lines.push('같은 품종 (메뉴판)\n\n'+same.map(function(w){return line(w,'선택 이유: '+grape.name+' · '+w.variety);}).join('\n\n'));
   if(picked.length)lines.push((same.length?'맛이 가까운 다른 와인':'맛이 가까운 와인')+'\n\n'+picked.map(function(w){var diff=['sweetness','acidity','tannin','body'].reduce(function(t,k){return t+Math.abs(w[k]-target[k]);},0);return line(w,'선택 이유: 맛 점수 차이 합 '+diff+' · '+(w.variety||'품종 미기재')+(w.aromas?' · 향 '+w.aromas:''));}).join('\n\n'));
   if(unscored.length)lines.push('메뉴판에 있지만 맛 점수가 없어 비교에서 빠진 '+grape.name+': '+unscored.map(function(m){return m.name;}).join(', '));
-  lines.push('원문 점수와 웹 자료 기준 추정을 포함한 메뉴판 와인 '+WINE_DATA.length+'종 안에서 골랐어요. 재고는 직접 확인.');
-  return {text:lines.join('\n\n'),wines:same.concat(picked),comparisonBasis:basis,sameGrapeNames:same.map(function(w){return w.name;}),stockNote:'메뉴판 와인 중 맛 점수가 가까운 순서예요. 재고는 직접 확인.',title:'비슷한 와인 (우리 메뉴판)',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
+  lines.push('원문 점수·웹 자료 기준 추정 포함, 메뉴판 와인 '+WINE_DATA.length+'종 중 선정. 재고는 직접 확인.');
+  return {text:lines.join('\n\n'),wines:same.concat(picked),comparisonBasis:basis,sameGrapeNames:same.map(function(w){return w.name;}),stockNote:'메뉴판 와인 중 맛 점수가 가까운 순. 재고는 직접 확인.',title:'비슷한 와인 (우리 메뉴판)',src:'와인추천 참고자료 최신화 · 하라고지페 메뉴판 List'};
 }
 function answer(q){var a=answerCore(q);if(a&&a.text)a.text=fixPrices(a.text);return a;}
 function answerCore(q){
@@ -513,8 +536,8 @@ if(typeof document!=="undefined"){
    try{
     if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(text);
     else{var a=el('textarea');a.value=text;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var copied=document.execCommand('copy');a.remove();if(!copied)throw Error('copy');}
-    b.textContent='복사했어요';
-   }catch(err){b.textContent='길게 눌러 복사해 주세요';}
+    b.textContent='복사 완료';
+   }catch(err){b.textContent='길게 눌러 복사할 것';}
   },'copy-pitch');parent.appendChild(b);
  }
  function readState(kind){try{return JSON.parse(localStorage.getItem('harago-check-v2:'+localWorkDate()+':'+kind)||'{}');}catch(err){return {};}}
@@ -531,7 +554,7 @@ if(typeof document!=="undefined"){
  }
  function renderChecklist(){
   var host=document.getElementById('checkContent');host.replaceChildren();
-  var entries=tasksFor(checkKind),state=readState(checkKind),tools=el('div','check-tools'),count=el('span'),bar=el('div','check-progress'),fill=el('span');
+  var entries=tasksFor(checkKind),srcIdx=checkSource(checkKind),state=readState(checkKind),tools=el('div','check-tools'),count=el('span'),bar=el('div','check-progress'),fill=el('span');
   tools.append(count,button('오늘 체크 초기화',function(){state={};save();renderChecklist();}));host.append(tools);bar.append(fill);host.append(bar);
   function save(){try{localStorage.setItem('harago-check-v2:'+localWorkDate()+':'+checkKind,JSON.stringify(state));}catch(err){count.textContent+=' · 저장 불가';}refreshHome();}
   function update(){var tasks=entries.filter(function(t){return t.task;}),applicable=tasks.filter(function(t){return statusOf(t,state)!=='na';}),done=applicable.filter(function(t){return statusOf(t,state)===true;}).length;
@@ -540,12 +563,12 @@ if(typeof document!=="undefined"){
   entries.forEach(function(task){
    if(task.section){host.append(el('h3','task-group',task.text));return;}
    if(!task.task){host.append(el('p','check-help'+(/\[확인\]/.test(task.text)?' phrase-warning':''),task.text));return;}
-   var item=el('div','info-item'),label=el('label','check-row'),input=el('input'),text=el('span','task-label',task.text);input.type='checkbox';
+   var item=el('div','info-item'),label=el('label','check-row'),input=el('input'),text=el('span','task-label',task.text),tgt={tab:'checklist',file:'09_운영_매뉴얼',section:checkKind,sub:task.group,index:srcIdx[taskKey(task)]||0,unit:'항목',field:'',current:task.text,label:'체크리스트 · '+checkKind+' · '+task.group+' · '+(srcIdx[taskKey(task)]||'?')+'번째 항목'};text.append(editMark(tgt));input.type='checkbox';
    function sync(){input.checked=statusOf(task,state)===true;input.disabled=statusOf(task,state)==='na';item.classList.toggle('skip',input.disabled);skip.textContent=input.disabled?'해당 없음 취소':'해당 없음';}
    input.onchange=function(){if(localWorkDate()!==workDay){workDay=localWorkDate();renderChecklist();refreshHome();return;}state[taskKey(task)]=input.checked;update();save();};
    label.append(input,text);item.append(label);
    var skip=button('해당 없음',function(){if(localWorkDate()!==workDay){workDay=localWorkDate();renderChecklist();refreshHome();return;}state[taskKey(task)]=statusOf(task,state)==='na'?false:'na';sync();update();save();},'skip-check');
-   item.append(skip);host.append(item);sync();
+   item.append(skip,editButton(tgt));host.append(item);sync();
   });update();
   document.querySelectorAll('[data-check-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.checkKind===checkKind));});
  }
@@ -555,9 +578,9 @@ if(typeof document!=="undefined"){
    var entry=KB.find(function(e){return e.file==='12_칵테일_레시피'&&e.title.indexOf(name+' 레시피')===0;}),card=el('article','recipe-card');
    if(RECIPE_PHOTOS[name]){var image=el('img','recipe-photo');image.src=RECIPE_PHOTOS[name];image.alt=name;image.loading='lazy';image.onerror=function(){image.remove();};card.append(image);}
    var content=el('div','recipe-content');content.append(el('h3','',name));
-   entry.body.split('\n').filter(Boolean).forEach(function(line){
+   entry.body.split('\n').filter(Boolean).forEach(function(line,li){
     var clean=line.replace(/^[•-]\s*/,''),m=clean.match(/^([^:]+):\s*([\s\S]*)$/),field=el('div','recipe-field'+(/\[확인\]/.test(clean)?' confirm':''));
-    if(m){field.append(el('strong','',m[1]),el('span','',m[2]));}else field.textContent=clean;content.append(field);
+    if(m){field.append(el('strong','',m[1]),el('span','',m[2]));}else field.textContent=clean;var rt={tab:'recipes',file:entry.file,section:entry.title,sub:'',index:li+1,unit:'줄',field:m?m[1]:'내용',current:m?m[2]:clean,label:'레시피 · '+name+' · '+(m?m[1]:'내용')};field.append(editMark(rt),editButton(rt,'✎ 수정'));content.append(field);
    });content.append(el('p','recipe-note','출처 · '+entry.file+' / 주문한 병 와인 기준'));card.append(content);host.append(card);
   });
  }
@@ -565,12 +588,12 @@ if(typeof document!=="undefined"){
   var host=document.getElementById('phraseCards');host.replaceChildren();var group='';
   PHRASES.forEach(function(p){
    if(group!==p.group){group=p.group;host.append(el('h3','phrase-group',group));}
-   var card=el('details','phrase-card');card.dataset.phraseTitle=p.title;card.append(el('summary','',p.title));
+   var card=el('details','phrase-card');card.dataset.phraseTitle=p.title;var pt={tab:'phrases',file:p.file||'13_손님_응대_멘트',section:p.section||p.title,sub:'',index:0,unit:'',field:'멘트',current:p.speech,label:'응대 멘트 · '+p.title},sum=el('summary','',p.title);sum.append(editMark(pt));card.append(sum);
    if(p.notice)card.append(el('p','phrase-warning',p.notice));
-   if(/^5-7\b/.test(p.title))card.append(el('p','phrase-warning','[확인] 새 응대 문장 · 말투 승인 전. 관리자 확인 뒤 사용해요.'));
+   if(/^5-7\b/.test(p.title))card.append(el('p','phrase-warning','[확인] 새 응대 문장 · 말투 승인 전. 관리자 확인 후 사용할 것.'));
    var speech=el('div','phrase-speech',p.speech);card.append(speech);
-   if(p.confirm&&!/\[확인\]/.test(p.speech+p.notes))card.append(el('p','phrase-warning','[확인] 관리자 확인 뒤 사용해요.'));
-   addCopy(card,p.speech);card.append(el('p','phrase-notes',p.notes));host.append(card);
+   if(p.confirm&&!/\[확인\]/.test(p.speech+p.notes))card.append(el('p','phrase-warning','[확인] 관리자 확인 후 사용할 것.'));
+   var tools=el('div','card-tools');addCopy(tools,p.speech);tools.append(editButton(pt,'✎ 수정 요청'));card.append(tools,el('p','phrase-notes',p.notes));host.append(card);
   });
  }
  function renderWineCards(host,wines,meta){
@@ -603,12 +626,118 @@ if(typeof document!=="undefined"){
   a.text.split('\n').filter(Boolean).forEach(function(line){var clean=line.replace(/^•\s*/,''),heading=/^#{1,6}\s+/.test(clean);var item=el(heading?'h3':'div',heading?'task-group':'info-item'+(/\[확인\]/.test(clean)?' confirm':''),clean.replace(/^#{1,6}\s+/,''));host.append(item);});
   if(a.src)host.append(el('p','src','출처 · '+a.src));
  }
+
+ var REQ_KEY='harago-edit-requests-v1',NICK_KEY='harago-edit-nick-v1',REQ_KINDS=['문구 수정','항목 추가','삭제 요청','순서·시간 변경'];
+ var requests=[],reqStorageOk=true,formTarget=null,editingId=null,formKind='문구 수정',textDirty=false;
+ try{var rawReq=JSON.parse(localStorage.getItem(REQ_KEY)||'[]');if(Array.isArray(rawReq))requests=rawReq;}catch(err){reqStorageOk=false;}
+ function saveRequests(){try{localStorage.setItem(REQ_KEY,JSON.stringify(requests));}catch(err){reqStorageOk=false;}updateReqUi();}
+ function targetKey(t){return [t.file,t.section,t.sub||'',t.index||'',t.field||''].join('|');}
+ function reqCountFor(t){var k=targetKey(t);return requests.filter(function(r){return targetKey(r)===k;}).length;}
+ function seoulStamp(){var v={};new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date()).forEach(function(p){v[p.type]=p.value;});return v.year+'-'+v.month+'-'+v.day+' '+v.hour+':'+v.minute;}
+ function editMark(t){var m=el('span','edit-mark','수정 요청 있음');m.dataset.tkey=targetKey(t);m.hidden=!reqCountFor(t);return m;}
+ function editButton(t,text){var b=button(text||'✎',function(ev){ev.preventDefault();ev.stopPropagation();openForm(t);},'edit-btn');b.setAttribute('aria-label','수정 요청: '+t.label);b.title='수정 요청';return b;}
+ function updateReqUi(){
+  document.querySelectorAll('.edit-mark').forEach(function(m){var n=0,k=m.dataset.tkey;requests.forEach(function(r){if(targetKey(r)===k)n++;});m.hidden=!n;});
+  var c=document.getElementById('reqCount');c.textContent=requests.length;c.hidden=!requests.length;
+  var h=document.getElementById('homeReqSmall');if(h)h.textContent=requests.length?'쌓인 요청 '+requests.length+'건 · 복사·내려받기':'쌓인 요청 복사·내려받기';
+  ['editStorage','reqStorage'].forEach(function(id){document.getElementById(id).hidden=reqStorageOk;});
+ }
+ function checkSource(kind){
+  var entry=KB.find(function(e){return e.file==='09_운영_매뉴얼'&&e.title===kind;}),group='기본 준비',count={},map={};
+  entry.body.split('\n').forEach(function(line){var s=line.trim();if(!s)return;if(/^### /.test(s)){group=s.slice(4);return;}
+   if(/^-\s/.test(s)){count[group]=(count[group]||0)+1;map[taskKey({group:group,text:s.replace(/^-\s*/,'')})]=count[group];}});
+  return map;
+ }
+ var editDialog=document.getElementById('editDialog');
+ function setFormKind(kind){
+  formKind=kind;
+  document.querySelectorAll('#editKinds button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.kind===kind));});
+  var area=document.getElementById('editText'),label=document.getElementById('editTextLabel'),del=kind==='삭제 요청';
+  document.getElementById('editTextField').hidden=del;
+  label.textContent=kind==='항목 추가'?'추가할 문구':kind==='순서·시간 변경'?'변경할 순서·시간 (문구로 작성)':'수정할 문구';
+  if(!textDirty)area.value=(kind==='문구 수정'||kind==='순서·시간 변경')?formTarget.current:'';
+ }
+ function openForm(t,existing){
+  formTarget=t;editingId=existing?existing.id:null;textDirty=!!existing;
+  document.getElementById('editTitle').textContent=existing?'수정 요청 편집':'수정 요청';
+  document.getElementById('editTarget').textContent=t.label;
+  document.getElementById('editCurrent').textContent=t.current||'(해당 문구 없음)';
+  document.getElementById('editText').value=existing?existing.text:'';
+  document.getElementById('editMemo').value=existing?existing.memo:'';
+  var nick='';try{nick=existing?existing.nick:(localStorage.getItem(NICK_KEY)||'');}catch(err){}
+  document.getElementById('editNick').value=nick||'';
+  document.getElementById('editError').textContent='';
+  setFormKind(existing?existing.kind:'문구 수정');
+  updateReqUi();
+  if(!editDialog.open)editDialog.showModal();
+  var area=document.getElementById('editText');if(!area.closest('[hidden]'))area.focus();
+ }
+ function closeForm(){if(editDialog.open)editDialog.close();}
+ function saveForm(){
+  var text=document.getElementById('editText').value.trim(),memo=document.getElementById('editMemo').value.trim(),nick=document.getElementById('editNick').value.trim(),err=document.getElementById('editError');
+  if(formKind!=='삭제 요청'){
+   if(!text){err.textContent='수정할 문구를 입력할 것.';document.getElementById('editText').focus();return;}
+   if(formKind==='문구 수정'&&text===String(formTarget.current).trim()){err.textContent='현재 문구와 같음. 고친 문구를 입력할 것.';document.getElementById('editText').focus();return;}
+  }else text='';
+  var rec;
+  if(editingId){rec=requests.find(function(r){return r.id===editingId;});}
+  if(!rec){rec=Object.assign({},formTarget,{id:'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),at:seoulStamp()});requests.push(rec);}
+  rec.kind=formKind;rec.text=text;rec.memo=memo;rec.nick=nick;
+  try{localStorage.setItem(NICK_KEY,nick);}catch(e2){}
+  saveRequests();if(activeTab==='requests')renderRequests();closeForm();
+ }
+ function bullet(label,value){var lines=String(value===undefined||value===''?'-':value).split('\n');return '- '+label+': '+lines[0]+lines.slice(1).map(function(l){return '\n  '+l;}).join('');}
+ function exportText(list){
+  var sorted=list.slice().sort(function(a,b){return String(a.file).localeCompare(b.file)||String(a.section).localeCompare(b.section)||String(a.sub||'').localeCompare(b.sub||'')||(a.index||0)-(b.index||0)||String(a.at).localeCompare(b.at);});
+  var out=['# 근무노트 수정 요청','','- 생성일: '+localWorkDate(),'- 앱 자료 버전: '+(KB_VERSION.sourceHash||'-'),'- 요청 건수: '+sorted.length+'건',''];
+  sorted.forEach(function(r,i){
+   out.push('## '+(i+1)+'. '+r.label,bullet('대상 파일','지식/'+r.file+'.md'),bullet('섹션',r.section+(r.sub?' > '+r.sub:'')),bullet('항목',(r.index?r.index+'번째 '+(r.unit||'항목'):'-')+(r.field?' · '+r.field:'')),bullet('현재 문구',r.current),bullet('요청 종류',r.kind),bullet('수정 문구',r.kind==='삭제 요청'?'(삭제 요청)':r.text),bullet('메모',r.memo),bullet('작성 시각',r.at),bullet('작성자 표시',r.nick),'');
+  });
+  return out.join('\n');
+ }
+ var pendingConfirm={};
+ function confirmTwice(b,key,label,action){
+  if(pendingConfirm[key]){clearTimeout(pendingConfirm[key]);delete pendingConfirm[key];action();return;}
+  b.textContent='한 번 더 눌러 '+label;pendingConfirm[key]=setTimeout(function(){delete pendingConfirm[key];b.textContent=label;},3000);
+ }
+ function renderRequests(){
+  var host=document.getElementById('reqList');host.replaceChildren();updateReqUi();
+  if(!requests.length){host.append(el('div','req-empty','쌓인 수정 요청 없음. 체크리스트·레시피·응대 멘트의 수정 버튼으로 작성할 것.'));return;}
+  requests.slice().reverse().forEach(function(r){
+   var card=el('article','req-item'),dl=el('dl');card.dataset.reqId=r.id;card.append(el('h3','',r.label),el('p','req-meta',r.kind+' · '+r.at+(r.nick?' · '+r.nick:'')));
+   [['현재',r.current],['수정',r.kind==='삭제 요청'?'(삭제 요청)':r.text],['메모',r.memo]].forEach(function(p){if(!p[1])return;dl.append(el('dt','',p[0]),el('dd','',p[1]));});card.append(dl);
+   var acts=el('div','req-actions');acts.append(button('편집',function(){openForm(r,r);}),(function(){var del=button('삭제',function(){confirmTwice(del,r.id,'삭제',function(){requests=requests.filter(function(x){return x.id!==r.id;});saveRequests();renderRequests();});});return del;})());card.append(acts);host.append(card);
+  });
+ }
+ function copyText(text){
+  if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);
+  return new Promise(function(ok,fail){var a=el('textarea');a.value=text;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var done=false;try{done=document.execCommand('copy');}catch(e3){}a.remove();done?ok():fail(Error('copy'));});
+ }
+ function reqMessage(t){document.getElementById('reqMsg').textContent=t;}
+ function initRequestUi(){
+  var kinds=document.getElementById('editKinds');
+  REQ_KINDS.forEach(function(k){var b=button(k,function(){setFormKind(k);});b.dataset.kind=k;kinds.append(b);});
+  document.getElementById('editText').addEventListener('input',function(){textDirty=true;});
+  document.getElementById('editSave').onclick=saveForm;document.getElementById('editCancel').onclick=closeForm;document.getElementById('editClose').onclick=closeForm;
+  editDialog.addEventListener('click',function(ev){if(ev.target===editDialog)closeForm();});
+  document.getElementById('reqGo').onclick=function(){showTab('requests');};
+  document.getElementById('reqCopy').onclick=function(){
+   if(!requests.length){reqMessage('복사할 요청 없음.');return;}
+   copyText(exportText(requests)).then(function(){reqMessage('복사 완료. 카카오톡·메신저에 붙여 넣을 것.');},function(){reqMessage('복사 실패. .md 내려받기를 쓸 것.');});
+  };
+  document.getElementById('reqDownload').onclick=function(){
+   if(!requests.length){reqMessage('내려받을 요청 없음.');return;}
+   try{var url=URL.createObjectURL(new Blob([exportText(requests)],{type:'text/markdown;charset=utf-8'})),a=el('a');a.href=url;a.download='근무노트_수정요청_'+localWorkDate()+'.md';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},2000);reqMessage('내려받기 시작. 파일을 팀장에게 전달할 것.');}
+   catch(err){reqMessage('내려받기 실패. 전체 복사를 쓸 것.');}
+  };
+  (function(){var b=document.getElementById('reqClear');b.onclick=function(){if(!requests.length){reqMessage('비울 요청 없음.');return;}confirmTwice(b,'clear','전체 비우기',function(){requests=[];saveRequests();renderRequests();reqMessage('전체 비움.');});};})();
+ }
  function showTab(id){
   activeTab=id;workDay=localWorkDate();
   document.querySelectorAll('.screen').forEach(function(s){s.hidden=s.id!=='screen-'+id;});
   document.querySelectorAll('[data-tab]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.tab===id));});
   log.hidden=true;log.replaceChildren();
-  if(id==='checklist')renderChecklist();if(id==='home')refreshHome();window.scrollTo({top:0});
+  if(id==='checklist')renderChecklist();if(id==='home')refreshHome();if(id==='requests'){reqMessage('');renderRequests();}window.scrollTo({top:0});
  }
  function ask(q){
   q=q.trim();if(!q)return false;
@@ -619,8 +748,8 @@ if(typeof document!=="undefined"){
  [['home','홈','⌂'],['checklist','체크리스트','☑'],['recipes','레시피','♧'],['wine','와인','♢'],['phrases','응대 멘트','“']].forEach(function(tab){
   var b=button(tab[1],function(){showTab(tab[0]);});b.dataset.tab=tab[0];b.prepend(el('span','tab-icon',tab[2]));document.getElementById('departments').append(b);
  });
- [['checklist','체크리스트','오늘의 오픈과 마감'],['recipes','레시피','잔·재료·순서 한눈에'],['wine','와인','취향과 안주로 추천'],['phrases','응대 멘트','상황별 안내와 복사']].forEach(function(item){
-  var b=button('',function(){showTab(item[0]);},'home-card');b.append(el('strong','',item[1]),el('small','',item[2]),el('span','card-action','열기 →'));document.getElementById('homeCards').append(b);
+ [['checklist','체크리스트','오늘의 오픈과 마감'],['recipes','레시피','잔·재료·순서 한눈에'],['wine','와인','취향과 안주로 추천'],['phrases','응대 멘트','상황별 안내와 복사'],['requests','수정 요청 모아보기','쌓인 요청 복사·내려받기']].forEach(function(item){
+  var b=button('',function(){showTab(item[0]);},'home-card');var sm=el('small','',item[2]);if(item[0]==='requests'){sm.id='homeReqSmall';b.classList.add('featured');}b.append(el('strong','',item[1]),sm,el('span','card-action','열기 →'));document.getElementById('homeCards').append(b);
  });
  document.querySelectorAll('[data-check-kind]').forEach(function(b){b.onclick=function(){checkKind=b.dataset.checkKind;renderChecklist();};});
  document.querySelectorAll('#taste input[type=range]').forEach(function(input){
@@ -637,7 +766,7 @@ if(typeof document!=="undefined"){
  document.getElementById('homeGo').onclick=function(){showTab('home');};
  setInterval(function(){if(workDay!==localWorkDate()){workDay=localWorkDate();if(activeTab==='checklist')renderChecklist();refreshHome();}},60000);
   document.getElementById('taste').open=true;
-  renderRecipes();renderPhrases();refreshHome();showTab('home');
+  initRequestUi();renderRecipes();renderPhrases();refreshHome();updateReqUi();showTab('home');
 }
 
 </script></body></html>

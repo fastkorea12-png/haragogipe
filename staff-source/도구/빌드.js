@@ -33,12 +33,12 @@ for(const section of phraseText.split(/\n(?=## )/).slice(1)){
   const lines=part.split('\n'),title=lines.shift().replace(/^### /,'').trim();
   const speech=lines.filter(l=>/^>/.test(l)).map(l=>l.replace(/^>\s*/, '')).join('\n');
   const notes=lines.filter(l=>l.trim()&&l!=='---'&&!/^>/.test(l)).join('\n');
-  phrases.push({group,title,speech,notes,notice,confirm:/\[확인\]/.test(speech+' '+notes)||/^5-7\b/.test(title)});
+  phrases.push({group,title,speech,notes,notice,file:'13_손님_응대_멘트',section:group+' > '+title,confirm:/\[확인\]/.test(speech+' '+notes)||/^5-7\b/.test(title)});
  }
 }
 for(const [file,title] of [['04_칵테일_전환_가격','안내 멘트 (손님에게)'],['05_이벤트_응대','손님에게 말할 문장 (이벤트)'],['05_이벤트_응대','리뷰 표기 원칙']]){
  const entry=kb.find(e=>e.file===file&&e.title===title);
- if(entry)phrases.push({group:'전환·리뷰 원문',title,speech:entry.body,notes:file,notice:'[확인] 이벤트 시작 여부와 기간을 확인한 뒤 사용해요.',confirm:true});
+ if(entry)phrases.push({group:'전환·리뷰 원문',title,speech:entry.body,notes:file,file,section:title,notice:'[확인] 이벤트 시작 여부·기간 확인 후 사용할 것.',confirm:true});
 }
 const recipePhotos={};
 for(const name of ['칼리모초','키르','미모사']){

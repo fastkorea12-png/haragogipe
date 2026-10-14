@@ -12,7 +12,7 @@ for(let day=0;day<7;day++){
  assert.equal(weekly.length,day>=1&&day<=4?(day===3?3:2):0);
  assert.equal(close.filter(t=>t.defaultNA).length,2);
  assert(ctx.checklistItems(body('마감 순서'),date).some(t=>t.text.includes('02:00')&&t.text.includes('01:00')&&t.text.includes('[확인]')));
- assert(body('마감 순서').includes('오전·오후 표기가 없어요 [확인]'));
+ assert(body('마감 순서').includes('오전·오후 표기 없음 [확인]'));
  totals.push({day,open:open.length,close:close.length});
 }
 assert(!html.includes('fetch('));
