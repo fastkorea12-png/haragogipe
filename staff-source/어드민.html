@@ -1486,7 +1486,7 @@ function invOrderData(){
 function ordQty(r){var o=INV.ord.over[r.it.id];return o==null?r.def:o;}
 function invOrderText(rows){
   var lines=rows.filter(function(r){return ordQty(r)>0;}).map(function(r){return "- "+r.it.name+" "+ordQty(r)+"병";});
-  return ["안녕하세요, 하라고지페입니다.","아래 와인 발주 부탁드립니다.",""].concat(lines,["","감사합니다."]).join("\n");
+  return ["안녕하세요! 아래 항목 발주 부탁드립니다 :)",""].concat(lines).join("\n");
 }
 var ORD_GROUPS=[];
 function ordSum(g){var n=0,b=0;g.rows.forEach(function(r){var q=ordQty(r);if(q>0){n++;b+=q;}});return {n:n,b:b};}
