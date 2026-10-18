@@ -52,7 +52,7 @@ const total=days.reduce((n,d)=>n+d.tasks.length,0);
   await card.getByRole('button',{name:'혼자 수행 확인'}).click();
   assert.equal(await page.locator('#trainingProgress').textContent(),'혼자 수행 확인 1 / '+total+'개 항목');
   // 연결되면 대기 기록부터 순서대로 보냄(대기 1 + 함께 해봄 + 혼자 수행 확인)
-  await page.waitForFunction(()=>document.getElementById('trainingSync').textContent==='시트에 기록했어요.');
+  await page.waitForFunction(()=>document.getElementById('trainingSync').textContent==='기록했어요.');
   assert.deepEqual(posts.slice(1).map(p=>p.level),[1,2,3]);
   assert.equal(posts[1].id,posts[0].id,'대기 기록은 같은 기록ID로 다시 보냄');
   assert.equal(await page.evaluate(()=>localStorage.getItem('harago-training-v2-queue')),'[]');
