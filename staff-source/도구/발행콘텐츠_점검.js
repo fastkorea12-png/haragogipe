@@ -141,7 +141,7 @@ const resetStub=()=>{S.hits.length=0;S.props.length=0;S.chats.length=0;S.other.l
    // 응대 멘트
    await tab(page,'phrases');await page.waitForFunction(()=>document.querySelector('#phraseCards .phrase-group')&&document.querySelector('#phraseCards .phrase-group').textContent.includes('발행판'));
    const titles=await phraseTitles(page);
-   await check(A,'① 멘트 소제목·상황 발행본 반영, 항목 수 유지',async()=>{assert.equal((await page.locator('#phraseCards .phrase-group').first().innerText()),'입장 · 자리 안내 (발행판)');assert.equal(titles[0],'발행 상황: 손님이 들어오실 때');assert.equal(titles.length,55);});
+   await check(A,'① 멘트 소제목·상황 발행본 반영, 항목 수 유지',async()=>{assert.equal((await page.locator('#phraseCards .phrase-group').first().innerText()),'입장 · 자리 안내 (발행판)');assert.equal(titles[0],'발행 상황: 손님이 들어오실 때');assert.equal(titles.length,53);});
    await check(A,'② 04·05 원문 3장은 내장 그대로 마지막에 유지',async()=>{const groups=await page.locator('#phraseCards .phrase-group').allInnerTexts();assert.equal(groups.at(-1),'전환·리뷰 원문');assert.deepEqual(titles.slice(-3),['안내 멘트 (손님에게)','손님에게 말할 문장 (이벤트)','리뷰 표기 원칙']);});
    const pc=page.locator('.phrase-card').first();await pc.locator('summary').click();
    await check(A,'① 손님 발화(복사 버튼)·직원 안내·[확인] 배너',async()=>{const t=await pc.innerText();assert(t.includes(PH_NEW));assert(t.includes('직원 안내')&&t.includes('발행 직원 안내: 눈 맞춤 먼저'));assert(t.includes('[확인] 발행 멘트 확인 사항'));assert.equal(await pc.locator('.phrase-speech').count(),1);assert.equal(await pc.locator('.copy-pitch').count(),1);assert.equal(await pc.locator('.phrase-staff').count(),1);});
@@ -157,7 +157,7 @@ const resetStub=()=>{S.hits.length=0;S.props.length=0;S.chats.length=0;S.other.l
    const {context,page}=await open(profile);await tab(page,'recipes');await page.waitForTimeout(600);
    await check(A,'② '+label+': 내장 레시피 그대로',async()=>{assert.deepEqual(await foodNames(page),builtinFoodNames);assert((await page.locator('#recipeCards').innerText()).length>0);await page.locator('.food-card').first().locator('.food-head').click();assert((await page.locator('.food-card').first().innerText()).includes('내장본'));});
    await tab(page,'phrases');
-   await check(A,'② '+label+': 내장 멘트 55장',async()=>{assert.equal((await phraseTitles(page)).length,55);});
+   await check(A,'② '+label+': 내장 멘트 53장',async()=>{assert.equal((await phraseTitles(page)).length,53);});
    await check(A,'② '+label+': 캐시 저장 안 함',async()=>{assert.equal(await page.evaluate(()=>[localStorage.getItem('harago-published-recipes-v1'),localStorage.getItem('harago-published-phrases-v1')].join()),',');});
    await context.close();
   }

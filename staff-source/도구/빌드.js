@@ -71,4 +71,7 @@ const inventoryTpl=fs.readFileSync(path.join(__dirname,'재고조사.html'),'utf
 fs.writeFileSync(path.join(root,'재고조사.html'),inventoryTpl.replace('/*LOGO_URL*/',logo.header).replace('/*FAVICON_URL*/',logo.favicon).replace('/*INV_API_BASE*/""',safe(adminBase)).replace('/*WINES_JSON*/{"groups":[]}',()=>safe(inventoryWines)));
 // 어드민의 와인 목록 시작값(이름·칸·순서만)도 같은 추출 결과를 쓴다.
 fs.writeFileSync(path.join(root,'어드민.html'),fs.readFileSync(path.join(root,'어드민.html'),'utf8').replace('/*WINES_JSON*/{"groups":[]}',()=>safe(inventoryWines)));
+// 어드민 신입 교육 탭의 업무 목록(일차·제목·업무 이름만)은 근무노트 템플릿의 trainingDays에서 가져온다.
+const trainingAt=tpl.indexOf('var trainingDays=')+17,trainingDays=JSON.parse(tpl.slice(trainingAt,tpl.indexOf('],trainingState={}',trainingAt)+1)).map(d=>({id:d.id,day:d.day,title:d.title,tasks:d.tasks.map(t=>t.title)}));
+fs.writeFileSync(path.join(root,'어드민.html'),fs.readFileSync(path.join(root,'어드민.html'),'utf8').replace('/*TRAINING_JSON*/[]',()=>safe(trainingDays)));
 console.log('재고조사.html 생성 / 와인',inventoryWines.groups.reduce((n,g)=>n+g.items.length,0),'종 / 서버 주소',adminBase);

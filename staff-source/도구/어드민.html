@@ -74,6 +74,10 @@ select{font:inherit;font-size:16px;min-height:44px;border:1px solid #CFC4B8;bord
 .tag[data-stale]{background:#FBF3E2;color:var(--warn)}
 .sech{margin:16px 0 6px;font-weight:700;color:var(--muted)}
 details.un{margin:16px 0 0;background:var(--bot);border:1px solid var(--rule);border-radius:12px;padding:8px 14px}details.un summary{min-height:44px;display:flex;align-items:center;font-weight:700;color:var(--muted);cursor:pointer}details.un ul{margin:0 0 8px;padding-left:20px}details.un li{overflow-wrap:anywhere}
+.badge.lv0{color:var(--muted);background:var(--soft)}.badge.lv1{color:var(--warn);background:#FBF3E2}.badge.lv2{color:var(--mov);background:#EAF1F8}.badge.lv3{color:var(--ok);background:#EEF6EF}
+.trow{display:flex;gap:8px 12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--bot);border:1px solid var(--rule);border-left:4px solid var(--rule);border-radius:10px;padding:8px 12px;margin-bottom:8px}.trow.lv3{border-left-color:var(--ok)}.trow.lv2{border-left-color:var(--mov)}.trow.lv1{border-left-color:var(--warn)}.trow .tname{overflow-wrap:anywhere}.trow .tmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tsum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0 0}.tsum div{background:var(--soft);border-radius:10px;padding:8px 10px}.tsum b{display:block;font-size:20px;color:var(--wine)}
+.rlog{list-style:none;padding:0;margin:0}.rlog li{border-bottom:1px solid var(--rule);padding:8px 2px;overflow-wrap:anywhere}
 [hidden]{display:none!important}
 @media(min-width:900px){main{max-width:880px}.row{padding:10px 14px}}
 </style></head><body>
@@ -85,6 +89,7 @@ details.un{margin:16px 0 0;background:var(--bot);border:1px solid var(--rule);bo
 var ADMIN_API_BASE=/*ADMIN_API_BASE*/"";
 var EMBEDDED=/*CHECKLIST_JSON*/{};
 var EMBEDDED_CONTENT=/*CONTENT_JSON*/{};
+var TRAINING_DAYS=/*TRAINING_JSON*/[];
 var TOKEN_KEY="harago-admin-token",NICK_KEY="harago-admin-nick";
 var KIND_LABEL={open:"오픈",close:"마감"};
 var DAY_CHIPS=[["월",1],["화",2],["수",3],["목",4],["금",5],["토",6],["일",0]];
@@ -260,7 +265,7 @@ function viewMain(){
   if(S.serverNote&&S.top==="cl")wrap.append(h("div",{class:"msg warn",text:S.serverNote}));
   var nav=function(id,top,label,extra){return h("button",{type:"button",id:id,"aria-pressed":String(S.top===top),onclick:function(){enterTop(top);}},label,extra);};
   wrap.append(h("div",{class:"tabs top"},nav("navCl","cl","체크리스트"),nav("navRecipes","recipes","레시피"),nav("navPhrases","phrases","응대 멘트"),
-    nav("navProps","props","제안함",h("span",{class:"nbadge",id:"propBadge",hidden:!S.pr.count,text:S.pr.count?String(S.pr.count):""})),nav("tabSub","sub","제출 현황"),nav("navInv","inv","재고 조사")));
+    nav("navProps","props","제안함",h("span",{class:"nbadge",id:"propBadge",hidden:!S.pr.count,text:S.pr.count?String(S.pr.count):""})),nav("tabSub","sub","제출 현황"),nav("navInv","inv","재고 조사"),nav("navTrain","train","신입 교육")));
   if(S.top==="cl"){
     var tabBtn=function(id,key,label){return h("button",{type:"button",id:id,"aria-pressed":String(S.tab===key),text:label,onclick:function(){S.tab=key;S.pendingRestore=null;if(key!=="edit")S.notice=null;render();}});};
     wrap.append(h("div",{class:"tabs sub"},tabBtn("tabEdit","edit","편집"),tabBtn("tabPv","pv","미리보기"),tabBtn("tabVer","ver","버전 기록")));
@@ -268,6 +273,7 @@ function viewMain(){
   }else if(S.top==="recipes"||S.top==="phrases")wrap.append(viewContent(S.top));
   else if(S.top==="props")wrap.append(viewProps());
   else if(S.top==="inv")wrap.append(viewInv());
+  else if(S.top==="train")wrap.append(viewTrain());
   else wrap.append(viewSubs());
   return wrap;
 }
@@ -594,6 +600,7 @@ function enterTop(top){
   else if(top==="props"){loadProps();render();}
   else if(top==="sub"){loadSubs();}
   else if(top==="inv"){loadInv(false);}
+  else if(top==="train"){loadTrain();}
   else render();
 }
 
@@ -1147,6 +1154,50 @@ function applyChecklist(p){
   render();scrollToHl();
 }
 function scrollToHl(){var r=document.querySelector('[data-row="'+S.hl+'"]');if(r)r.scrollIntoView({block:"center"});}
+
+// ======================= 신입 교육 =======================
+// 교육생이 근무노트에서 진도를 누를 때마다 서버에 쌓인 기록을 읽기만 한다. 업무 목록·순서는 빌드가 근무노트의 trainingDays에서 심는다.
+var TR_LEVELS=["아직 배우기 전","설명 들음","함께 해봄","혼자 수행 확인"];
+var TR={loaded:false,loading:false,error:"",trainees:[],recent:[],truncated:false,sel:null};
+function trTotal(){return TRAINING_DAYS.reduce(function(n,d){return n+d.tasks.length;},0);}
+function loadTrain(){
+  TR.loading=true;TR.error="";render();
+  api("GET","/api/admin/training").then(function(d){
+    TR.trainees=d.trainees||[];TR.recent=d.recent||[];TR.truncated=!!d.truncated;TR.loaded=true;TR.loading=false;
+    if(!TR.trainees.some(function(t){return t.name===TR.sel;}))TR.sel=TR.trainees.length?TR.trainees[0].name:null;
+    if(S.top==="train")render();
+  },function(e){TR.loading=false;if(e.status===401)return;TR.error=e.status===503?"교육 기록 저장소 없음 또는 연결 안 됨. 서버 설정 확인":e.message;TR.loaded=true;if(S.top==="train")render();});
+}
+function trBadge(level){var n=[0,1,2,3].indexOf(level)>=0?level:0;return h("span",{class:"badge lv"+n,text:(n===3?"● ":"")+TR_LEVELS[n]});}
+function viewTrain(){
+  var box=h("div",{});
+  box.append(h("div",{class:"bar"},h("h2",{text:"신입 교육 진도",style:"margin:0"}),h("span",{class:"sp"}),h("button",{class:"btn",type:"button",id:"trRefresh",text:"새로고침",disabled:TR.loading,onclick:loadTrain})));
+  box.append(h("p",{class:"hint",text:"교육생이 근무노트 '신입 교육' 탭에서 진도를 누를 때마다 기록. 이름은 교육생이 직접 입력한 값."}));
+  if(TR.loading&&!TR.loaded){box.append(h("div",{class:"card",text:"불러오는 중"}));return box;}
+  if(TR.error)box.append(h("div",{class:"msg err",id:"trError"},TR.error,h("div",{class:"acts"},h("button",{class:"btn",type:"button",id:"trRetry",text:"다시 불러오기",onclick:loadTrain}))));
+  if(!TR.trainees.length){if(!TR.error)box.append(h("div",{class:"card",id:"trEmpty",text:"아직 기록 없음. 교육생이 근무노트 '신입 교육' 탭에서 이름을 넣고 진도를 누르면 여기에 나타남."}));return box;}
+  box.append(h("div",{class:"chips",id:"trChips",role:"group","aria-label":"교육생 선택"},TR.trainees.map(function(t){return h("button",{type:"button","data-trainee":t.name,"aria-pressed":String(TR.sel===t.name),text:t.name,onclick:function(){TR.sel=t.name;render();}});})));
+  var t=TR.trainees.filter(function(x){return x.name===TR.sel;})[0]||TR.trainees[0],total=trTotal(),solo=0,tried=0,known={};
+  TRAINING_DAYS.forEach(function(d){d.tasks.forEach(function(name,i){var r=t.tasks[d.id+"-"+i];known[d.id+"-"+i]=true;if(r&&r.level>=3)solo++;if(r&&r.level>=2)tried++;});});
+  box.append(h("div",{class:"card",id:"trSummary"},h("h3",{text:t.name}),h("p",{class:"hint",text:"마지막 기록 "+invFmt(t.lastAt)}),
+    h("div",{class:"tsum"},h("div",{id:"trSolo"},h("b",{text:solo+" / "+total}),"혼자 수행 확인"),h("div",{id:"trTried"},h("b",{text:tried+" / "+total}),"함께 해봄 이상"))));
+  TRAINING_DAYS.forEach(function(d){
+    box.append(h("div",{class:"sec"},h("h3",{text:d.day+" · "+d.title})));
+    d.tasks.forEach(function(name,i){
+      var r=t.tasks[d.id+"-"+i],lv=r?r.level:0;
+      box.append(h("div",{class:"trow lv"+lv,"data-task":d.id+"-"+i},h("span",{class:"tname"},h("b",{text:name}),r&&r.task!==name?h("span",{class:"small",text:" (기록 당시: "+r.task+")"}):null),
+        h("span",{class:"tmeta"},trBadge(lv),h("span",{class:"small",text:r?invFmt(r.at):"기록 없음"}))));
+    });
+  });
+  var extra=Object.keys(t.tasks).filter(function(k){return!known[k];});
+  if(extra.length){
+    box.append(h("div",{class:"sec"},h("h3",{text:"현재 목록에 없는 업무 기록"})),h("p",{class:"hint",text:"교육 내용이 바뀌기 전에 남은 기록."}));
+    extra.forEach(function(k){var r=t.tasks[k];box.append(h("div",{class:"trow lv"+r.level,"data-task":k},h("span",{class:"tname"},h("b",{text:r.dayLabel+" · "+r.task})),h("span",{class:"tmeta"},trBadge(r.level),h("span",{class:"small",text:invFmt(r.at)}))));});
+  }
+  box.append(h("div",{class:"sec"},h("h3",{text:"최근 기록"})),h("p",{class:"hint",text:"전체 교육생, 최근 50건."+(TR.truncated?" 기록이 많아 오래된 기록 일부는 집계에서 빠짐.":"")}));
+  box.append(h("ul",{class:"rlog card",id:"trRecent"},TR.recent.map(function(r){return h("li",{},h("span",{class:"small",text:invFmt(r.at)+" · "}),h("b",{text:r.trainee}),h("span",{text:" · "+r.dayLabel+" "+r.task+" → "}),trBadge(r.level));})));
+  return box;
+}
 
 // ======================= 재고 조사 =======================
 var INV_LOC=[["fridge","냉장고"],["storage","창고"]];

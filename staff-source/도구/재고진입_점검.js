@@ -17,12 +17,12 @@ const homeLayout=async(page,label)=>{const l=await page.evaluate(()=>{window.scr
    const ctx=await browser.newContext({viewport:{width:w,height:h},timezoneId:'Asia/Seoul'}),page=await ctx.newPage(),errors=[],external=[],nav=[];
    page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url())&&!H.ALLOWED.includes(r.url()))external.push(r.url());});await H.stub(page);
    await page.goto('file://'+path.join(root,'근무노트.html'));
-   assert.equal(await page.locator('#departments button').count(),5,'탭 5개 유지');
+   assert.equal(await page.locator('#departments button').count(),6,'탭 6개(신입 교육 추가 10/18)');
    const card=page.locator('#homeCards a.home-card',{hasText:'재고 조사'});
    assert(await card.isVisible(),'재고 조사 카드 표시');
    assert.equal(await card.getAttribute('href'),'./inventory/');assert.equal(await card.getAttribute('target'),null,'같은 탭 이동');
    const t=await card.innerText();assert(t.includes('와인 수량 입력·검색')&&t.includes('열기 →'));
-   assert.equal(await page.locator('#homeCards .home-card').count(),6,'홈 카드 6장(4 탭 + 재고 조사 + 내 수정 제안)');
+   assert.equal(await page.locator('#homeCards .home-card').count(),7,'홈 카드 7장(4 탭 + 재고 조사 + 내 수정 제안 + 신입 교육)');
    const full=await page.evaluate(()=>{const g=document.getElementById('homeCards').getBoundingClientRect(),c=document.getElementById('homeInventory').getBoundingClientRect();return Math.abs(c.width-g.width)<2;});assert(full,'전체 폭 1장');
    await homeLayout(page,name);await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:shot(name)});
    assert.equal(errors.length,0,errors.join('\n'));assert.equal(external.length,0,'외부 요청 '+external.join());
