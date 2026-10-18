@@ -1,4 +1,4 @@
-// 신입 교육 카드 점검: 일차 선택 / 카드 넘기기 / 이름 입력 / 진도 4단계 저장·이름별 분리 / 교육 기록 전송·대기·재전송 / 위치 기억 / 초기화 / 모바일 폭. (node 도구/신입교육_점검.js, HARAGO_PLAYWRIGHT 필요)
+// 신입 교육 카드 점검: 일차 선택 / 카드 넘기기 / 교육생 드롭다운·새 교육생 등록·수료로 빠진 이름·목록 캐시 / 진도 4단계 저장·이름별 분리 / 교육 기록 전송·대기·재전송·409 버림 / 위치 기억 / 초기화 / 모바일 폭. (node 도구/신입교육_점검.js, HARAGO_PLAYWRIGHT 필요)
 // 서버 응답은 미발행으로 모의하고 외부 요청은 하지 않는다. 캡처는 HARAGO_SHOTS(기본 /private/tmp/harago-training-shots).
 const fs=require('fs'),path=require('path'),assert=require('assert/strict');
 const {chromium}=require(process.env.HARAGO_PLAYWRIGHT||'playwright');
@@ -16,9 +16,18 @@ const total=days.reduce((n,d)=>n+d.tasks.length,0);
   const page=await context.newPage(),errors=[],external=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>{if(/^https?:/.test(r.url())&&!H.ALLOWED.includes(r.url()))external.push(r.url());});await H.stub(page);
   page.on('dialog',d=>d.accept());
-  // 교육 기록 서버 모의: 처음엔 503(연결 실패), 이후 201. 받은 본문은 posts에 쌓는다.
-  const posts=[];let trainingUp=false;
-  await page.route(H.BASE+'/api/training',r=>{const req=r.request();if(req.method()==='OPTIONS')return r.fulfill({status:204,headers:H.CORS});posts.push(JSON.parse(req.postData()));r.fulfill({status:trainingUp?201:503,contentType:'application/json',headers:H.CORS,body:JSON.stringify(trainingUp?{saved:true}:{saved:false})});});
+  // 교육생 명단·교육 기록 서버 모의. 명단: active(목록에 보임)·completed(수료). 기록: 미등록·수료면 409, 아니면 trainingUp에 따라 503/201.
+  const posts=[],registers=[],active=['신입 B'],completed=['수료자'];let trainingUp=false,rosterUp=true;
+  await page.route(H.BASE+'/api/training/trainees',r=>{const req=r.request();if(req.method()==='OPTIONS')return r.fulfill({status:204,headers:H.CORS});
+   const send=(status,body)=>r.fulfill({status,contentType:'application/json',headers:H.CORS,body:JSON.stringify(body)});
+   if(req.method()==='GET')return rosterUp?send(200,{trainees:active.slice()}):send(503,{error:'down'});
+   const name=JSON.parse(req.postData()).name.replace(/\s+/g,' ').trim();registers.push(name);
+   if(completed.includes(name))return send(409,{registered:false,error:'이미 수료한 이름이에요. 다른 이름으로 등록해 주세요.'});
+   if(active.includes(name))return send(200,{registered:true,existing:true,name});
+   active.push(name);send(201,{registered:true,existing:false,name});});
+  await page.route(H.BASE+'/api/training',r=>{const req=r.request();if(req.method()==='OPTIONS')return r.fulfill({status:204,headers:H.CORS});const body=JSON.parse(req.postData());posts.push(body);
+   if(!active.includes(body.trainee))return r.fulfill({status:409,contentType:'application/json',headers:H.CORS,body:JSON.stringify({saved:false,error:'등록되지 않았거나 수료한 교육생이에요.'})});
+   r.fulfill({status:trainingUp?201:503,contentType:'application/json',headers:H.CORS,body:JSON.stringify(trainingUp?{saved:true}:{saved:false})});});
   await page.goto('file://'+path.join(root,'근무노트.html'));
   await page.locator('[data-tab="training"]').click();
   const card=page.locator('.training-card'),sync=page.locator('#trainingSync');
@@ -28,14 +37,37 @@ const total=days.reduce((n,d)=>n+d.tasks.length,0);
   assert(await card.getByRole('button',{name:'← 이전'}).isDisabled());
   assert.equal(await page.locator('#trainingProgress').textContent(),'혼자 수행 확인 0 / '+total+'개 항목');
   await page.screenshot({path:path.join(shotDir,'카드_1일차_1.png'),fullPage:true});
-  // 이름 없이 진도를 누르면 기록하지 않고 이름 입력으로 안내
+  // 목록은 서버에서 받아 드롭다운에 표시(기본 '교육생 선택')
+  const options=()=>page.locator('#trainingName option').allTextContents();
+  await page.waitForFunction(()=>document.querySelectorAll('#trainingName option').length===2);
+  assert.deepEqual(await options(),['교육생 선택','신입 B']);
+  assert.equal(await page.inputValue('#trainingName'),'');
+  // 선택 없이 진도를 누르면 기록하지 않고 드롭다운으로 안내
   await card.getByRole('button',{name:'설명 들음'}).click();
-  assert.match(await sync.textContent(),/이름을 먼저/);
+  assert.match(await sync.textContent(),/교육생을 먼저 골라/);
   assert.equal(await card.getByRole('button',{name:'아직 배우기 전'}).getAttribute('aria-pressed'),'true');
   assert.equal(await page.evaluate(()=>document.activeElement.id),'trainingName');
-  await page.fill('#trainingName','  ');await page.click('#trainingNameSave');assert.match(await sync.textContent(),/1~20자/);
-  await page.fill('#trainingName',' 신입 A ');await page.press('#trainingName','Enter');
-  assert.equal(await page.inputValue('#trainingName'),'신입 A');assert.match(await sync.textContent(),/신입 A 님의 진도/);
+  // 새 교육생 등록: 펼치기·검증·수료 이름 409·등록 후 선택
+  assert(await page.locator('#trainingNewRow').isHidden());
+  await page.click('#trainingNew');
+  assert.equal(await page.getAttribute('#trainingNew','aria-expanded'),'true');
+  assert.equal(await page.evaluate(()=>document.activeElement.id),'trainingNewName');
+  await page.fill('#trainingNewName','  ');await page.click('#trainingNewSave');assert.match(await sync.textContent(),/1~20자/);assert.equal(registers.length,0);
+  await page.fill('#trainingNewName','수료자');await page.click('#trainingNewSave');
+  await page.waitForFunction(()=>/수료한 이름/.test(document.getElementById('trainingSync').textContent));
+  assert.equal(await page.inputValue('#trainingName'),'');
+  await page.fill('#trainingNewName',' 신입 A ');await page.press('#trainingNewName','Enter');
+  await page.waitForFunction(()=>/신입 A 님을 등록/.test(document.getElementById('trainingSync').textContent));
+  assert.deepEqual(registers,['수료자','신입 A']);
+  assert.deepEqual(await options(),['교육생 선택','신입 B','신입 A']);
+  assert.equal(await page.inputValue('#trainingName'),'신입 A');
+  assert(await page.locator('#trainingNewRow').isHidden());assert.equal(await page.getAttribute('#trainingNew','aria-expanded'),'false');
+  // 이미 있는 이름을 다시 등록하면 그 이름을 고름
+  await page.click('#trainingNew');await page.fill('#trainingNewName','신입 B');await page.click('#trainingNewSave');
+  await page.waitForFunction(()=>/이미 등록돼 있어요/.test(document.getElementById('trainingSync').textContent));
+  assert.equal(await page.inputValue('#trainingName'),'신입 B');
+  await page.selectOption('#trainingName','신입 A');assert.match(await sync.textContent(),/신입 A 님의 진도/);
+  await page.screenshot({path:path.join(shotDir,'교육생_선택_375.png'),fullPage:false});
   // 연결 실패: 화면 진도는 저장되고 기록은 대기
   await card.getByRole('button',{name:'설명 들음'}).click();
   await page.waitForFunction(()=>/기록 대기 1건/.test(document.getElementById('trainingSync').textContent));
@@ -56,10 +88,10 @@ const total=days.reduce((n,d)=>n+d.tasks.length,0);
   assert.deepEqual(posts.slice(1).map(p=>p.level),[1,2,3]);
   assert.equal(posts[1].id,posts[0].id,'대기 기록은 같은 기록ID로 다시 보냄');
   assert.equal(await page.evaluate(()=>localStorage.getItem('harago-training-v2-queue')),'[]');
-  // 다른 이름으로 바꾸면 진도가 따로 보임
-  await page.fill('#trainingName','신입 B');await page.click('#trainingNameSave');
+  // 다른 교육생을 고르면 진도가 따로 보임
+  await page.selectOption('#trainingName','신입 B');
   assert.equal(await page.locator('#trainingProgress').textContent(),'혼자 수행 확인 0 / '+total+'개 항목');
-  await page.fill('#trainingName','신입 A');await page.click('#trainingNameSave');
+  await page.selectOption('#trainingName','신입 A');
   assert.equal(await page.locator('#trainingProgress').textContent(),'혼자 수행 확인 1 / '+total+'개 항목');
   // 끝까지 넘기기 → 마무리
   for(let i=1;i<days[0].tasks.length;i++){await card.getByRole('button',{name:/다음 →|마무리 →/}).click();assert.equal(await title(),days[0].tasks[i].title);}
@@ -96,6 +128,28 @@ const total=days.reduce((n,d)=>n+d.tasks.length,0);
   await page.locator('.training-chip').first().click();
   await card.locator('.training-links button').first().click();
   assert.equal(await page.locator('.screen:visible').getAttribute('id'),'screen-'+days[0].links[0][0]);
+  // 수료된 교육생(서버 기준)으로 기록하면 409: 대기하지 않고 버림
+  await page.locator('[data-tab="training"]').click();
+  active.splice(active.indexOf('신입 B'),1);completed.push('신입 B');
+  await page.selectOption('#trainingName','신입 B');
+  const before409=posts.length;
+  await card.getByRole('button',{name:'설명 들음'}).click();
+  await page.waitForFunction(()=>/수료한 교육생이라/.test(document.getElementById('trainingSync').textContent));
+  assert.equal(posts.length,before409+1);
+  assert.equal(await page.evaluate(()=>localStorage.getItem('harago-training-v2-queue')),'[]');
+  // 다시 열면 목록에서 빠지고, 선택해 둔 이름은 풀림
+  await page.reload();await page.locator('[data-tab="training"]').click();
+  await page.waitForFunction(()=>/수료했거나 목록에 없는 이름/.test(document.getElementById('trainingSync').textContent));
+  assert.deepEqual(await options(),['교육생 선택','신입 A']);
+  assert.equal(await page.inputValue('#trainingName'),'');
+  assert.equal(await page.evaluate(()=>localStorage.getItem('harago-training-v2-name')),null);
+  // 목록 서버 연결 실패: 기기에 저장된 목록으로 표시
+  await page.selectOption('#trainingName','신입 A');rosterUp=false;
+  await page.reload();await page.locator('[data-tab="training"]').click();
+  await page.waitForFunction(()=>/저장된 목록/.test(document.getElementById('trainingSync').textContent));
+  assert.deepEqual(await options(),['교육생 선택','신입 A']);
+  assert.equal(await page.inputValue('#trainingName'),'신입 A');
+  rosterUp=true;
   assert.deepEqual(errors,[]);assert.deepEqual(external,[]);
   console.log('신입 교육 카드 점검 통과 ('+days.length+'일 '+total+'항목, 캡처 '+shotDir+')');
  }finally{await browser.close();}

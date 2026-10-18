@@ -68,6 +68,11 @@ textarea.bad{border-color:var(--wine)}
 .badge.st-none{color:var(--del);background:#FBEDEB}.badge.st-low{color:var(--warn);background:#FBF3E2}.badge.st-ok{color:var(--ok);background:#EEF6EF}.badge.st-na{color:var(--muted);background:var(--soft)}
 .qgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:6px 0}.qcell{background:var(--soft);border-radius:8px;padding:6px 8px;display:grid;gap:2px;align-content:start}
 .row.inv{padding:10px 12px}
+.osec{background:var(--bot);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;margin-bottom:12px}.osec h3{font-size:18px;color:var(--wine);overflow-wrap:anywhere}.osec.none h3{color:var(--warn)}
+.orow{display:flex;gap:6px 10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding:8px 0}.orow .oname{flex:1 1 180px;min-width:0;overflow-wrap:anywhere}.orow.off .oname b{text-decoration:line-through;color:var(--muted)}
+.oqty{display:flex;align-items:center;gap:4px}.oqty button{min-width:44px;padding:0 8px}.oqty input[type=text]{width:64px;text-align:center}
+.omsg{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--soft);border-radius:10px;padding:10px 12px;margin:10px 0 0}
+.plist{list-style:none;padding:0;margin:8px 0}.plist li{border-bottom:1px solid var(--rule);padding:6px 2px;overflow-wrap:anywhere}.plist li.bad{color:var(--wine)}
 select{font:inherit;font-size:16px;min-height:44px;border:1px solid #CFC4B8;border-radius:10px;padding:0 8px;background:#fff;color:inherit;max-width:100%}
 #invChips{flex-wrap:wrap}
 .nrow{display:grid;gap:4px;background:var(--bot);border:1px solid var(--rule);border-left:4px solid var(--warn);border-radius:10px;padding:8px 12px;margin-bottom:8px}.nrow.none{border-left-color:var(--wine)}.nsub{color:var(--muted);display:flex;gap:6px 10px;align-items:center;flex-wrap:wrap}
@@ -1156,31 +1161,53 @@ function applyChecklist(p){
 function scrollToHl(){var r=document.querySelector('[data-row="'+S.hl+'"]');if(r)r.scrollIntoView({block:"center"});}
 
 // ======================= 신입 교육 =======================
-// 교육생이 근무노트에서 진도를 누를 때마다 서버에 쌓인 기록을 읽기만 한다. 업무 목록·순서는 빌드가 근무노트의 trainingDays에서 심는다.
+// 교육생이 근무노트에서 진도를 누를 때마다 서버에 쌓인 기록을 보여 주고, 명단(근무노트에서 등록)의 수료 처리·수료 취소·삭제(기록 0건만)를 한다.
+// 업무 목록·순서는 빌드가 근무노트의 trainingDays에서 심는다.
 var TR_LEVELS=["아직 배우기 전","설명 들음","함께 해봄","혼자 수행 확인"];
-var TR={loaded:false,loading:false,error:"",trainees:[],recent:[],truncated:false,sel:null};
+var TR={loaded:false,loading:false,error:"",msg:"",trainees:[],recent:[],truncated:false,sel:null,showDone:false,busy:false};
+function trVisible(){return TR.trainees.filter(function(t){return TR.showDone||!t.completedAt;});}
 function trTotal(){return TRAINING_DAYS.reduce(function(n,d){return n+d.tasks.length;},0);}
 function loadTrain(){
   TR.loading=true;TR.error="";render();
   api("GET","/api/admin/training").then(function(d){
     TR.trainees=d.trainees||[];TR.recent=d.recent||[];TR.truncated=!!d.truncated;TR.loaded=true;TR.loading=false;
-    if(!TR.trainees.some(function(t){return t.name===TR.sel;}))TR.sel=TR.trainees.length?TR.trainees[0].name:null;
+    var vis=trVisible();if(!vis.some(function(t){return t.name===TR.sel;}))TR.sel=vis.length?vis[0].name:null;
     if(S.top==="train")render();
   },function(e){TR.loading=false;if(e.status===401)return;TR.error=e.status===503?"교육 기록 저장소 없음 또는 연결 안 됨. 서버 설정 확인":e.message;TR.loaded=true;if(S.top==="train")render();});
+}
+function trAction(action,t){
+  var ask={complete:t.name+" 님을 수료 처리할까요? 근무노트 교육생 목록에서 빠지고 기록은 남아요.",remove:t.name+" 님을 명단에서 삭제할까요? 기록이 없는 이름만 삭제돼요."}[action];
+  if(ask&&!window.confirm(ask))return;
+  TR.busy=true;TR.msg="";render();
+  api("POST","/api/admin/training/trainees/"+action,{name:t.name}).then(function(){
+    TR.busy=false;TR.msg={complete:t.name+" 님 수료 처리 완료.",reopen:t.name+" 님 수료 취소 완료. 근무노트 목록에 다시 보여요.",remove:t.name+" 님을 명단에서 삭제했어요."}[action];
+    if(action==="remove")TR.sel=null;loadTrain();
+  },function(e){TR.busy=false;if(e.status===401)return;TR.msg="";TR.error=e.message||"처리하지 못했어요.";render();});
 }
 function trBadge(level){var n=[0,1,2,3].indexOf(level)>=0?level:0;return h("span",{class:"badge lv"+n,text:(n===3?"● ":"")+TR_LEVELS[n]});}
 function viewTrain(){
   var box=h("div",{});
   box.append(h("div",{class:"bar"},h("h2",{text:"신입 교육 진도",style:"margin:0"}),h("span",{class:"sp"}),h("button",{class:"btn",type:"button",id:"trRefresh",text:"새로고침",disabled:TR.loading,onclick:loadTrain})));
-  box.append(h("p",{class:"hint",text:"교육생이 근무노트 '신입 교육' 탭에서 진도를 누를 때마다 기록. 이름은 교육생이 직접 입력한 값."}));
+  box.append(h("p",{class:"hint",text:"교육생은 근무노트 '신입 교육' 탭에서 처음 한 번 이름을 등록하고 목록에서 골라 진도를 누름. 수료 처리하면 근무노트 목록에서 빠지고 기록은 남음."}));
+  if(TR.msg)box.append(h("div",{class:"msg ok",id:"trMsg",role:"status",text:TR.msg}));
   if(TR.loading&&!TR.loaded){box.append(h("div",{class:"card",text:"불러오는 중"}));return box;}
   if(TR.error)box.append(h("div",{class:"msg err",id:"trError"},TR.error,h("div",{class:"acts"},h("button",{class:"btn",type:"button",id:"trRetry",text:"다시 불러오기",onclick:loadTrain}))));
-  if(!TR.trainees.length){if(!TR.error)box.append(h("div",{class:"card",id:"trEmpty",text:"아직 기록 없음. 교육생이 근무노트 '신입 교육' 탭에서 이름을 넣고 진도를 누르면 여기에 나타남."}));return box;}
-  box.append(h("div",{class:"chips",id:"trChips",role:"group","aria-label":"교육생 선택"},TR.trainees.map(function(t){return h("button",{type:"button","data-trainee":t.name,"aria-pressed":String(TR.sel===t.name),text:t.name,onclick:function(){TR.sel=t.name;render();}});})));
-  var t=TR.trainees.filter(function(x){return x.name===TR.sel;})[0]||TR.trainees[0],total=trTotal(),solo=0,tried=0,known={};
+  var done=TR.trainees.filter(function(t){return t.completedAt;}).length,vis=trVisible();
+  if(done)box.append(h("label",{class:"small",id:"trShowDoneLabel",style:"display:inline-flex;align-items:center;gap:6px;min-height:44px"},h("input",{type:"checkbox",id:"trShowDone",checked:TR.showDone,onchange:function(e){TR.showDone=e.target.checked;var v=trVisible();if(!v.some(function(t){return t.name===TR.sel;}))TR.sel=v.length?v[0].name:null;render();}}),"수료 포함 보기 ("+done+"명)"));
+  if(!vis.length){if(!TR.error)box.append(h("div",{class:"card",id:"trEmpty",text:done?"교육 중인 교육생 없음. 수료한 교육생은 '수료 포함 보기'로 확인.":"아직 교육생 없음. 교육생이 근무노트 '신입 교육' 탭에서 이름을 등록하면 여기에 나타남."}));return box;}
+  box.append(h("div",{class:"chips",id:"trChips",role:"group","aria-label":"교육생 선택"},vis.map(function(t){return h("button",{type:"button","data-trainee":t.name,"aria-pressed":String(TR.sel===t.name),text:t.name+(t.completedAt?" · 수료":t.registered?"":" · 명단 없음"),onclick:function(){TR.sel=t.name;TR.msg="";render();}});})));
+  var t=vis.filter(function(x){return x.name===TR.sel;})[0]||vis[0],total=trTotal(),solo=0,tried=0,known={};
   TRAINING_DAYS.forEach(function(d){d.tasks.forEach(function(name,i){var r=t.tasks[d.id+"-"+i];known[d.id+"-"+i]=true;if(r&&r.level>=3)solo++;if(r&&r.level>=2)tried++;});});
-  box.append(h("div",{class:"card",id:"trSummary"},h("h3",{text:t.name}),h("p",{class:"hint",text:"마지막 기록 "+invFmt(t.lastAt)}),
-    h("div",{class:"tsum"},h("div",{id:"trSolo"},h("b",{text:solo+" / "+total}),"혼자 수행 확인"),h("div",{id:"trTried"},h("b",{text:tried+" / "+total}),"함께 해봄 이상"))));
+  var status=t.completedAt?"수료 "+invFmt(t.completedAt):t.registered?"교육 중"+(t.registeredAt?" · 등록 "+invFmt(t.registeredAt):""):"명단에 없음(기록만 있음)";
+  var acts=h("div",{class:"acts",id:"trActs"});
+  if(t.completedAt)acts.append(h("button",{class:"btn",type:"button",id:"trReopen",text:"수료 취소",disabled:TR.busy,onclick:function(){trAction("reopen",t);}}));
+  else if(t.registered){
+    acts.append(h("button",{class:"btn primary",type:"button",id:"trComplete",text:"수료 처리",disabled:TR.busy||solo<total,"aria-describedby":"trCompleteHint",onclick:function(){trAction("complete",t);}}));
+    if(!t.recordCount)acts.append(h("button",{class:"btn",type:"button",id:"trRemove",text:"목록에서 삭제",disabled:TR.busy,onclick:function(){trAction("remove",t);}}));
+  }
+  box.append(h("div",{class:"card",id:"trSummary"},h("h3",{text:t.name}),h("p",{class:"hint",id:"trStatus",text:status+" · 마지막 기록 "+(t.lastAt?invFmt(t.lastAt):"없음")}),
+    h("div",{class:"tsum"},h("div",{id:"trSolo"},h("b",{text:solo+" / "+total}),"혼자 수행 확인"),h("div",{id:"trTried"},h("b",{text:tried+" / "+total}),"함께 해봄 이상")),
+    acts,t.registered&&!t.completedAt?h("p",{class:"small",id:"trCompleteHint",text:solo<total?"업무 "+total+"개가 모두 '혼자 수행 확인'이면 수료 처리할 수 있어요.":"모든 업무 혼자 수행 확인. 수료 처리할 수 있어요."}):null));
   TRAINING_DAYS.forEach(function(d){
     box.append(h("div",{class:"sec"},h("h3",{text:d.day+" · "+d.title})));
     d.tasks.forEach(function(name,i){
@@ -1205,7 +1232,8 @@ var INV_LOC_NAME={fridge:"냉장고",storage:"창고"};
 var INV_SHEET={sent:["ok","시트 전송 성공"],form:["ok","양식 기록 성공(대체)"],failed:["err","시트 전송 실패"],form_failed:["err","양식 기록 실패"],pending:["warn","전송 중"],unset:["","미설정"]};
 var INV_MODE={script:"앱스크립트 연결됨. 새 탭 '재고조사'에 기록",form:"앱스크립트 미설정. 구글 양식으로 대체 기록 중(새 탭 없음)",off:"시트 기록 꺼짐. 서버 저장소에만 저장"};
 var EMBEDDED_WINES=/*WINES_JSON*/{"groups":[]};
-function invNew(){return {loaded:false,loading:false,error:"",items:{},surveys:[],sheetMode:"",sub:"status",gid:null,q:"",low:false,detail:null,detailData:null,detailErr:"",resend:{},
+function invNew(){return {loaded:false,loading:false,error:"",items:{},surveys:[],sheetMode:"",sub:"status",gid:null,q:"",low:false,detail:null,detailData:null,detailErr:"",resend:{},needView:"list",
+  sup:{error:"",orig:{},draft:{},busy:false,paste:{open:false,text:"",rows:null}},ord:{over:{}},
   w:{orig:null,draft:null,base:0,published:false,publishedAt:"",versions:[],errors:{},other:[],serverNote:"",sub:"edit",gid:null,pendingRestore:null,confirmReset:false}};}
 var INV=invNew();
 function invFmt(iso){try{var p={};new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Seoul",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).formatToParts(new Date(iso)).forEach(function(x){p[x.type]=x.value;});return p.month+"/"+p.day+" "+(p.hour==="24"?"00":p.hour)+":"+p.minute;}catch(e){return "";}}
@@ -1263,7 +1291,7 @@ function invFetch(){return api("GET","/api/admin/inventory").then(function(d){IN
 function loadInv(force){
   if(INV.loaded&&!force){render();invFetch().then(function(){if(S.top==="inv"&&INV.sub!=="wines")render();},function(){});return;}
   INV.loading=true;INV.error="";render();
-  Promise.all([invFetch(),wFetch(true)]).then(function(){INV.loaded=true;INV.loading=false;if(!INV.gid)INV.gid=INV.w.orig.groups.length?INV.w.orig.groups[0].id:null;if(!INV.w.gid)INV.w.gid=INV.gid;render();},function(e){
+  Promise.all([invFetch(),wFetch(true),supFetch()]).then(function(){INV.loaded=true;INV.loading=false;if(!INV.gid)INV.gid=INV.w.orig.groups.length?INV.w.orig.groups[0].id:null;if(!INV.w.gid)INV.w.gid=INV.gid;render();},function(e){
     INV.loading=false;if(e.status===401)return;
     INV.error=e.status===503?"재고 저장소 없음 또는 연결 안 됨. 서버 설정(재고 테이블 추가) 확인":e.message;
     if(!INV.w.orig){INV.w.orig=wFrom(EMBEDDED_WINES);INV.w.draft=clone(INV.w.orig);INV.w.serverNote="서버 연결 안 됨. 내장 목록이 시작값";}
@@ -1326,8 +1354,14 @@ function invCopy(text){
   return new Promise(function(ok,fail){var a=document.createElement("textarea");a.value=text;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();var done=false;try{done=document.execCommand("copy");}catch(e){}a.remove();done?ok():fail(new Error("copy"));});
 }
 function viewInvNeed(){
+  var vb=function(key,label){return h("button",{type:"button","data-nview":key,"aria-pressed":String(INV.needView===key),text:label,onclick:function(){INV.needView=key;S.notice=null;render();}});};
+  var views=h("div",{class:"kinds",id:"needViews",role:"group","aria-label":"보기 선택"},vb("list","필요 목록"),vb("order","발주 멘트"));
+  var body=INV.needView==="order"?viewInvOrder():viewInvNeedList();
+  return h("div",{},views,body);
+}
+function viewInvNeedList(){
   if(INV.error)return h("div",{class:"msg warn",id:"needState",text:"최신 수량 없음. 필요 목록 표시 불가"});
-  var box=h("div",{}),d=invNeedData(),total=d.groups.reduce(function(n,g){return n+g.rows.length;},0);
+  var box=h("div",{id:"needList"}),d=invNeedData(),total=d.groups.reduce(function(n,g){return n+g.rows.length;},0);
   var msg=h("span",{class:"small",id:"needCopyMsg",role:"status"});
   box.append(h("div",{class:"bar"},h("b",{class:"count",id:"needCount",text:"필요·없음 "+total+"종"}),h("span",{class:"sp"}),
     total?h("button",{type:"button",class:"btn primary",id:"needCopy",text:"목록 복사",onclick:function(){invCopy(invNeedText(invNeedData())).then(function(){msg.textContent="복사됨. 메신저에 붙여넣기";},function(){msg.textContent="복사 실패. 직접 선택해 복사";});}}):null,
@@ -1343,6 +1377,170 @@ function viewInvNeed(){
   });
   if(d.un.length)box.append(h("details",{class:"un",id:"needUn"},h("summary",{text:"미조사 "+d.un.length+"종 (필요 목록에 넣지 않음)"}),h("ul",{},d.un.map(function(it){return h("li",{text:it.name});}))));
   box.append(h("p",{class:"hint",text:"냉장고 수량 기준: 0 없음 · 1~(기준-1) 필요. 냉장고 조사 기록이 없는 와인은 미조사."}));
+  return box;
+}
+// ---- 수입사(관리자 전용, 서버 inventory_suppliers). 와인 목록 발행과 따로 저장한다. 직원 화면·발행 목록에는 나가지 않는다.
+function supFetch(){
+  return api("GET","/api/admin/inventory/suppliers").then(function(d){supApply(d.suppliers||{});INV.sup.error="";},function(e){
+    if(e.status===401)return;INV.sup.error=e.status===503?"수입사 저장소 연결 안 됨(서버 스키마 3 적용 확인)":e.message;});
+}
+// 저장된 값으로 바꾸되, 아직 저장 안 한 입력은 유지
+function supApply(map){
+  var p=INV.sup,keep={};supDirtyIds().forEach(function(id){keep[id]=p.draft[id];});
+  p.orig=map||{};p.draft=clone(p.orig);Object.keys(keep).forEach(function(id){p.draft[id]=keep[id];});
+}
+function supVal(map,id){return String(map[id]||"").trim();}
+function supDirtyIds(){var p=INV.sup,ids={};Object.keys(p.draft).concat(Object.keys(p.orig)).forEach(function(id){if(supVal(p.draft,id)!==supVal(p.orig,id))ids[id]=1;});return Object.keys(ids);}
+function supCheck(v){v=String(v).trim();if(v.length>30)return "수입사 30자 초과";if(/[\u0000-\u001f<>]/.test(v))return "줄바꿈·제어문자·꺾쇠 사용 불가";return "";}
+function supWineName(id){var n=id;invGroups().forEach(function(g){g.items.forEach(function(it){if(it.id===id)n=it.name;});});return n;}
+function supSave(items,done){
+  var p=INV.sup;if(p.busy||!items.length)return;
+  p.busy=true;render();
+  api("PUT","/api/admin/inventory/suppliers",{items:items}).then(function(d){
+    p.busy=false;items.forEach(function(x){delete p.draft[x.itemId];});supApply(d.suppliers||{});items.forEach(function(x){p.draft[x.itemId]=p.orig[x.itemId]||"";});
+    if(done)done();notice("ok","수입사 저장 완료 · "+items.length+"건");render();
+  },function(e){
+    p.busy=false;if(e.status===401){render();return;}
+    var list=((e.data&&e.data.details)||[]).map(function(x){return (x.id?supWineName(x.id)+": ":"")+x.reason;});
+    notice("err","수입사 저장 실패: "+e.message,list);render();window.scrollTo(0,0);
+  });
+}
+function supSaveDraft(){
+  var bad=[],items=supDirtyIds().map(function(id){var v=supVal(INV.sup.draft,id),r=supCheck(v);if(r)bad.push(supWineName(id)+": "+r);return {itemId:id,supplier:v};});
+  if(bad.length){notice("err","수입사 입력 확인 필요 "+bad.length+"곳",bad);render();window.scrollTo(0,0);return;}
+  supSave(items);
+}
+function supUpdateMeta(){
+  var n=supDirtyIds().length,c=document.getElementById("supChg");if(c)c.textContent="수입사 변경 "+n+"건";
+  var b=document.getElementById("supSave");if(b)b.disabled=!n||INV.sup.busy||!!INV.sup.error;
+}
+// 일괄 붙여넣기: 시트에서 복사한 "와인이름<탭>수입사" 줄을 이름(공백·기호 무시)으로 맞춘다. 정확히 하나만 맞을 때만 저장 대상.
+function supMatch(text){
+  var byName={},rows=[],last={};
+  invGroups().forEach(function(g){g.items.forEach(function(it){var k=invNorm(it.name);if(!k)return;(byName[k]=byName[k]||[]).push(it);});});
+  String(text||"").split(/\r?\n/).forEach(function(line,i){
+    if(!line.trim())return;
+    var r={no:i+1,line:line.trim(),ok:false,reason:""},parts=line.split("\t");
+    rows.push(r);
+    if(parts.length<2){r.reason="탭 구분 없음(와인이름<탭>수입사)";return;}
+    var name=parts[0].trim(),sup=parts[1].trim(),k=invNorm(name);
+    r.name=name;r.sup=sup;
+    if(!k){r.reason="와인 이름 없음";return;}
+    var bad=supCheck(sup);if(bad){r.reason=bad;return;}
+    var c=byName[k]||[];
+    if(!c.length){r.reason="일치하는 와인 없음";return;}
+    if(c.length>1){r.reason="같은 이름 와인 "+c.length+"개. 와인 목록 편집에서 직접 입력";return;}
+    r.ok=true;r.it=c[0];r.same=sup===supVal(INV.sup.orig,c[0].id);
+    if(last[c[0].id]){last[c[0].id].ok=false;last[c[0].id].reason="아래 "+r.no+"번째 줄과 같은 와인(아래 줄 사용)";}
+    last[c[0].id]=r;
+  });
+  return rows;
+}
+function viewSupBar(){
+  var p=INV.sup,box=h("div",{id:"supBox"}),n=supDirtyIds().length;
+  if(p.error)box.append(h("div",{class:"msg warn",id:"supError",text:"수입사 불러오기 실패: "+p.error}));
+  box.append(h("div",{class:"bar"},h("span",{class:"count",id:"supChg",text:"수입사 변경 "+n+"건"}),h("span",{class:"sp"}),
+    h("button",{class:"btn",type:"button",id:"supPasteOpen","aria-expanded":String(p.paste.open),"aria-controls":"supPaste",text:"일괄 붙여넣기",disabled:!!p.error,onclick:function(){p.paste.open=!p.paste.open;render();if(p.paste.open){var t=document.getElementById("supPasteText");if(t)t.focus();}}}),
+    h("button",{class:"btn primary",type:"button",id:"supSave",text:p.busy?"저장 중":"수입사 저장",disabled:!n||p.busy||!!p.error,onclick:supSaveDraft})));
+  box.append(h("p",{class:"hint",text:"수입사는 어드민에서만 보임(직원 화면·발행 목록에 안 나감). '수입사 저장'은 와인 목록 저장·발행과 별개."}));
+  if(p.paste.open)box.append(viewSupPaste());
+  return box;
+}
+function viewSupPaste(){
+  var p=INV.sup,pp=p.paste,box=h("div",{class:"card",id:"supPaste"});
+  var ta=h("textarea",{id:"supPasteText",rows:"4","aria-describedby":"supPasteHint",placeholder:"와인이름 [탭] 수입사 (한 줄에 하나)",oninput:function(ev){pp.text=ev.target.value;autosize(ev.target);}});ta.value=pp.text;
+  box.append(h("h3",{text:"수입사 일괄 붙여넣기"}),h("p",{class:"hint",id:"supPasteHint",text:"시트에서 '와인 이름'·'수입사' 두 열을 함께 복사해 붙여 넣기. 한 줄에 와인 하나. 수입사 칸이 비어 있으면 그 와인의 수입사를 지움."}),
+    h("label",{class:"f",for:"supPasteText",text:"붙여 넣을 내용"}),ta,
+    h("div",{class:"acts tight"},h("button",{class:"btn",type:"button",id:"supPastePreview",text:"미리보기",onclick:function(){pp.rows=supMatch(pp.text);render();var r=document.getElementById("supPasteResult");if(r)r.focus();}}),
+      h("button",{class:"btn",type:"button",id:"supPasteClose",text:"닫기",onclick:function(){pp.open=false;pp.rows=null;render();var b=document.getElementById("supPasteOpen");if(b)b.focus();}})));
+  if(pp.rows){
+    var ok=pp.rows.filter(function(r){return r.ok;}),chg=ok.filter(function(r){return !r.same;}),bad=pp.rows.filter(function(r){return !r.ok;});
+    var res=h("div",{id:"supPasteResult",tabindex:"-1","aria-live":"polite"});
+    res.append(h("p",{id:"supPasteSum"},h("b",{text:"일치 "+ok.length+"건"}),h("span",{text:" (변경 "+chg.length+"건) · 실패 "+bad.length+"건"})));
+    if(ok.length)res.append(h("ul",{class:"plist",id:"supPasteOk"},ok.map(function(r){return h("li",{"data-pok":r.it.id},h("b",{text:r.it.name}),h("span",{text:" → "+(r.sup||"(지움)")+(r.same?" · 변경 없음":"")}));})));
+    if(bad.length)res.append(h("ul",{class:"plist",id:"supPasteBad"},bad.map(function(r){return h("li",{class:"bad","data-pbad":String(r.no)},h("span",{text:r.no+"번째 줄 「"+r.line.replace(/\t/g," / ")+"」: "+r.reason}));})));
+    res.append(h("div",{class:"acts tight"},h("button",{class:"btn primary",type:"button",id:"supPasteSave",text:p.busy?"저장 중":"일치 "+chg.length+"건 저장",disabled:!chg.length||p.busy,onclick:function(){
+      supSave(chg.map(function(r){return {itemId:r.it.id,supplier:r.sup};}),function(){pp.open=false;pp.rows=null;pp.text="";});}})));
+    box.append(res);
+  }
+  return box;
+}
+// ---- 발주 멘트: 최신 수량 기준. 기본 발주 수량 = max(0, 기준 - 냉장고 - 창고). 창고로 기준을 채울 수 있으면 '창고에서 채우기'로 뺀다.
+function invOrderData(){
+  var by={},fill=[],un=[];
+  invGroups().forEach(function(g){
+    g.items.forEach(function(it){
+      var c=INV.items[it.id]||{},f=c.fridge,st=c.storage;
+      if(!f){un.push(it);return;}
+      var min=Number.parseInt(it.min,10)||3,fq=f.qty,sq=st?st.qty:0;
+      if(fq>=min)return;
+      if(fq+sq>=min){fill.push({it:it,move:min-fq,f:fq,s:st?sq:null,min:min});return;}
+      var key=supVal(INV.sup.orig,it.id);
+      (by[key]=by[key]||[]).push({it:it,def:Math.max(0,min-fq-sq),f:fq,s:st?sq:null,min:min});
+    });
+  });
+  var keys=Object.keys(by).filter(Boolean).sort(function(a,b){return a.localeCompare(b,"ko");});
+  if(by[""])keys.push("");
+  return {groups:keys.map(function(k){return {key:k,rows:by[k]};}),fill:fill,un:un};
+}
+function ordQty(r){var o=INV.ord.over[r.it.id];return o==null?r.def:o;}
+function invOrderText(rows){
+  var lines=rows.filter(function(r){return ordQty(r)>0;}).map(function(r){return "- "+r.it.name+" "+ordQty(r)+"병";});
+  return ["안녕하세요, 하라고지페입니다.","아래 와인 발주 부탁드립니다.",""].concat(lines,["","감사합니다."]).join("\n");
+}
+var ORD_GROUPS=[];
+function ordSum(g){var n=0,b=0;g.rows.forEach(function(r){var q=ordQty(r);if(q>0){n++;b+=q;}});return {n:n,b:b};}
+function ordSync(gi){
+  var g=ORD_GROUPS[gi],sec=document.querySelector('[data-osec="'+gi+'"]');if(!g||!sec)return;
+  var s=ordSum(g);
+  sec.querySelector("[data-ohead]").textContent=(g.key||"수입사 미지정")+" · "+s.n+"종 "+s.b+"병";
+  sec.querySelector("[data-omsg]").textContent=invOrderText(g.rows);
+  var cb=sec.querySelector("[data-ocopy]");cb.disabled=!s.n;
+  g.rows.forEach(function(r){var row=sec.querySelector('[data-order="'+r.it.id+'"]');if(!row)return;var off=ordQty(r)<=0;row.classList.toggle("off",off);row.querySelector("[data-ooff]").hidden=!off;});
+  var all=0;ORD_GROUPS.forEach(function(x){all+=ordSum(x).n;});var c=document.getElementById("ordCount");if(c)c.textContent="발주 "+all+"종";
+  var rs=document.getElementById("ordReset");if(rs)rs.disabled=!Object.keys(INV.ord.over).length;
+}
+function ordSet(gi,r,v,input){
+  v=Math.max(0,Math.min(99,v));
+  if(v===r.def)delete INV.ord.over[r.it.id];else INV.ord.over[r.it.id]=v;
+  if(input&&input.value!==String(v))input.value=String(v);
+  ordSync(gi);
+}
+function viewInvOrder(){
+  if(INV.error)return h("div",{class:"msg warn",id:"ordState",text:"최신 수량 없음. 발주 멘트 표시 불가"});
+  var box=h("div",{id:"ordBox"}),d=invOrderData();ORD_GROUPS=d.groups;
+  var all=0;d.groups.forEach(function(g){all+=ordSum(g).n;});
+  box.append(h("div",{class:"bar"},h("b",{class:"count",id:"ordCount",text:"발주 "+all+"종"}),h("span",{class:"small",text:"수입사 "+d.groups.filter(function(g){return g.key;}).length+"곳"}),h("span",{class:"sp"}),
+    h("button",{class:"btn",type:"button",id:"ordReset",text:"수량 기본값으로",disabled:!Object.keys(INV.ord.over).length,onclick:function(){INV.ord.over={};render();}}),
+    h("button",{class:"btn",type:"button",id:"ordRefresh",text:"새로고침",onclick:function(){INV.loaded=false;loadInv(true);}})));
+  if(INV.sup.error)box.append(h("div",{class:"msg warn",id:"ordSupError",text:"수입사 불러오기 실패. 모두 '수입사 미지정'으로 표시: "+INV.sup.error}));
+  if(!d.groups.length)box.append(h("div",{class:"card",id:"ordEmpty",text:"발주할 와인이 없어요"}));
+  d.groups.forEach(function(g,gi){
+    var s=ordSum(g),msg=h("span",{class:"small","data-ocmsg":"",role:"status"});
+    var sec=h("section",{class:"osec"+(g.key?"":" none"),"data-osec":String(gi),"data-sname":g.key,"aria-labelledby":"oh-"+gi},
+      h("h3",{id:"oh-"+gi,"data-ohead":"",text:(g.key||"수입사 미지정")+" · "+s.n+"종 "+s.b+"병"}),
+      g.key?null:h("p",{class:"hint",text:"수입사를 정하려면 '와인 목록 편집'에서 입력·저장."}));
+    g.rows.forEach(function(r){
+      var label=r.it.name+" 발주 수량(병)";
+      var inp=h("input",{type:"text",inputmode:"numeric",maxlength:"2","data-oqty":"","aria-label":label,value:String(ordQty(r)),
+        oninput:function(ev){var t=ev.target.value.replace(/[^0-9]/g,"").slice(0,2);if(t!==ev.target.value)ev.target.value=t;ordSet(gi,r,t===""?0:Number(t),null);},
+        onblur:function(ev){if(ev.target.value==="")ev.target.value="0";}});
+      sec.append(h("div",{class:"orow"+(ordQty(r)>0?"":" off"),"data-order":r.it.id},
+        h("div",{class:"oname"},h("b",{text:r.it.name}),h("div",{class:"small",text:"냉장고 "+r.f+" · 창고 "+(r.s==null?"-":r.s)+" · 기준 "+r.min+" · 기본 "+r.def+"병"}),h("div",{class:"small","data-ooff":"",hidden:ordQty(r)>0,text:"0병: 발주 문구에서 빠짐"})),
+        h("div",{class:"oqty"},
+          h("button",{class:"btn",type:"button","data-ominus":"","aria-label":r.it.name+" 1병 줄이기",text:"−",onclick:function(){ordSet(gi,r,ordQty(r)-1,inp);}}),
+          inp,h("span",{text:"병"}),
+          h("button",{class:"btn",type:"button","data-oplus":"","aria-label":r.it.name+" 1병 늘리기",text:"+",onclick:function(){ordSet(gi,r,ordQty(r)+1,inp);}}))));
+    });
+    sec.append(h("pre",{class:"omsg","data-omsg":"","aria-label":(g.key||"수입사 미지정")+" 복사될 문구",text:invOrderText(g.rows)}),
+      h("div",{class:"acts tight"},h("button",{class:"btn primary",type:"button","data-ocopy":"","aria-label":(g.key||"수입사 미지정")+" 발주 멘트 복사",text:"복사",disabled:!s.n,onclick:function(){
+        invCopy(invOrderText(g.rows)).then(function(){msg.textContent="복사됨. 카톡에 붙여넣기";},function(){msg.textContent="복사 실패. 위 문구를 직접 선택해 복사";});}}),msg));
+    box.append(sec);
+  });
+  if(d.fill.length)box.append(h("section",{class:"osec",id:"ordFill","aria-labelledby":"ordFillH"},h("h3",{id:"ordFillH",text:"창고에서 채우기 "+d.fill.length+"종"}),h("p",{class:"hint",text:"냉장고는 부족하지만 창고 재고로 기준을 채울 수 있어 발주에서 뺌."}),
+    h("ul",{class:"plist"},d.fill.map(function(r){return h("li",{"data-fill":r.it.id},h("b",{text:r.it.name}),h("span",{text:" · 창고에서 "+r.move+"병 꺼내기 (냉장고 "+r.f+" · 창고 "+r.s+" · 기준 "+r.min+")"}));}))));
+  if(d.un.length)box.append(h("details",{class:"un",id:"ordUn"},h("summary",{text:"미조사 "+d.un.length+"종 (발주에 넣지 않음)"}),h("ul",{},d.un.map(function(it){return h("li",{text:it.name});}))));
+  box.append(h("p",{class:"hint",text:"기본 발주 수량 = 기준 − 냉장고 − 창고(창고 기록 없으면 0). 수량은 고칠 수 있고 0이면 그 줄은 문구에서 빠짐. 수입사는 저장된 값 기준."}));
   return box;
 }
 function invRenderRows(){var host=document.getElementById("invRows");if(host)host.replaceChildren.apply(host,invRowNodes());}
@@ -1425,6 +1623,7 @@ function viewInvWines(){
   if(w.confirmReset)reset=h("span",{class:"bar"},h("span",{text:"변경 "+d.count+"건 모두 되돌릴지 확인"}),h("button",{class:"btn danger",type:"button",id:"wResetYes",text:"예, 되돌림",onclick:function(){w.draft=clone(w.orig);w.errors={};w.other=[];w.confirmReset=false;notice("ok","모든 변경 되돌림");render();}}),h("button",{class:"btn",type:"button",text:"아니오",onclick:function(){w.confirmReset=false;render();}}));
   else reset=h("button",{class:"btn",type:"button",id:"wReset",text:"모두 되돌리기",disabled:!d.count,onclick:function(){w.confirmReset=true;render();}});
   box.append(h("div",{class:"bar"},h("span",{class:"count",id:"wChg",text:"변경 "+d.count+"건"}),h("span",{class:"small",text:w.published?"발행본 v"+w.base+" 기준":"발행 전 · 내장 목록 기준"}),h("span",{class:"sp"}),reset,h("button",{class:"btn primary",type:"button",id:"wSave",text:"저장·발행",disabled:!d.count,onclick:wOpenSummary})));
+  box.append(viewSupBar());
   if(w.other.length)box.append(h("div",{class:"msg err"},"저장 불가 사유",h("ul",{},w.other.map(function(t){return h("li",{text:t});}))));
   var gid=w.gid&&w.draft.groups.some(function(g){return g.id===w.gid;})?w.gid:(w.draft.groups[0]&&w.draft.groups[0].id);w.gid=gid;
   box.append(h("div",{class:"chips",id:"wChips",role:"group","aria-label":"칸 선택"},w.draft.groups.map(function(g){return h("button",{type:"button","data-gid":g.id,"aria-pressed":String(g.id===gid),text:g.name+" "+g.items.filter(function(i){return!i.del;}).length,onclick:function(){w.gid=g.id;render();}});})));
@@ -1467,6 +1666,10 @@ function wRow(g,gi,it,ii,d){
         if(st.types.indexOf("add")>=0){g.items.splice(ii,1);render();return;}
         it.del=!it.del;renderKeep(rs,rs+' [data-f="del"]');}})));
   minI.id="wmin-"+it.id;
+  var known=!!(w.orig&&w.orig.groups.some(function(x){return x.items.some(function(y){return y.id===it.id;});})),sp=INV.sup;
+  var supI=h("input",{type:"text","data-f":"supplier",id:"wsup-"+it.id,maxlength:"30",autocomplete:"off","aria-label":(it.name||"새 와인")+" 수입사",value:sp.draft[it.id]||"",disabled:it.del||!known||!!sp.error||sp.busy,placeholder:known?"수입사(어드민 전용)":"와인 목록 발행 후 입력",style:"flex:1 1 160px;width:auto;min-width:0",
+    oninput:function(ev){sp.draft[it.id]=ev.target.value;supUpdateMeta();}});
+  row.insertBefore(h("div",{class:"rbar","data-supbar":""},h("label",{class:"small",for:"wsup-"+it.id,text:"수입사"}),supI),row.children[2]);
   if(err)row.append(h("div",{class:"rerr",text:err.map(function(x){return x.reason;}).join(" · ")}));
   return row;
 }

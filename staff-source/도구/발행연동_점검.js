@@ -16,7 +16,7 @@ const check=async(area,name,fn)=>{try{await fn();rec(area,name,true,'');}catch(e
 
 // ---- 0. 정적 확인: 서버 주소·내장본 동등성 ----
 assert.match(html,new RegExp('var CL_BASE = "https://'+PROD_HOST.replace(/\./g,'\\.')+'";'),'빌드에 심은 서버 주소');
-assert.equal((html.match(/\bfetch\(/g)||[]).length,6,'서버 호출 6곳(체크리스트·레시피/멘트 발행본 읽기·근무 제출·웹 검색·수정 제안·교육 기록)');
+assert.equal((html.match(/\bfetch\(/g)||[]).length,8,'서버 호출 8곳(체크리스트·레시피/멘트 발행본 읽기·근무 제출·웹 검색·수정 제안·교육 기록·교육생 목록/등록)');
 checkSync('정적','발행본을 안 바꾸고 그대로 쓰면 화면 항목이 내장본과 같음(요일 7일)',()=>{
  for(const kind of ['오픈 순서','마감 순서'])for(let day=0;day<7;day++){
   const date=new Date('2026-10-'+String(11+day).padStart(2,'0')+'T12:00:00+09:00'),body=ctx.KB.find(e=>e.file==='09_운영_매뉴얼'&&e.title===kind).body;
