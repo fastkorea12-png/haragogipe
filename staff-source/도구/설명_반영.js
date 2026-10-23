@@ -33,7 +33,17 @@ for(const t of estimates.targets.filter(t=>t.status==='accepted')){
  const i=excluded.findIndex(x=>x[0]===t.name);if(i>=0)excluded.splice(i,1);
  links.push({menuName:v[2],sourceName:originalName,english:v[4],method:'웹 자료 기준 추정 · '+t.identity});
 }
-for(const b of baseline){const w=wines.find(w=>w.name===b.name);if(!w||w.scoreSource==='web-estimate'||['sweetness','acidity','tannin','body'].some(k=>w[k]!==b[k]))throw new Error('Original score changed: '+b.name);}
+// 화이트·로제는 페이히어 판매 목록이 기준이다. 빠진 제품은 추천에서 빼고, 번호·가격은 페이히어 값을 쓴다. 신규 제품은 점수 없이 확인 목록에만 둔다.
+const payhere=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_화이트로제_1023.json'),'utf8'));
+const whiteCode=c=>/^White/i.test(clean(c)),payhereOf=name=>payhere.items.find(p=>p.menuName===name);
+for(const p of payhere.items)if(p.menuName&&!menu.rows.some(m=>whiteCode(m.values[0])&&clean(m.values[2])===p.menuName))throw new Error('Payhere menu link changed: '+p.name);
+const offSale=menu.rows.filter(m=>whiteCode(m.values[0])&&!payhereOf(clean(m.values[2]))).map(m=>clean(m.values[2]));
+for(let i=wines.length-1;i>=0;i--){const w=wines[i];if(!whiteCode(w.menuCode))continue;const p=payhereOf(w.name);
+ if(!p){wines.splice(i,1);continue;}
+ Object.assign(w,{price:p.price+'원',posNumber:'화이트·로제 '+p.number+'번',posName:p.name,priceSource:'페이히어 '+payhere.readAt});}
+for(const name of offSale){const reason='페이히어 판매 목록에 없음('+payhere.readAt+')',x=excluded.find(x=>x[0]===name);if(x)x[1]=reason;else excluded.push([name,reason]);}
+for(const p of payhere.items.filter(p=>!p.menuName))excluded.push([p.name,'페이히어 신규('+payhere.readAt+', '+p.price+'원) · 맛 점수·설명 시트 미등록']);
+for(const b of baseline){if(offSale.includes(b.name))continue;const w=wines.find(w=>w.name===b.name);if(!w||w.scoreSource==='web-estimate'||['sweetness','acidity','tannin','body'].some(k=>w[k]!==b[k]))throw new Error('Original score changed: '+b.name);}
 wines.sort((a,b)=>a.menuRow-b.menuRow);
 fs.writeFileSync(path.join(__dirname,'와인_추천_데이터.json'),JSON.stringify(wines,null,2)+'\n');
 fs.writeFileSync(path.join(__dirname,'와인_이름_연결표.json'),JSON.stringify(links,null,2)+'\n');
@@ -46,12 +56,15 @@ const sections=rows.map(r=>{
  const estimate=wines.find(w=>w.scoreSource==='web-estimate'&&w.name===(link?.menuName||r[1]));
  const taste=estimate?'맛 점수: 웹 자료 기준 추정 · 당도 '+estimate.sweetness+'/5 · 산도 '+estimate.acidity+'/5 · 타닌 '+estimate.tannin+'/5 · 바디 '+estimate.body+'/5':scored?'맛 점수: 당도 '+r[3]+'/5 · 산도 '+r[5]+'/5 · 타닌 '+r[6]+'/5 · 바디 '+r[4]+'/5':'맛 점수: 자료 미완성. 취향 추천에서는 제외 [확인].';
  const lines=[r[2]?'영문명: '+r[2]:'',r[9]?'국가: '+r[9]:'',r[10]?'품종 (와인 참고자료): '+r[10]:'',mv&&mv[6]?'품종 (메뉴판): '+mv[6]:'',mv&&mv[3]?'도수 (메뉴판): '+mv[3]:'',mv&&mv[5]?'지역 (메뉴판): '+mv[5]:'',mv&&mv[7]?'가격 원문 (메뉴판): '+mv[7]+' · 현재 가격 확인 필요':'',r[12]?'뉘앙스: '+r[12]:'',r[13]?'설명: '+r[13]:'',taste,r[7]?'아로마: '+r[7]:'',r[8]?'안주: '+r[8]:''];
+ const menuName=link?.menuName||r[1],sale=payhereOf(menuName);
+ if(sale)lines.splice(7,0,'가격 (페이히어 '+payhere.readAt+'): '+sale.price+'원 · '+'화이트·로제 '+sale.number+'번');
+ if(offSale.includes(menuName))lines.unshift('판매 상태: 페이히어 판매 목록에 없음('+payhere.readAt+'). 추천하지 않음 [확인].');
  if(estimate)lines.push('추정 근거: '+estimate.scoreSources.join(' · '),'빈티지 유의: '+estimate.scoreVintageNote);
  if(/미션 레이트 하비스트/.test(r[1]))lines.push('주의: 기존 원문의 당도 1/5와 달콤한 설명은 충돌한다. 원문은 보존하고 공식 자료의 웹 추정 점수를 별도로 사용한다.');
  return '## '+(link?.menuName||r[1])+' ('+label+')\n- 상태: '+(estimate?'웹 자료 기준 추정':'확정')+'\n- 키워드: '+Array.from(new Set([r[1],r[2],link?.menuName].filter(Boolean))).join(', ')+'\n'+lines.filter(Boolean).map(x=>'- '+x).join('\n');
 });
-fs.writeFileSync(path.join(root,'지식','12_와인_추가_설명.md'),'# 와인 추가 설명 (2026-10-08)\n\n> 출처: 와인추천 참고자료 최신화, gid=2027125317, A1:N120.뉘앙스·설명문 67종.가격은 메뉴판 List의 현행 확인 대상이다.점수 없는 제품은 추천에 넣지 않는다.\n\n'+sections.join('\n\n')+'\n');
-fs.writeFileSync(path.join(root,'지식','11_와인_추천_데이터.md'),'# 와인 추천 데이터\n\n추천 가능 '+wines.length+'종 / 확인 필요 '+excluded.length+'종. 원문 '+wines.filter(w=>w.scoreSource!=='web-estimate').length+'종과 웹 자료 기준 추정 '+wines.filter(w=>w.scoreSource==='web-estimate').length+'종을 구분한다. 기존38종 점수는 유지했다. 최신 메뉴 연결로 원문 점수3종을 추가 연결했다.\n\n- 웹 추정: 도구/웹추정_맛점수_1011.json의 동일 제품·근거·빈티지·확신도를 함께 보관. 낮음은 제외.\n- 웹 추정 맛 점수는 실측값이 아니며 직원용에서만 사용한다. 손님용은 승인된 기존38종만 포함한다.\n- 뉘앙스·설명문: 기존 허용 스냅샷67종. 이번 작업에서 다른 탭을 읽지 않았다.\n- 가격·품종·도수: List A:H와 K, '+menu.readAt+' 읽음. 가격·재고를 웹에서 채우지 않는다.\n- 미션 레이트 하비스트의 충돌 원문은 보존하며 별도 웹 추정 점수만 사용한다.\n- 이름 연결 근거: 도구/와인_이름_연결표.json.\n- 재고는 직접 확인.\n');
+fs.writeFileSync(path.join(root,'지식','12_와인_추가_설명.md'),'# 와인 추가 설명 (2026-10-08)\n\n> 출처: 와인추천 참고자료 최신화, gid=2027125317, A1:N120.뉘앙스·설명문 67종.가격은 메뉴판 List의 현행 확인 대상이다.점수 없는 제품은 추천에 넣지 않는다.\n\n'+sections.concat(payhere.items.filter(p=>!p.menuName).map(p=>'## '+p.name+' (화이트·로제)\n- 상태: 확인\n- 키워드: '+p.name+'\n- 가격 (페이히어 '+payhere.readAt+'): '+p.price+'원 · 화이트·로제 '+p.number+'번\n- 맛 점수: 자료 미완성. 취향 추천에서는 제외 [확인].\n- 설명: 시트 미등록. 맛·향은 병 라벨이나 선임에게 확인.')).join('\n\n')+'\n');
+fs.writeFileSync(path.join(root,'지식','11_와인_추천_데이터.md'),'# 와인 추천 데이터\n\n추천 가능 '+wines.length+'종 / 확인 필요 '+excluded.length+'종. 원문 '+wines.filter(w=>w.scoreSource!=='web-estimate').length+'종과 웹 자료 기준 추정 '+wines.filter(w=>w.scoreSource==='web-estimate').length+'종을 구분한다. 기존38종 점수는 유지했다. 최신 메뉴 연결로 원문 점수3종을 추가 연결했다.\n\n- 웹 추정: 도구/웹추정_맛점수_1011.json의 동일 제품·근거·빈티지·확신도를 함께 보관. 낮음은 제외.\n- 웹 추정 맛 점수는 실측값이 아니며 직원용에서만 사용한다. 손님용은 승인된 기존38종만 포함한다.\n- 뉘앙스·설명문: 기존 허용 스냅샷67종. 이번 작업에서 다른 탭을 읽지 않았다.\n- 가격·품종·도수: List A:H와 K, '+menu.readAt+' 읽음. 가격·재고를 웹에서 채우지 않는다.\n- 화이트·로제: 페이히어 판매 목록('+payhere.readAt+', 도구/페이히어_화이트로제_1023.json)이 기준. 번호·가격은 페이히어 값. 판매 목록에 없는 제품은 추천에서 뺀다.\n- 미션 레이트 하비스트의 충돌 원문은 보존하며 별도 웹 추정 점수만 사용한다.\n- 이름 연결 근거: 도구/와인_이름_연결표.json.\n- 재고는 직접 확인.\n');
 const added=wines.filter(w=>w.scoreSource==='web-estimate'&&!links.some(l=>l.menuName===w.name&&rows.some(r=>r[1]===l.sourceName)));
 fs.writeFileSync(path.join(root,'지식','13_와인_웹추정_설명.md'),'# 신규 메뉴 와인 웹 추정 (2026-10-11)\n\n'+added.map(w=>'## '+w.name+' ('+w.category+')\n- 상태: 웹 자료 기준 추정\n- 키워드: '+w.name+', '+w.english+'\n- 영문명: '+w.english+'\n- 국가: '+w.country+'\n- 품종 (메뉴판): '+w.variety+'\n- 설명: '+w.description+'\n- 맛 점수: 웹 자료 기준 추정 · 당도 '+w.sweetness+'/5 · 산도 '+w.acidity+'/5 · 타닌 '+w.tannin+'/5 · 바디 '+w.body+'/5\n- 아로마: '+w.aromas+'\n- 안주: '+w.pairing+'\n- 추정 근거: '+w.scoreSources.join(' · ')+'\n- 빈티지 유의: '+w.scoreVintageNote).join('\n\n')+'\n');
 console.log('추천 '+wines.length+'종 (원문 '+wines.filter(w=>w.scoreSource!=='web-estimate').length+' + 웹추정 '+wines.filter(w=>w.scoreSource==='web-estimate').length+') / 제외 '+excluded.length+'종 / 설명 '+rows.length+'종');

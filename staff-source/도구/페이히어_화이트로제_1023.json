@@ -1,0 +1,20 @@
+{
+  "readAt": "2026-10-23",
+  "source": "페이히어 비즈니스 매장 상품 · 화이트 & 로제 카테고리(이름·번호·가격만)",
+  "note": "화이트·로제는 이 목록이 판매 기준이다. 번호는 QR 주문 번호다. menuName은 메뉴판 List의 한글명이며, 없으면 맛 점수·설명이 아직 없는 신규 제품이다.",
+  "items": [
+    {"number": 1, "name": "샤또 라 오뜨 브랑드 모엘루", "price": "49,000", "menuName": null},
+    {"number": 2, "name": "보르도 샤또 라 오뜨 브랑드 쇼비뇽", "price": "49,000", "menuName": null},
+    {"number": 3, "name": "군터록 리즐링", "price": "59,000", "menuName": "군터록 리즐링"},
+    {"number": 4, "name": "라로쉬 샤르도네 리저브", "price": "69,000", "menuName": "라로쉬 샤르도네 리저브"},
+    {"number": 5, "name": "롱반 샤도네이", "price": "59,000", "menuName": "롱반 샤도네이"},
+    {"number": 6, "name": "토카이 에데 스윗 사모로드니", "price": "45,000", "menuName": null},
+    {"number": 7, "name": "레 자르 젤리에르 비오니에", "price": "49,000", "menuName": "레 자르 젤리에르 비오니에"},
+    {"number": 8, "name": "마틴 코닥스", "price": "59,000", "menuName": "마틴 코닥스"},
+    {"number": 9, "name": "피터 바인바흐 미디움 스위트 스페트레제", "price": "49,000", "menuName": "피터 바인바흐 미디움 스위트"},
+    {"number": 10, "name": "카룬도 펄스 오브 로제", "price": "49,000", "menuName": "카룬도 펄스 오브 로제"},
+    {"number": 11, "name": "킬리빙빙 스윗 립스 로제", "price": "49,000", "menuName": "킬리빙빙 스윗 립스 로제"},
+    {"number": 12, "name": "그라모나 제사미", "price": "69,000", "menuName": "그라모나 제사미"},
+    {"number": 13, "name": "카룬도 샤도네이 750ml", "price": "39,000", "menuName": "카룬도 샤도네이 750ml"}
+  ]
+}

@@ -20,7 +20,9 @@ const tpl=fs.readFileSync(path.join(__dirname,'템플릿.html'),'utf8');
 const wines=JSON.parse(fs.readFileSync(path.join(__dirname,'와인_추천_데이터.json'),'utf8'));
 const menuSource=JSON.parse(fs.readFileSync(path.join(__dirname,'메뉴판_허용자료_1008.json'),'utf8'));
 const foods=menuSource.rows.filter(r=>/^MENU\s+\d+/.test(r.values[0])&&r.values[2]).map(r=>({name:r.values[2],description:r.description||'',sourceRow:r.row}));
-const wineMenu=menuSource.rows.filter(r=>/wine/i.test(r.values[0]||'')&&r.values[2]).map(r=>({category:String(r.values[0]).replace(/\s+\d+.*$/,'').trim(),name:r.values[2],english:r.values[4],origin:r.values[5],variety:r.values[6]}));
+const payhere=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_화이트로제_1023.json'),'utf8'));
+// 화이트·로제는 페이히어 판매 목록에 있는 제품만 메뉴로 안내한다.
+const wineMenu=menuSource.rows.filter(r=>/wine/i.test(r.values[0]||'')&&r.values[2]&&(!/^White/i.test(String(r.values[0]).trim())||payhere.items.some(p=>p.menuName===String(r.values[2]).trim()))).map(r=>({category:String(r.values[0]).replace(/\s+\d+.*$/,'').trim(),name:r.values[2],english:r.values[4],origin:r.values[5],variety:r.values[6]}));
 const safe=s=>JSON.stringify(s).replace(/</g,'\\u003c');
 const sourceHash=crypto.createHash('sha256').update(JSON.stringify(kb)+JSON.stringify(wines)+JSON.stringify(foods)+JSON.stringify(wineMenu)+tpl).digest('hex').slice(0,10);
 
