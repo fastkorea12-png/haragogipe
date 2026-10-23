@@ -3,13 +3,13 @@ const root=path.join(__dirname,'..'),read=f=>JSON.parse(fs.readFileSync(path.joi
 const ctx={};vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(root,'근무노트.html'),'utf8').match(/<script>([\s\S]*)<\/script>/)[1],ctx);
 const baseline=read('기존38_맛점수_1011.json'),dossier=read('웹추정_맛점수_1011.json'),menu=read('메뉴판_허용자료_1008.json');
 // 화이트·로제는 페이히어 판매 목록(QR 주문 번호)이 기준이다. 판매 목록에 없는 제품은 추천·손님용에서 뺀다.
-const payhere=read('페이히어_화이트로제_1023.json'),onSale=b=>!menu.rows.some(m=>/^White/i.test(m.values[0].trim())&&m.values[2].trim()===b.name)||payhere.items.some(p=>p.menuName===b.name);
+const payhere=read('페이히어_화이트로제_1023.json'),skip=read('추천_제외.json').items,onSale=b=>!skip.some(x=>x.name===b.name)&&(!menu.rows.some(m=>/^White/i.test(m.values[0].trim())&&m.values[2].trim()===b.name)||payhere.items.some(p=>p.menuName===b.name));
 const results=[],check=(name,condition)=>{assert.ok(condition,name);results.push({name,pass:true});};
 check('메뉴66종·단종2종 제외',menu.rows.filter(r=>/wine/i.test(r.values[0])).length===66&&!menu.rows.some(r=>/미션 리즐링|킬리빙빙 스윗 하트 샤도네이/.test(r.values[2])));
 check('기존38종 중 판매 중인 와인의 네 점수 유지',baseline.length===38&&baseline.filter(onSale).every(b=>{const w=ctx.WINE_DATA.find(w=>w.name===b.name);return w&&w.scoreSource!=='web-estimate'&&['sweetness','acidity','tannin','body'].every(k=>w[k]===b[k]);}));
 check('레드·화이트·스파클링 보정5종 네축 ±1',read('웹추정_보정_1011.json').length>=5&&read('웹추정_보정_1011.json').every(c=>c.estimated.every((x,i)=>Math.abs(x-c.original[i])<=1)&&c.urls.length));
 const web=ctx.WINE_DATA.filter(w=>w.scoreSource==='web-estimate');
-check('원문39종(페이히어 판매 중단 2종 제외)+웹추정11종',ctx.WINE_DATA.length===50&&web.length===11);
+check('원문38종(페이히어 판매 중단 2종·추천 제외 1종 제외)+웹추정11종',ctx.WINE_DATA.length===49&&web.length===11&&!skip.some(x=>ctx.WINE_DATA.some(w=>w.name===x.name)));
 check('화이트·로제는 페이히어 판매 중인 와인만·번호와 가격은 페이히어 값',ctx.WINE_DATA.filter(w=>/^White/.test(w.menuCode)).every(w=>{const p=payhere.items.find(p=>p.menuName===w.name);return p&&w.posNumber==='화이트·로제 '+p.number+'번'&&w.price===p.price+'원';})&&!ctx.WINE_DATA.some(w=>payhere.items.some(p=>!p.menuName&&p.name===w.name)));
 check('웹추정 필수 출처·일자·확신도·메뉴 연결',web.every(w=>w.scoreSources.length>=1&&w.scoreSources.length<=3&&w.scoreSources.every(u=>/^https:\/\//.test(u))&&w.scoredAt==='2026-10-11'&&w.scoreConfidence==='중간'&&menu.rows.some(m=>m.row===w.menuRow&&m.values[2].trim()===w.name)));
 check('낮음14종은 추천에서 제외',dossier.targets.filter(t=>t.status==='excluded').length===14&&dossier.targets.filter(t=>t.status==='excluded').every(t=>t.score===null&&!ctx.WINE_DATA.some(w=>w.name===t.name)));

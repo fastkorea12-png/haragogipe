@@ -43,7 +43,10 @@ for(let i=wines.length-1;i>=0;i--){const w=wines[i];if(!whiteCode(w.menuCode))co
  Object.assign(w,{price:p.price+'원',posNumber:'화이트·로제 '+p.number+'번',posName:p.name,priceSource:'페이히어 '+payhere.readAt});}
 for(const name of offSale){const reason='페이히어 판매 목록에 없음('+payhere.readAt+')',x=excluded.find(x=>x[0]===name);if(x)x[1]=reason;else excluded.push([name,reason]);}
 for(const p of payhere.items.filter(p=>!p.menuName))excluded.push([p.name,'페이히어 신규('+payhere.readAt+', '+p.price+'원) · 맛 점수·설명 시트 미등록']);
-for(const b of baseline){if(offSale.includes(b.name))continue;const w=wines.find(w=>w.name===b.name);if(!w||w.scoreSource==='web-estimate'||['sweetness','acidity','tannin','body'].some(k=>w[k]!==b[k]))throw new Error('Original score changed: '+b.name);}
+// 회장 지시로 추천에서 빼는 와인. 원문 점수·설명은 지식에 남긴다.
+const skip=JSON.parse(fs.readFileSync(path.join(__dirname,'추천_제외.json'),'utf8')).items;
+for(const x of skip){const i=wines.findIndex(w=>w.name===x.name);if(i<0)throw new Error('Skip target not found: '+x.name);wines.splice(i,1);excluded.push([x.name,x.reason+'('+x.at+')']);}
+for(const b of baseline){if(offSale.includes(b.name)||skip.some(x=>x.name===b.name))continue;const w=wines.find(w=>w.name===b.name);if(!w||w.scoreSource==='web-estimate'||['sweetness','acidity','tannin','body'].some(k=>w[k]!==b[k]))throw new Error('Original score changed: '+b.name);}
 wines.sort((a,b)=>a.menuRow-b.menuRow);
 fs.writeFileSync(path.join(__dirname,'와인_추천_데이터.json'),JSON.stringify(wines,null,2)+'\n');
 fs.writeFileSync(path.join(__dirname,'와인_이름_연결표.json'),JSON.stringify(links,null,2)+'\n');
@@ -58,6 +61,7 @@ const sections=rows.map(r=>{
  const lines=[r[2]?'영문명: '+r[2]:'',r[9]?'국가: '+r[9]:'',r[10]?'품종 (와인 참고자료): '+r[10]:'',mv&&mv[6]?'품종 (메뉴판): '+mv[6]:'',mv&&mv[3]?'도수 (메뉴판): '+mv[3]:'',mv&&mv[5]?'지역 (메뉴판): '+mv[5]:'',mv&&mv[7]?'가격 원문 (메뉴판): '+mv[7]+' · 현재 가격 확인 필요':'',r[12]?'뉘앙스: '+r[12]:'',r[13]?'설명: '+r[13]:'',taste,r[7]?'아로마: '+r[7]:'',r[8]?'안주: '+r[8]:''];
  const menuName=link?.menuName||r[1],sale=payhereOf(menuName);
  if(sale)lines.splice(7,0,'가격 (페이히어 '+payhere.readAt+'): '+sale.price+'원 · '+'화이트·로제 '+sale.number+'번');
+ const skipped=skip.find(x=>x.name===menuName);if(skipped)lines.unshift('추천 상태: '+skipped.reason+'('+skipped.at+'). 먼저 권하지 않음.');
  if(offSale.includes(menuName))lines.unshift('판매 상태: 페이히어 판매 목록에 없음('+payhere.readAt+'). 추천하지 않음 [확인].');
  if(estimate)lines.push('추정 근거: '+estimate.scoreSources.join(' · '),'빈티지 유의: '+estimate.scoreVintageNote);
  if(/미션 레이트 하비스트/.test(r[1]))lines.push('주의: 기존 원문의 당도 1/5와 달콤한 설명은 충돌한다. 원문은 보존하고 공식 자료의 웹 추정 점수를 별도로 사용한다.');
