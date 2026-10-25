@@ -54,6 +54,11 @@ dialog ul{padding-left:20px;margin:6px 0}dialog li{margin:4px 0;overflow-wrap:an
 .nrow{display:grid;gap:4px;background:var(--bot);border:1px solid var(--rule);border-left:4px solid var(--warn);border-radius:10px;padding:8px 12px}.nrow.none{border-left-color:var(--wine)}
 .nsub{color:var(--muted);display:flex;gap:6px 10px;align-items:center;flex-wrap:wrap}
 details.un{margin:16px 0 0;background:var(--bot);border:1px solid var(--rule);border-radius:12px;padding:8px 14px}details.un summary{min-height:44px;display:flex;align-items:center;font-weight:700;color:var(--muted);cursor:pointer}details.un ul{margin:0 0 8px;padding-left:20px}details.un li{overflow-wrap:anywhere}
+.osec{background:var(--bot);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;margin-bottom:12px}.osec h3{font-size:18px;color:var(--wine);overflow-wrap:anywhere;margin:0 0 4px}.osec.none h3{color:var(--warn)}
+.orow{display:flex;gap:6px 10px;align-items:center;justify-content:space-between;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding:8px 0}.orow .oname{flex:1 1 180px;min-width:0;overflow-wrap:anywhere}.orow .small{font-size:14px;color:var(--muted)}.orow.off .oname b{text-decoration:line-through;color:var(--muted)}
+.oqty{display:flex;align-items:center;gap:4px}.oqty button{min-width:44px;min-height:44px;padding:0 8px}.oqty input[type=text]{width:56px;min-height:44px;text-align:center;padding:6px}
+.omsg{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--soft);border-radius:10px;padding:10px 12px;margin:10px 0 8px}
+.alogin{display:flex;gap:8px;flex-wrap:wrap}.alogin input{flex:1 1 180px;min-height:48px;border:1px solid #CFC4B8;border-radius:10px;padding:10px 12px;font-size:16px}
 [hidden]{display:none!important}
 </style></head><body>
 <header><div class="brand"><img src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페"><p>재고 조사</p></div><a href="../" id="toNote">근무노트로</a></header>
@@ -61,12 +66,13 @@ details.un{margin:16px 0 0;background:var(--bot);border:1px solid var(--rule);bo
 <div id="net" class="msg warn" role="status" hidden>오프라인. 입력은 이 기기에 보존됨. 연결 후 제출</div>
 <div id="pendingBox"></div>
 <div id="stock" class="msg warn" role="status" hidden></div>
-<div class="seg" id="views" role="group" aria-label="보기 선택"><button type="button" data-view="input" aria-pressed="true">수량 입력</button><button type="button" data-view="need" aria-pressed="false">필요 목록</button></div>
+<div class="seg" id="views" role="group" aria-label="보기 선택"><button type="button" data-view="input" aria-pressed="true">수량 입력</button><button type="button" data-view="need" aria-pressed="false">필요 목록</button><button type="button" data-view="order" aria-pressed="false">발주 멘트</button></div>
 <label class="f" for="q" style="margin-top:0">와인 이름 검색</label>
 <input type="search" id="q" maxlength="40" autocomplete="off" autocapitalize="off" enterkeyhint="search" placeholder="예: 후안길, 포트" aria-label="와인 이름 검색">
 <section id="results" hidden aria-live="polite"></section>
 <section id="detail" hidden></section>
 <section id="need" hidden aria-live="polite"></section>
+<section id="order" hidden></section>
 <section id="survey">
   <div class="sech">칸 선택</div>
   <div class="chips" id="chips" role="group" aria-label="칸 선택"></div>
@@ -368,10 +374,91 @@ function renderNeed(){
   if(d.un.length)kids.push(h("details",{class:"un",id:"needUn"},h("summary",{text:"미조사 "+d.un.length+"종 (필요 목록에 넣지 않음)"}),h("ul",{},d.un.map(function(it){return h("li",{text:it.name});}))));
   box.replaceChildren.apply(box,kids);
 }
+// ---------- 발주 멘트(관리자 전용) ----------
+// 관리자 비밀번호로 로그인해야 보인다. 와인별 거래처는 이 화면 소스에 없고, 로그인 뒤 서버에서 관리자 토큰으로만 받아 온다.
+// 계산은 어드민 발주 멘트와 같다: 발주 수량 = 기준 − 냉장고 − 창고(창고 기록 없으면 0). 창고로 기준을 채울 수 있으면 '창고에서 채우기'로 뺀다.
+var ADM={token:null,sup:null,err:"",busy:false,over:{}},ADM_KEY="harago-admin-token";
+try{ADM.token=sessionStorage.getItem(ADM_KEY);}catch(e){}
+function admStore(t){ADM.token=t;try{if(t)sessionStorage.setItem(ADM_KEY,t);else sessionStorage.removeItem(ADM_KEY);}catch(e){}}
+function admApi(method,path,body){
+  var headers={"content-type":"application/json"};if(ADM.token)headers.authorization="Bearer "+ADM.token;
+  return fetch(API_BASE+path,{method:method,headers:headers,body:body===undefined?undefined:JSON.stringify(body),cache:"no-store"}).then(function(r){
+    return r.json().catch(function(){return {};}).then(function(d){
+      if(r.status===401&&path!=="/api/admin/login"){admStore(null);ADM.sup=null;ADM.err="로그인 만료. 다시 로그인";}
+      if(!r.ok){var e=new Error(d.error||("오류 "+r.status));e.status=r.status;throw e;}
+      return d;
+    });
+  },function(){throw new Error("서버 연결 불가. 연결 후 다시 시도");});
+}
+function admLoadSup(){
+  ADM.busy=true;renderOrder();
+  admApi("GET","/api/admin/inventory/suppliers").then(function(d){ADM.sup=d.suppliers||{};ADM.err="";},function(e){if(ADM.token)ADM.err=e.message;}).then(function(){ADM.busy=false;renderOrder();});
+}
+function orderData(){
+  var by={},fill=[],un=[];
+  S.groups.forEach(function(g){g.items.forEach(function(it){
+    var f=cnt(it.id,"fridge"),st=cnt(it.id,"storage");
+    if(!f){un.push(it);return;}
+    var min=it.min,fq=f.qty,sq=st?st.qty:0;
+    if(fq>=min)return;
+    if(fq+sq>=min){fill.push({it:it,move:min-fq,f:fq,s:st?sq:null,min:min});return;}
+    var key=String(ADM.sup[it.id]||"").trim();
+    (by[key]=by[key]||[]).push({it:it,def:Math.max(0,min-fq-sq),f:fq,s:st?sq:null,min:min});
+  });});
+  var keys=Object.keys(by).filter(Boolean).sort(function(a,b){return a.localeCompare(b,"ko");});
+  if(by[""])keys.push("");
+  return {groups:keys.map(function(k){return {key:k,rows:by[k]};}),fill:fill,un:un};
+}
+function oQty(r){var o=ADM.over[r.it.id];return o==null?r.def:o;}
+function orderText(rows){
+  return ["안녕하세요! 아래 항목 발주 부탁드립니다 :)",""].concat(rows.filter(function(r){return oQty(r)>0;}).map(function(r){return "- "+r.it.name+" "+oQty(r)+"병";})).join("\n");
+}
+function renderOrder(){
+  var box=$("order");if(!box)return;
+  if(!ADM.token){
+    var pw=h("input",{type:"password",id:"admPw",autocomplete:"current-password","aria-label":"관리자 비밀번호",placeholder:"관리자 비밀번호",maxlength:"200"});
+    var go=function(){var v=pw.value;if(!v||ADM.busy)return;ADM.busy=true;ADM.err="";btn.disabled=true;
+      admApi("POST","/api/admin/login",{password:v}).then(function(d){pw.value="";admStore(d.token);admLoadSup();},function(e){ADM.err=e.message;ADM.busy=false;renderOrder();});};
+    var btn=h("button",{type:"button",class:"btn primary",id:"admLogin",text:"로그인",onclick:go});
+    pw.addEventListener("keydown",function(ev){if(ev.key==="Enter")go();});
+    box.replaceChildren(h("p",{class:"hint",text:"발주 멘트는 관리자만 볼 수 있어요. 어드민 비밀번호로 로그인."}),h("div",{class:"alogin"},pw,btn),ADM.err?h("div",{class:"msg err",id:"admErr",role:"alert",style:"margin-top:10px",text:ADM.err}):null);
+    return;
+  }
+  if(!ADM.sup){box.replaceChildren(h("div",{class:"msg",id:"ordState",text:ADM.busy?"발주 정보 불러오는 중":"발주 정보 불러오기 실패: "+(ADM.err||"")}),ADM.busy?null:h("button",{type:"button",class:"btn",text:"다시 시도",onclick:admLoadSup}));if(!ADM.busy&&!ADM.err)admLoadSup();return;}
+  if(S.stockState==="loading"){box.replaceChildren(h("div",{class:"msg",id:"ordState",text:"최신 수량 불러오는 중"}));return;}
+  if(!S.counts||S.stockState==="fail"){box.replaceChildren(h("div",{class:"msg warn",id:"ordState",text:"최신 수량 없음. 발주 멘트 표시 불가. 연결 후 새로고침"}));return;}
+  var d=orderData(),kids=[],all=0;d.groups.forEach(function(g){g.rows.forEach(function(r){if(oQty(r)>0)all++;});});
+  kids.push(h("div",{class:"acts",style:"margin:0 0 8px;align-items:center"},h("b",{id:"ordCount",text:"발주 "+all+"종"}),
+    h("button",{type:"button",class:"btn",id:"ordReset",text:"수량 기본값으로",disabled:!Object.keys(ADM.over).length,onclick:function(){ADM.over={};renderOrder();}}),
+    h("button",{type:"button",class:"btn",id:"admOut",text:"로그아웃",onclick:function(){admStore(null);ADM.sup=null;ADM.over={};ADM.err="";renderOrder();}})));
+  if(!d.groups.length)kids.push(h("div",{class:"msg ok",id:"ordEmpty",text:"발주할 와인이 없어요"}));
+  d.groups.forEach(function(g){
+    var msg=h("span",{class:"hint",role:"status"}),pre=h("pre",{class:"omsg","data-omsg":"",text:orderText(g.rows)}),head=h("h3",{"data-ohead":""});
+    var sync=function(){var n=0,b=0;g.rows.forEach(function(r){var q=oQty(r);if(q>0){n++;b+=q;}});head.textContent=(g.key||"거래처 미지정")+" · "+n+"종 "+b+"병";pre.textContent=orderText(g.rows);copy.disabled=!n;};
+    var copy=h("button",{type:"button",class:"btn primary","data-ocopy":"",text:"복사",onclick:function(){copyText(orderText(g.rows)).then(function(){msg.textContent="복사됨. 카톡에 붙여넣기";},function(){msg.textContent="복사 실패. 위 문구를 직접 선택해 복사";});}});
+    var sec=h("section",{class:"osec"+(g.key?"":" none"),"data-sname":g.key},head,g.key?null:h("p",{class:"hint",text:"거래처는 어드민 '와인 목록 편집'에서 입력."}));
+    g.rows.forEach(function(r){
+      var row,inp,set=function(v){v=Math.max(0,Math.min(99,v|0));if(v===r.def)delete ADM.over[r.it.id];else ADM.over[r.it.id]=v;inp.value=String(v);row.classList.toggle("off",v<=0);sync();$("ordReset").disabled=!Object.keys(ADM.over).length;var a=0;d.groups.forEach(function(x){x.rows.forEach(function(y){if(oQty(y)>0)a++;});});$("ordCount").textContent="발주 "+a+"종";};
+      inp=h("input",{type:"text",inputmode:"numeric",maxlength:"2","data-oqty":"","aria-label":r.it.name+" 발주 수량(병)",value:String(oQty(r)),oninput:function(ev){var t=ev.target.value.replace(/[^0-9]/g,"").slice(0,2);set(t===""?0:Number(t));}});
+      row=h("div",{class:"orow"+(oQty(r)>0?"":" off"),"data-order":r.it.id},
+        h("div",{class:"oname"},h("b",{text:r.it.name}),h("div",{class:"small",text:"냉장고 "+r.f+" · 창고 "+(r.s==null?"-":r.s)+" · 기준 "+r.min+" · 기본 "+r.def+"병"})),
+        h("div",{class:"oqty"},h("button",{type:"button",class:"btn","aria-label":r.it.name+" 1병 줄이기",text:"−",onclick:function(){set(oQty(r)-1);}}),inp,h("span",{text:"병"}),h("button",{type:"button",class:"btn","aria-label":r.it.name+" 1병 늘리기",text:"+",onclick:function(){set(oQty(r)+1);}})));
+      sec.append(row);
+    });
+    sec.append(pre,h("div",{class:"acts",style:"align-items:center"},copy,msg));sync();
+    kids.push(sec);
+  });
+  if(d.fill.length)kids.push(h("section",{class:"osec",id:"ordFill"},h("h3",{text:"창고에서 채우기 "+d.fill.length+"종"}),h("p",{class:"hint",text:"냉장고는 부족하지만 창고 재고로 기준을 채울 수 있어 발주에서 뺌."}),
+    h("ul",{},d.fill.map(function(r){return h("li",{"data-fill":r.it.id},h("b",{text:r.it.name}),h("span",{text:" · 창고에서 "+r.move+"병 꺼내기 (냉장고 "+r.f+" · 창고 "+r.s+" · 기준 "+r.min+")"}));}))));
+  if(d.un.length)kids.push(h("details",{class:"un",id:"ordUn"},h("summary",{text:"미조사 "+d.un.length+"종 (발주에 넣지 않음)"}),h("ul",{},d.un.map(function(it){return h("li",{text:it.name});}))));
+  kids.push(h("p",{class:"hint",text:"최신 재고 조사 기준. 기본 발주 수량 = 기준 − 냉장고 − 창고(창고 기록 없으면 0). 수량은 고칠 수 있고 0이면 그 줄은 문구에서 빠짐."}));
+  box.replaceChildren.apply(box,kids);
+}
 function setView(v){
   S.view=v;
   Array.prototype.forEach.call(document.querySelectorAll("#views button"),function(b){b.setAttribute("aria-pressed",String(b.getAttribute("data-view")===v));});
   if(v==="need")renderNeed();
+  if(v==="order")renderOrder();
   renderSearch();
 }
 
@@ -390,7 +477,7 @@ function searchItems(q){
 function lastDate(id){var best="";LOCS.forEach(function(l){var c=cnt(id,l[0]);if(c&&c.surveyDate&&c.surveyDate>best)best=c.surveyDate;});return best;}
 function renderSearch(){
   var q=S.query.trim(),res=$("results"),det=$("detail");
-  $("survey").hidden=!!q||S.view!=="input";$("need").hidden=!!q||S.view!=="need";
+  $("survey").hidden=!!q||S.view!=="input";$("need").hidden=!!q||S.view!=="need";$("order").hidden=!!q||S.view!=="order";
   if(!q){res.hidden=true;det.hidden=true;S.detail=null;renderPanelBar();return;}
   updateBar(null);
   if(S.detail){res.hidden=true;det.hidden=false;renderDetail();return;}
@@ -589,7 +676,7 @@ window.addEventListener("beforeunload",function(){clearTimeout(draftTimer);if(S.
   renderChips();renderPanel();renderPendingBox();
   if(navigator.onLine===false)showNet(true);
   loadStock().then(function(){
-    renderChips();renderNeed();
+    renderChips();renderNeed();if(S.view==="order")renderOrder();
     var a=document.activeElement;
     if(a&&a.closest&&a.closest("#rows")){var v=view();if(v)v.rows.forEach(function(r){updateRow(r.it.id,true);});}else renderPanel();
     if(S.query&&!S.detail)renderSearch();
