@@ -95,6 +95,8 @@ var ADMIN_API_BASE=/*ADMIN_API_BASE*/"";
 var EMBEDDED=/*CHECKLIST_JSON*/{};
 var EMBEDDED_CONTENT=/*CONTENT_JSON*/{};
 var TRAINING_DAYS=/*TRAINING_JSON*/[];
+// 재고 부족 기준(min) 기본값. 와인별로 정하지 않으면 이 값(10/25 회장: 기본 6병).
+var INV_DEFAULT_MIN=6;
 var TOKEN_KEY="harago-admin-token",NICK_KEY="harago-admin-nick";
 var KIND_LABEL={open:"오픈",close:"마감"};
 var DAY_CHIPS=[["월",1],["화",2],["수",3],["목",4],["금",5],["토",6],["일",0]];
@@ -1241,7 +1243,7 @@ function invNorm(s){return String(s).toLowerCase().replace(/[^0-9a-z가-힣]/g,"
 function invStatus(qty,min){
   if(qty==null)return {cls:"st-na",text:"- 미조사"};
   if(qty<=0)return {cls:"st-none",text:"✕ 없음"};
-  if(qty<(min||3))return {cls:"st-low",text:"▲ 필요"};
+  if(qty<(min||INV_DEFAULT_MIN))return {cls:"st-low",text:"▲ 필요"};
   return {cls:"st-ok",text:"● 충분"};
 }
 function invBadge(qty,min){var s=invStatus(qty,min);return h("span",{class:"badge "+s.cls,text:s.text});}
@@ -1332,7 +1334,7 @@ function invNeedData(){
     g.items.forEach(function(it){
       var c=INV.items[it.id]||{},f=c.fridge,st=c.storage;
       if(!f){un.push(it);return;}
-      var min=Number.parseInt(it.min,10)||3;
+      var min=Number.parseInt(it.min,10)||INV_DEFAULT_MIN;
       if(f.qty>=min)return;
       rows.push({it:it,f:f.qty,s:st?st.qty:null,date:f.surveyDate||"",none:f.qty<=0});
     });
@@ -1472,7 +1474,7 @@ function invOrderData(){
     g.items.forEach(function(it){
       var c=INV.items[it.id]||{},f=c.fridge,st=c.storage;
       if(!f){un.push(it);return;}
-      var min=Number.parseInt(it.min,10)||3,fq=f.qty,sq=st?st.qty:0;
+      var min=Number.parseInt(it.min,10)||INV_DEFAULT_MIN,fq=f.qty,sq=st?st.qty:0;
       if(fq>=min)return;
       if(fq+sq>=min){fill.push({it:it,move:min-fq,f:fq,s:st?sq:null,min:min});return;}
       var key=supVal(INV.sup.orig,it.id);
@@ -1555,11 +1557,11 @@ function invRowNodes(){
   list=list.filter(function(r){
     if(!INV.low)return true;
     var c=(INV.items[r.it.id]||{}).fridge;if(!c)return false;
-    var min=Number.parseInt(r.it.min,10)||3;return c.qty<min;
+    var min=Number.parseInt(r.it.min,10)||INV_DEFAULT_MIN;return c.qty<min;
   });
   if(!list.length)kids.push(h("div",{class:"card",id:"invEmpty",text:INV.low?"필요·없음 상태인 와인 없음":"일치하는 와인 없음"}));
   list.forEach(function(r){
-    var it=r.it,c=INV.items[it.id]||{},min=Number.parseInt(it.min,10)||3,last="",memos=[];
+    var it=r.it,c=INV.items[it.id]||{},min=Number.parseInt(it.min,10)||INV_DEFAULT_MIN,last="",memos=[];
     INV_LOC.forEach(function(l){var x=c[l[0]];if(x){if((x.surveyDate||"")>last)last=x.surveyDate||"";if(x.memo)memos.push(l[1]+": "+x.memo);}});
     var cells=INV_LOC.map(function(l){var x=c[l[0]];return h("div",{class:"qcell","data-loc":l[0]},h("div",{class:"small",text:l[1]}),h("b",{text:x?x.qty+"병":"-"}),l[0]==="fridge"?invBadge(x?x.qty:null,min):null,h("div",{class:"small","data-ldate":l[0],text:x&&x.surveyDate?"조사 일자 "+x.surveyDate:"조사 일자 -"}));});
     kids.push(h("div",{class:"row inv","data-inv":it.id},h("div",{},h("b",{text:r.g.name+" · "+r.no+"번 · "+it.name}),it.confirm?h("span",{class:"tag",text:" 확인 필요"}):null),
@@ -1630,7 +1632,7 @@ function viewInvWines(){
   var gi=-1;w.draft.groups.forEach(function(g,i){if(g.id===gid)gi=i;});
   if(gi<0)return box;
   var g=w.draft.groups[gi];
-  box.append(h("p",{class:"hint",text:"숫자열 입력은 이 순서대로 들어감(냉장고 진열 순서와 맞출 것). '부족 기준'은 냉장고 수량이 이 값 미만이면 '필요'(비우면 기본 3)."}));
+  box.append(h("p",{class:"hint",text:"숫자열 입력은 이 순서대로 들어감(냉장고 진열 순서와 맞출 것). '부족 기준'은 냉장고 수량이 이 값 미만이면 '필요'(비우면 기본 "+INV_DEFAULT_MIN+")."}));
   g.items.forEach(function(it,ii){box.append(wRow(g,gi,it,ii,d));});
   box.append(h("div",{class:"add-row"},h("button",{class:"btn",type:"button",id:"wAdd","data-add":g.id,text:"+ 와인 추가",onclick:function(){
     var it={id:"n"+Date.now().toString(36)+(uid++).toString(36),name:"",min:"",confirm:false,note:"",del:false};g.items.push(it);renderKeep("#wAdd");
@@ -1688,7 +1690,7 @@ function wUpdateMeta(){
 function wChangeLines(orig,draft){
   var d=wDiff(orig,draft),out=[],byId={};
   draft.groups.forEach(function(g){g.items.forEach(function(it){byId[it.id]={g:g,it:it};});});
-  var min=function(x){return String(x).trim()===""?"기본 3":String(x).trim();};
+  var min=function(x){return String(x).trim()===""?"기본 "+INV_DEFAULT_MIN:String(x).trim();};
   Object.keys(d.items).forEach(function(id){
     var st=d.items[id],cur=byId[id];if(!st.types.length)return;
     var nm=(cur&&cur.it.name.trim())||(st.before&&st.before.name)||id;
