@@ -8,8 +8,12 @@ const clean=v=>String(v||'').replace(/[\u0000-\u0009\u000b-\u001f]/g,' ').replac
 const english=v=>clean(v).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
 const rows=source.values.slice(1).filter(r=>r[1]).map(r=>r.map(clean));
 const wines=[],excluded=[],links=[];
+// 메뉴판 줄이 낡아 이름이 다른 병(회장 확인). 이름·영문·품종·국가는 맛 점수 탭 값을 쓴다.
+const confirmedLinks={'그랑 띠에라 비노 틴토':{source:'비노 틴토',at:'2026-10-28',note:'매장 병은 비냐 란자(페이히어 레드 22번 비노 틴토)'}};
 for(const m of menu.rows.filter(m=>/wine/i.test(m.values[0]||''))){
-  const v=m.values.map(clean);let matches=rows.filter(r=>r[1]===v[2]);let method='한글명 일치';
+  const v=m.values.map(clean);const fixed=confirmedLinks[v[2]];
+  if(fixed){const r=rows.find(r=>r[1]===fixed.source);if(!r)throw new Error('Confirmed link source missing: '+fixed.source);v[2]=r[1];v[4]=r[2];v[6]=r[10];v[5]=r[9];v[3]='';}
+  let matches=rows.filter(r=>r[1]===v[2]);let method=fixed?'회장 확인('+fixed.at+') · '+fixed.note:'한글명 일치';
   if(!matches.length){matches=rows.filter(r=>english(r[2])&&english(r[2])===english(v[4]));method='유일한 영문명 일치';}
   if(matches.length!==1){excluded.push([v[2],matches.length?'같은 영문명의 제품·용량이 여러 개여서 확인 필요':'맛 점수 탭에서 제품 이름 연결 확인 필요']);continue;}
   const r=matches[0];
@@ -45,7 +49,7 @@ for(const name of offSale){const reason='페이히어 판매 목록에 없음('+
 for(const p of payhere.items.filter(p=>!p.menuName))excluded.push([p.name,'페이히어 신규('+payhere.readAt+', '+p.price+'원) · 맛 점수·설명 시트 미등록']);
 // 레드도 페이히어 번호(QR 주문 번호)와 가격을 쓴다(10/27). 메뉴판 코드 Red Wine N의 숫자와 다를 수 있다.
 const payRed=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_레드_1027.json'),'utf8'));
-const redAlias={'오젠느 르블랑 바케라스':'으젠느 르블랑 바케라스'},redOf=name=>payRed.items.find(p=>p.menuName===(redAlias[name]||name));
+const redAlias={'오젠느 르블랑 바케라스':'으젠느 르블랑 바케라스'},redOf=name=>payRed.items.find(p=>p.menuName===(redAlias[name]||name)||p.name===name);
 for(const p of payRed.items)if(!menu.rows.some(m=>/^Red/i.test(clean(m.values[0]))&&clean(m.values[2])===p.menuName))throw new Error('Payhere red menu link changed: '+p.name);
 for(const w of wines){if(!/^Red/i.test(w.menuCode))continue;const p=redOf(w.name);if(!p)throw new Error('Red not on Payhere: '+w.name);
  Object.assign(w,{price:p.price+'원',posNumber:'레드 '+p.number+'번',posName:p.name,priceSource:'페이히어 '+payRed.readAt});}

@@ -24,7 +24,7 @@
     {"number": 19, "name": "퍼르시모", "price": "59,000", "menuName": "퍼르시모"},
     {"number": 20, "name": "프리마 산지오베제 루비코네", "price": "39,000", "menuName": "프리마 산지오베제 루비네코"},
     {"number": 21, "name": "키안티 루피나 리제르바", "price": "63,000", "menuName": "키안티 루피나 리제르바"},
-    {"number": 22, "name": "비노 틴토", "price": "39,000", "menuName": "그랑 띠에라 비노 틴토"},
+    {"number": 22, "name": "비노 틴토", "price": "39,000", "menuName": "그랑 띠에라 비노 틴토", "note": "매장 병은 비냐 란자(Vina Lanzar Red, 템프라니요). 메뉴판 List 줄의 그랑 띠에라 정보는 낡음(회장 확인 10/28)"},
     {"number": 23, "name": "세파 비헤아스 보발", "price": "59,000", "menuName": "세파 비헤아스 보발"},
     {"number": 24, "name": "아라우카노 까르미네르 리제르바", "price": "59,000", "menuName": "아라우카노 까르미네르 리제르바"},
     {"number": 25, "name": "그랑 아라우카노", "price": "159,000", "menuName": "그랑 아라우카노"},
