@@ -18,11 +18,14 @@
     "volumeLabel": "",
     "alcohol": "alc 13.5%",
     "region": "Yecla, Spain",
-    "price": "39,",
+    "price": "39,000원",
     "description": "정말 갓성비 한 친구 가져왔어요. 신선하고 꾸밈없어요. 정말 드링커블 호로록호로록. 호벤이라는 이름 자체가 젊은 남자 라는 뜻이에요 힘과 생명력 넘치는 와인!",
     "nuance": "붉은 과실·무화과·모카·허브 / 드라이",
     "serviceDescription": "스페인 예클라의 모나스트렐로 만든 오가닉 레드입니다. 붉은 과실과 말린 무화과, 초콜릿·모카·허브 향이 겹치며, 잘 익은 타닌과 산도가 균형을 이룹니다. 소고기·양고기 요리나 고기 파스타와 곁들이기 좋습니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 1번",
+    "posName": "올드 핸즈 호벤",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 2",
@@ -43,11 +46,14 @@
     "volumeLabel": "",
     "alcohol": "alc 11-12%",
     "region": "Yecla, Spain",
-    "price": "39,",
+    "price": "39,000원",
     "description": "스페인 예끌라 지역의 모나스트렐 품종의 특징인 블랙베리, 계피, 자두향과 장미 꽃잎 향이 가득 퍼져요. 젊고 힘이 넘치는 친구예요.",
     "nuance": "블랙베리·자두·향신료 / 중간 바디",
     "serviceDescription": "예클라의 모나스트렐 레드로, 검은 베리와 자두에 계피·정향·장미 향이 더해집니다. 입안에서는 초콜릿과 피망의 풍미가 이어지며 여운이 긴 스타일입니다. 수입사 기준 바디는 중간 정도로, 소고기·양고기·양념육과 잘 어울립니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 2번",
+    "posName": "라 푸리시마 모나스트렐",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 3",
@@ -68,11 +74,14 @@
     "volumeLabel": "",
     "alcohol": "alc 15%",
     "region": "Spain",
-    "price": "49,",
+    "price": "49,000원",
     "description": "체리, 라즈베리, 블랙베리, 바닐라, 초콜렛, 장미의 향이 어우러지면서 농축된 과실향이 나는 친구예요. 적당히 달고 산도도 있어서 밸런스가 좋은 와인이예요.",
     "nuance": "농익은 과일·허브·라벤더 / 중간 바디",
     "serviceDescription": "농익은 과일향에 허브·라벤더·미네랄 느낌이 이어지는 모나스트렐입니다. 향의 변화를 즐기기 좋은 중간 바디 레드로, 허브와 과실향을 좋아하는 손님께 소개하기 좋습니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 3번",
+    "posName": "후안길 옐로 라벨",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 4",
@@ -93,11 +102,14 @@
     "volumeLabel": "",
     "alcohol": "alc 15%",
     "region": "Spain",
-    "price": "66,",
+    "price": "66,000원",
     "description": "체리, 라즈베리, 블랙베리, 바닐라, 초콜렛, 장미향 속에서 스쳐가는 타닌감이 여러 향들의 조화를 연결해주는 친구예요. 여러 와인 애호가에게 사랑받는 와인이예요.",
     "nuance": "자두·체리·오크 / 농후한 바디·풍부한 질감",
     "serviceDescription": "잘 익은 자두와 체리의 과실향에 오크 풍미가 어우러지는 모나스트렐입니다. 올드 바인에서 오는 농후한 질감과 풍부한 바디가 특징이며, 프랑스 오크 12개월 숙성의 여운을 함께 설명하기 좋습니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 4번",
+    "posName": "후안길 실버 라벨",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 5",
@@ -118,11 +130,14 @@
     "volumeLabel": "",
     "alcohol": "alc 13%",
     "region": "France",
-    "price": "47,",
+    "price": "47,000원",
     "description": "높은 지대에 있는 포도로 만들었어요. 1980년대 파리콩쿠르에서 메달을 땄다고 해요. 나무뿌리 향으로 시작해서 치즈향이 은은하게 퍼지며 부드러운 바디감과 바닐라향이 두 번 미소 짓게 만들어요. 가성비 좋은 보르도 맛을 느낄 수 있어요.",
     "nuance": "블랙체리·바닐라 / 단단한 레드",
     "serviceDescription": "블랙체리와 바닐라 향을 중심으로 바디·산도·타닌이 또렷하게 잡힌 레드입니다. 치즈나 육포처럼 맛이 진한 안주와 함께 추천하기 좋습니다.\nPDF의 ‘도멘 오뜨 브랑드 메를로 2022’와 같은 제품인지는 병 라벨 확인이 필요합니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 5번",
+    "posName": "샤또 오뜨 브랑드",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 6",
@@ -143,11 +158,14 @@
     "volumeLabel": "",
     "alcohol": "alc 13.5%",
     "region": "U.S.A",
-    "price": "59,",
+    "price": "59,000원",
     "description": "과실과 오크의 풍미가 조화로운 와인이에요. 블랙베리, 라즈배리 달콤한 향신료의 향이 나고 입에서는 과실의 풍미와 함께 스모키함과 삼나무의 풍미를 느낄 수 있어요. 복합적이고 다층적이어서 한 모금 한 모금이 즐거운 친구예요.",
     "nuance": "블랙베리·삼나무 / 풍부한 바디",
     "serviceDescription": "블랙베리의 과실향에 오크와 삼나무 느낌이 더해지는 멀롯입니다. 단맛이 적고 질감이 풍부해 고기 요리나 파스타에 곁들이기 좋습니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 6번",
+    "posName": "롱반 멀롯",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 26",
@@ -168,11 +186,14 @@
     "volumeLabel": "",
     "alcohol": "alc 13%",
     "region": "South Australia, Australia",
-    "price": "39,",
+    "price": "39,000원",
     "description": "잘 익은 자두와 은은한 향신료 향을 보여주는 호주 피노 누아입니다. 오크 숙성 없이 가벼운 바디와 부드러운 산미, 과실의 여운을 살린 스타일입니다. 오리 요리나 버섯 리조또, 참치 스테이크와 곁들이기 좋습니다.",
     "nuance": "자두·은은한 향신료 / 가벼운 바디",
     "serviceDescription": "잘 익은 자두와 은은한 향신료 향을 보여주는 호주 피노 누아입니다. 오크 숙성 없이 가벼운 바디와 부드러운 산미, 과실의 여운을 살린 스타일입니다. 오리 요리나 버섯 리조또, 참치 스테이크와 곁들이기 좋습니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 9번",
+    "posName": "민친버리 피노누아",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 10",
@@ -193,11 +214,14 @@
     "volumeLabel": "",
     "alcohol": "alc 13-14%",
     "region": "Australia",
-    "price": "39,",
+    "price": "39,000원",
     "description": "적당한 타닌감을 원하신다면 이 친구를 추천드려요. 블랙베리 등의 풍부한 베리 과일향이 나면서 입에서는 아몬드와 모카향이 잘 어우러지는 친구예요.",
     "nuance": "블루베리·자두·후추 / 산뜻한 쉬라즈",
     "serviceDescription": "블루베리와 자두에 밀크 초콜릿과 그린 페퍼콘 느낌이 겹치는 쉬라즈입니다. 과실의 풍부함과 산뜻한 산도가 함께 있어 구운 양고기·베이컨·타진과 곁들이기 좋습니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 11번",
+    "posName": "디킨 쉬라즈",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 11",
@@ -218,7 +242,7 @@
     "volumeLabel": "",
     "alcohol": "alc 14-15%",
     "region": "Haselgrove, Vine Sean",
-    "price": "59,",
+    "price": "59,000원",
     "description": "감성이 촉촉한 저녁에 잘 어울리는 와인이에요. 달콤한 향이 코와 입안을 가득 매워줘요. 여기서 감성을 자극해 주는 부드러운 타닌감이 깊고 풍부하게 저녁을 채워 줄 거예요.",
     "nuance": "허브·민트·블랙베리·키르쉬 / 실키한 타닌",
     "serviceDescription": "호주 맥라렌 베일의 오래된 포도나무에서 수확한 그르나슈로 만든 하셀그로브 바인 션입니다. 허브·민트·블랙베리와 체리 리큐르를 연상시키는 향, 부드럽고 실키한 타닌, 우아한 여운이 특징입니다. 양고기·스테이크·바비큐·숙성 치즈와 곁들이기 좋습니다.",
@@ -235,7 +259,10 @@
       "정의된 산미·TA 6.99, pH3.41 → 높은 산도",
       "fine tannin → 섬세한 타닌",
       "medium bodied 명시"
-    ]
+    ],
+    "posNumber": "레드 12번",
+    "posName": "바인션 그라나슈",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 12",
@@ -256,11 +283,14 @@
     "volumeLabel": "",
     "alcohol": "alc 13-14%",
     "region": "Languedoc Roussillon , France",
-    "price": "49,",
+    "price": "49,000원",
     "description": "달콤한 베리류, 후추, 삼나무향이 느껴지는 와인이에요. 입안에서는 부드러운 질감으로 목 넘김이 좋고 바닐라, 농익은 자두의 과실 밸런스가 좋습니다! 적당히 가벼운 바디감과 타닌감이 좋아요!",
     "nuance": "자두·베리·후추·삼나무 / 부드러운 질감",
     "serviceDescription": "농익은 자두와 베리류에 후추·삼나무·바닐라 향이 어우러진 남프랑스 레드입니다. 메를로와 쉬라를 절반씩 섞어 과실감과 향신료 풍미를 함께 살렸으며, 부드러운 질감과 균형 잡힌 목넘김이 특징입니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 13번",
+    "posName": "레 자르젤리에르 멜롯-쉬라",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 13",
@@ -281,11 +311,14 @@
     "volumeLabel": "",
     "alcohol": "alc 14-15%",
     "region": "France",
-    "price": "47,",
+    "price": "47,000원",
     "description": "지중해성 기후가 빚은 최고의 포도 숙성도를 자랑하는 와인이에요. 월등한 밸런스와 딸기, 다크체리, 밀크 바닐라, 장미 등의 향과 부드럽게 응축된 타닌감이 여운을 오래 남겨줘요.",
     "nuance": "베리·장미·향신료 / 풍부한 향",
     "serviceDescription": "체리와 산딸기·블랙베리에 장미, 시나몬, 후추 향이 겹치는 레드입니다. 과실과 향신료의 인상이 풍부해 향이 다채로운 레드를 찾는 손님께 설명하기 좋습니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 14번",
+    "posName": "르 뷔우 트루폴리에",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 15",
@@ -306,11 +339,14 @@
     "volumeLabel": "",
     "alcohol": "alc 14-15%",
     "region": "Somontano, Spain",
-    "price": "59,",
+    "price": "59,000원",
     "description": "익은 체리의 향과 약간의 오크향이 향기로운 와인이에요. 부드러우면서도 짜임새 있는 탄탄한 느낌을 주면서 튀지 않는 산도에 적당하게 묵직한 바디감을 주는 균형감이 인상적이에요.",
     "nuance": "익은 체리·오크 / 부드러운 미디엄~풀 바디",
     "serviceDescription": "익은 체리와 은은한 오크 향이 중심인 소몬타노 레드 블렌드입니다. 부드러우면서 탄탄한 구조와 튀지 않는 산도가 어우러져, 미디엄에서 풀 바디 사이의 균형 잡힌 스타일로 소개하기 좋습니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 16번",
+    "posName": "소모스 크리안자",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 16",
@@ -331,7 +367,7 @@
     "volumeLabel": "",
     "alcohol": "alc 13.5%",
     "region": "Chile",
-    "price": "39,",
+    "price": "39,000원",
     "description": "신선한 맛을 주는 레드와인이에요. 블루베리, 블랙체리, 바이올렛 향으로 즐거워 지고, 입안에서는 초콜릿, 모카향이 은은하게 남아서 부담 없이 즐길 수 있는 친구예요!",
     "nuance": "리제르바 라인 / 품종 확인 필요",
     "serviceDescription": "칠레 뷰 마넨의 리제르바 라인으로, 품종별로 향과 질감이 달라집니다. 병 라벨에서 품종과 세부 제품명을 확인한 뒤 추천 설명을 확정하는 것이 좋습니다.",
@@ -349,7 +385,10 @@
       "present acidity·fresh 균형 → 보통",
       "smooth rounded tannins → 약함",
       "medium-bodied 명시"
-    ]
+    ],
+    "posNumber": "레드 17번",
+    "posName": "뷰 마넨 레세르바",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 17",
@@ -370,11 +409,14 @@
     "volumeLabel": "",
     "alcohol": "alc 14-15%",
     "region": "California, U.S.A",
-    "price": "79,",
+    "price": "79,000원",
     "description": "블랙베리, 블랙체리, 블랙페퍼의 향기로 기선제압을 해버리는 친구예요. 입안에서는 강렬하고 풍부한 풍미와 오크향의 밸런스가 어울어져서 복합미를 즐길 수 있는 와인이예요.",
     "nuance": "검은 과일·바닐라·향신료 / 진한 바디",
     "serviceDescription": "검은 과일과 바닐라·오크에 향신료 느낌이 더해지는 올드 바인 진판델입니다. 단맛이 적고 바디와 타닌이 강하게 잡혀 있어 소고기·양고기 같은 육류와 잘 맞는 스타일입니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 18번",
+    "posName": "날리헤드 올드바인 진판델",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 18",
@@ -395,11 +437,14 @@
     "volumeLabel": "",
     "alcohol": "alc 14%",
     "region": "Toscana, Italy",
-    "price": "59,",
+    "price": "59,000원",
     "description": "자기관리 잘하는 신사가 생각나요. 바이올렛 , 제비꽃에 오크터치 풍미가 섞여 정말 스타일리쉬해요 부담스러운 풀바디가 아니라 힘을 적당히 뺀 세련된 구조감이 돋보였습니다.",
     "nuance": "검붉은 과실·발사믹·향신료 / 실키한 타닌",
     "serviceDescription": "카베르네 소비뇽·카베르네 프랑·산지오베제를 블렌딩한 토스카나 레드입니다. 다크 체리와 검붉은 과실에 발사믹·향신료 느낌이 더해지고, 실키한 타닌과 산도의 균형이 특징입니다. 바비큐·햄버거·구운 채소와 잘 어울립니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 19번",
+    "posName": "퍼르시모",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 19",
@@ -420,11 +465,14 @@
     "volumeLabel": "",
     "alcohol": "alc 12-13%",
     "region": "Emilia-Romagna, ltaly",
-    "price": "39,",
+    "price": "39,000원",
     "description": "진한 루비색에 한 번 홀리고, 바이올렛, 오레노, 발사믹의 아로마에 반하는 친구예요. 가볍게 마시기에 좋아서 질리지 않게 즐길 수 있는 와인이예요.",
     "nuance": "체리·바이올렛·허브 / 부드러운 타닌",
     "serviceDescription": "루비코네에서 재배한 산지오베제 100%로 만든 데일리 레드입니다. 체리와 꽃향에 허브·발사믹 느낌이 더해지며, 부드러운 타닌과 적당한 산도가 편안한 인상을 줍니다. 토마토 파스타·피자·치즈나 구운 고기와 곁들이기 좋습니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 20번",
+    "posName": "프리마 산지오베제 루비코네",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 22",
@@ -445,11 +493,14 @@
     "volumeLabel": "",
     "alcohol": "alc 13%",
     "region": "Spain",
-    "price": "59,",
+    "price": "59,000원",
     "description": "깔끔한 와인을 먹고 싶을 때 생각나는 친구 중 하나예요. 잘 읽은 과일향과 부드러운 목 넘김이 즐겁고, 바닐라향으로 여운을 남기는 매력적인 와인이예요.",
     "nuance": "익은 과일·바닐라·커피 / 중간 바디·부드러운 타닌",
     "serviceDescription": "잘 익은 과일향에 바닐라와 로스팅 커피가 더해지는 보발입니다. 프랑스 오크 8개월 숙성으로 부드러운 중간 바디와 타닌을 보여주며, 신선한 과일향이 여운으로 이어집니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 23번",
+    "posName": "세파 비헤아스 보발",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 23",
@@ -470,11 +521,14 @@
     "volumeLabel": "",
     "alcohol": "alc 13.5%",
     "region": "Chile",
-    "price": "59,",
+    "price": "59,000원",
     "description": "따뜻한 분위기를 만들고 싶다면 이 친구와 함께 해 보는 것을 추천 드려요. 조밀조밀하고 둥근 맛을 내면서 부드럽게 넘어가는 와인이예요. 둥글 둥글 부드럽지만 적당한 타닌감으로 지루하지 않게 마실 수 있어요.",
     "nuance": "체리·붉은 과일·오크 / 풍부한 바디",
     "serviceDescription": "체리와 붉은 과일의 향에 오크 느낌이 더해지는 까르메네르입니다. 바디가 풍부하고 타닌은 중간 정도로 잡혀 있어 붉은 육류·버섯·치즈와 곁들이기 좋습니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 24번",
+    "posName": "아라우카노 까르미네르 리제르바",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 24",
@@ -495,11 +549,14 @@
     "volumeLabel": "",
     "alcohol": "alc 13.5%",
     "region": "Chile",
-    "price": "159,",
+    "price": "159,000원",
     "description": "이 친구를 입안에 머금었을 때 '팔방미인'이라는 말이 떠올랐어요. 구조감이면 구조감, 향이면 향, 입에 안에서 머무르는 피니시가지 모든 면에서 만족감을 주는 친구예요.",
     "nuance": "블랙커런트·허브 / 힘 있는 레드",
     "serviceDescription": "블랙커런트와 타임 같은 허브 향을 보여주는 카베르네 소비뇽입니다. 붉은 육류와 바비큐, 사슴고기처럼 풍미가 진한 요리와 함께 즐기기 좋은 스타일입니다.",
-    "descriptionUpdatedAt": "2026-10-08"
+    "descriptionUpdatedAt": "2026-10-08",
+    "posNumber": "레드 25번",
+    "posName": "그랑 아라우카노",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Red Wine 25",
@@ -520,7 +577,7 @@
     "volumeLabel": "",
     "alcohol": "alc 13.5%",
     "region": "IGP Atlantique, France",
-    "price": "49,",
+    "price": "49,000원",
     "description": "으깬 체리와 오디의 과실향에 바이올렛 꽃향이 더해지는 말벡입니다. 부드러운 질감과 타닌을 탄탄한 산미가 받쳐줘 등갈비·LA 갈비·통닭 구이와 곁들이기 좋습니다.",
     "nuance": "체리·오디·바이올렛 / 부드러운 타닌·탄탄한 산미",
     "serviceDescription": "으깬 체리와 오디의 과실향에 바이올렛 꽃향이 더해지는 말벡입니다. 부드러운 질감과 타닌을 탄탄한 산미가 받쳐줘 등갈비·LA 갈비·통닭 구이와 곁들이기 좋습니다.",
@@ -539,7 +596,10 @@
       "견고한 산미 명시",
       "부드러운 타닌 명시",
       "부드러운 질감·13.5% → 중간 바디 추론"
-    ]
+    ],
+    "posNumber": "레드 26번",
+    "posName": "도멘 오뜨 블랑드 말백",
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "White Wine 3",
@@ -567,7 +627,7 @@
     "descriptionUpdatedAt": "2026-10-08",
     "posNumber": "화이트·로제 4번",
     "posName": "라로쉬 샤르도네 리저브",
-    "priceSource": "페이히어 2026-10-23"
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "White Wine 4",
@@ -595,7 +655,7 @@
     "descriptionUpdatedAt": "2026-10-08",
     "posNumber": "화이트·로제 5번",
     "posName": "롱반 샤도네이",
-    "priceSource": "페이히어 2026-10-23"
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "White Wine 6",
@@ -623,7 +683,7 @@
     "descriptionUpdatedAt": "2026-10-08",
     "posNumber": "화이트·로제 7번",
     "posName": "레 자르 젤리에르 비오니에",
-    "priceSource": "페이히어 2026-10-23"
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "White Wine 7",
@@ -651,7 +711,7 @@
     "descriptionUpdatedAt": "2026-10-08",
     "posNumber": "화이트·로제 8번",
     "posName": "마틴 코닥스",
-    "priceSource": "페이히어 2026-10-23"
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "White & Rose Wine 9",
@@ -679,7 +739,7 @@
     "descriptionUpdatedAt": "2026-10-08",
     "posNumber": "화이트·로제 10번",
     "posName": "카룬도 펄스 오브 로제",
-    "priceSource": "페이히어 2026-10-23"
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "White & Rose Wine 10",
@@ -720,7 +780,7 @@
     ],
     "posNumber": "화이트·로제 11번",
     "posName": "킬리빙빙 스윗 립스 로제",
-    "priceSource": "페이히어 2026-10-23"
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "White & Rose Wine 11",
@@ -748,7 +808,7 @@
     "descriptionUpdatedAt": "2026-10-08",
     "posNumber": "화이트·로제 12번",
     "posName": "그라모나 제사미",
-    "priceSource": "페이히어 2026-10-23"
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "White & Rose Wine 12",
@@ -776,7 +836,7 @@
     "descriptionUpdatedAt": "2026-10-08",
     "posNumber": "화이트·로제 13번",
     "posName": "카룬도 샤도네이 750ml",
-    "priceSource": "페이히어 2026-10-23"
+    "priceSource": "페이히어 2026-10-27"
   },
   {
     "menuCode": "Sparkling Wine 1",

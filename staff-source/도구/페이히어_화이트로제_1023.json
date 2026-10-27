@@ -1,5 +1,5 @@
 {
-  "readAt": "2026-10-23",
+  "readAt": "2026-10-27",
   "source": "페이히어 비즈니스 매장 상품 · 화이트 & 로제 카테고리(이름·번호·가격만)",
   "note": "화이트·로제는 이 목록이 판매 기준이다. 번호는 QR 주문 번호다. menuName은 메뉴판 List의 한글명이며, 없으면 맛 점수·설명이 아직 없는 신규 제품이다.",
   "items": [
@@ -15,6 +15,8 @@
     {"number": 10, "name": "카룬도 펄스 오브 로제", "price": "49,000", "menuName": "카룬도 펄스 오브 로제"},
     {"number": 11, "name": "킬리빙빙 스윗 립스 로제", "price": "49,000", "menuName": "킬리빙빙 스윗 립스 로제"},
     {"number": 12, "name": "그라모나 제사미", "price": "69,000", "menuName": "그라모나 제사미"},
-    {"number": 13, "name": "카룬도 샤도네이 750ml", "price": "39,000", "menuName": "카룬도 샤도네이 750ml"}
+    {"number": 13, "name": "카룬도 샤도네이 750ml", "price": "39,000", "menuName": "카룬도 샤도네이 750ml"},
+    {"number": 14, "name": "민친버리 쇼비뇽 블랑", "price": "39,000", "menuName": null},
+    {"number": 15, "name": "트라웃 밸리 쇼비뇽 블랑", "price": "49,000", "menuName": null}
   ]
 }

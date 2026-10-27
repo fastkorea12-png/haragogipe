@@ -1,13 +1,13 @@
-// 와인 목록 추출 점검: 자료/와인재고.csv → JSON 70종(칸별 26/13/13/5/6/7, 화이트·로제는 페이히어 목록 13종 한 칸), 가격·주류회사·수량 없음, 이름에 제어문자 없음, 산출물에 CSV 원문이 없음. (node 도구/재고추출_점검.js)
+// 와인 목록 추출 점검: 자료/와인재고.csv → JSON 72종(칸별 26/15/13/5/6/7, 화이트·로제는 페이히어 목록 15종 한 칸), 가격·주류회사·수량 없음, 이름에 제어문자 없음, 산출물에 CSV 원문이 없음. (node 도구/재고추출_점검.js)
 const fs=require('fs'),path=require('path'),assert=require('assert/strict');
 const extract=require('./재고조사_추출.js');
 const root=path.join(__dirname,'..');
 const r=extract();
 assert.deepEqual(r.groups.map(g=>g.name),['레드','화이트 & 로제','스파클링','포트','내추럴','하프']);
 assert.deepEqual(r.groups.map(g=>g.id),['red','white','sparkling','port','natural','half']);
-assert.deepEqual(r.groups.map(g=>g.items.length),[26,13,13,5,6,7]);
-const all=r.groups.flatMap(g=>g.items);assert.equal(all.length,70);
-const ids=new Set(all.map(i=>i.id));assert.equal(ids.size,70,'id 중복 없음');
+assert.deepEqual(r.groups.map(g=>g.items.length),[26,15,13,5,6,7]);
+const all=r.groups.flatMap(g=>g.items);assert.equal(all.length,72);
+const ids=new Set(all.map(i=>i.id));assert.equal(ids.size,72,'id 중복 없음');
 // 화이트·로제: 페이히어 번호·이름 그대로, 판매 중단 2종 없음, 기존 와인 id 유지
 const ph=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_화이트로제_1023.json'),'utf8'));
 assert.deepEqual(r.groups[1].items.map(i=>[i.order,i.name]),ph.items.map(p=>[p.number,p.name]));
@@ -51,4 +51,4 @@ assert(!/가격|주류회사|도매가|희망가|주문|냉장고|진열장|창�
   const out=spawnSync(process.execPath,['-e',"console.log(JSON.stringify(require('./재고조사_추출.js')()))"],{cwd:__dirname,encoding:'utf8',env:{...process.env,HARAGO_INVENTORY_CSV:path.join(__dirname,'__없는경로__.csv')}});
   assert.equal(out.status,0,out.stderr);assert.deepEqual(JSON.parse(out.stdout),JSON.parse(JSON.stringify(r)),'CSV 없음 → 스냅샷(+페이히어)으로 같은 결과');
 }
-console.log('와인 목록 추출 점검 통과: 70종(26/13/13/5/6/7), id 유일·고정, 제어문자 없음, 확인 필요 보존, CSV 원문·가격·주류회사 없음');
+console.log('와인 목록 추출 점검 통과: 72종(26/15/13/5/6/7), id 유일·고정, 제어문자 없음, 확인 필요 보존, CSV 원문·가격·주류회사 없음');

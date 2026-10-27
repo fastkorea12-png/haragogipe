@@ -1,0 +1,33 @@
+{
+  "readAt": "2026-10-27",
+  "source": "페이히어 비즈니스 매장 상품 · 레드와인 카테고리(이름·번호·가격만)",
+  "note": "레드는 이 목록의 번호가 QR 주문 번호다. menuName은 메뉴판 List의 한글명이며, 메뉴판 줄 순서와 페이히어 번호가 같다(메뉴판 코드 Red Wine N의 숫자와는 다를 수 있다).",
+  "items": [
+    {"number": 1, "name": "올드 핸즈 호벤", "price": "39,000", "menuName": "올드 핸즈 호벤"},
+    {"number": 2, "name": "라 푸리시마 모나스트렐", "price": "39,000", "menuName": "라 푸리시마 모나스트렐"},
+    {"number": 3, "name": "후안길 옐로 라벨", "price": "49,000", "menuName": "후안길 옐로우 라벨"},
+    {"number": 4, "name": "후안길 실버 라벨", "price": "66,000", "menuName": "후안길 실버 라벨"},
+    {"number": 5, "name": "샤또 오뜨 브랑드", "price": "47,000", "menuName": "샤또 오뜨 브랑드"},
+    {"number": 6, "name": "롱반 멀롯", "price": "59,000", "menuName": "롱반 멀롯"},
+    {"number": 7, "name": "미스터 피에르 피노누아", "price": "49,000", "menuName": "미스터 피에르 피노누아"},
+    {"number": 8, "name": "블랙 베레 피노 누아", "price": "43,000", "menuName": "블랙 베레 피노 누아"},
+    {"number": 9, "name": "민친버리 피노누아", "price": "39,000", "menuName": "민친버리 피노누아"},
+    {"number": 10, "name": "으젠느 르블랑 바케라스", "price": "69,000", "menuName": "으젠느 르블랑 바케라스"},
+    {"number": 11, "name": "디킨 쉬라즈", "price": "39,000", "menuName": "디킨 쉬라즈"},
+    {"number": 12, "name": "바인션 그라나슈", "price": "59,000", "menuName": "바인션 그르나슈"},
+    {"number": 13, "name": "레 자르젤리에르 멜롯-쉬라", "price": "49,000", "menuName": "레 자르젤리에르 멜롯-쉬라"},
+    {"number": 14, "name": "르 뷔우 트루폴리에", "price": "47,000", "menuName": "르 뷔우 트루폴리에"},
+    {"number": 15, "name": "폼비스 런 쉬라즈", "price": "47,000", "menuName": "폼비스 런 쉬라즈"},
+    {"number": 16, "name": "소모스 크리안자", "price": "59,000", "menuName": "소모스 크리안자"},
+    {"number": 17, "name": "뷰 마넨 레세르바", "price": "39,000", "menuName": "뷰 마넨 레세르바"},
+    {"number": 18, "name": "날리헤드 올드바인 진판델", "price": "79,000", "menuName": "날리헤드 올드바인 진판델"},
+    {"number": 19, "name": "퍼르시모", "price": "59,000", "menuName": "퍼르시모"},
+    {"number": 20, "name": "프리마 산지오베제 루비코네", "price": "39,000", "menuName": "프리마 산지오베제 루비네코"},
+    {"number": 21, "name": "키안티 루피나 리제르바", "price": "63,000", "menuName": "키안티 루피나 리제르바"},
+    {"number": 22, "name": "비노 틴토", "price": "39,000", "menuName": "그랑 띠에라 비노 틴토"},
+    {"number": 23, "name": "세파 비헤아스 보발", "price": "59,000", "menuName": "세파 비헤아스 보발"},
+    {"number": 24, "name": "아라우카노 까르미네르 리제르바", "price": "59,000", "menuName": "아라우카노 까르미네르 리제르바"},
+    {"number": 25, "name": "그랑 아라우카노", "price": "159,000", "menuName": "그랑 아라우카노"},
+    {"number": 26, "name": "도멘 오뜨 블랑드 말백", "price": "49,000", "menuName": "도멘 오뜨 브랑드 말벡"}
+  ]
+}

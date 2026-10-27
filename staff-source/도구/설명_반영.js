@@ -43,6 +43,12 @@ for(let i=wines.length-1;i>=0;i--){const w=wines[i];if(!whiteCode(w.menuCode))co
  Object.assign(w,{price:p.price+'원',posNumber:'화이트·로제 '+p.number+'번',posName:p.name,priceSource:'페이히어 '+payhere.readAt});}
 for(const name of offSale){const reason='페이히어 판매 목록에 없음('+payhere.readAt+')',x=excluded.find(x=>x[0]===name);if(x)x[1]=reason;else excluded.push([name,reason]);}
 for(const p of payhere.items.filter(p=>!p.menuName))excluded.push([p.name,'페이히어 신규('+payhere.readAt+', '+p.price+'원) · 맛 점수·설명 시트 미등록']);
+// 레드도 페이히어 번호(QR 주문 번호)와 가격을 쓴다(10/27). 메뉴판 코드 Red Wine N의 숫자와 다를 수 있다.
+const payRed=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_레드_1027.json'),'utf8'));
+const redAlias={'오젠느 르블랑 바케라스':'으젠느 르블랑 바케라스'},redOf=name=>payRed.items.find(p=>p.menuName===(redAlias[name]||name));
+for(const p of payRed.items)if(!menu.rows.some(m=>/^Red/i.test(clean(m.values[0]))&&clean(m.values[2])===p.menuName))throw new Error('Payhere red menu link changed: '+p.name);
+for(const w of wines){if(!/^Red/i.test(w.menuCode))continue;const p=redOf(w.name);if(!p)throw new Error('Red not on Payhere: '+w.name);
+ Object.assign(w,{price:p.price+'원',posNumber:'레드 '+p.number+'번',posName:p.name,priceSource:'페이히어 '+payRed.readAt});}
 // 품절 등으로 추천에서 빼는 와인. 원문 점수·설명은 지식에 남긴다.
 const skip=JSON.parse(fs.readFileSync(path.join(__dirname,'추천_제외.json'),'utf8')).items;
 for(const x of skip){const i=wines.findIndex(w=>w.name===x.name);if(i<0)throw new Error('Skip target not found: '+x.name);wines.splice(i,1);excluded.push([x.name,x.reason+'('+x.at+')']);}
@@ -61,6 +67,7 @@ const sections=rows.map(r=>{
  const lines=[r[2]?'영문명: '+r[2]:'',r[9]?'국가: '+r[9]:'',r[10]?'품종 (와인 참고자료): '+r[10]:'',mv&&mv[6]?'품종 (메뉴판): '+mv[6]:'',mv&&mv[3]?'도수 (메뉴판): '+mv[3]:'',mv&&mv[5]?'지역 (메뉴판): '+mv[5]:'',mv&&mv[7]?'가격 원문 (메뉴판): '+mv[7]+' · 현재 가격 확인 필요':'',r[12]?'뉘앙스: '+r[12]:'',r[13]?'설명: '+r[13]:'',taste,r[7]?'아로마: '+r[7]:'',r[8]?'안주: '+r[8]:''];
  const menuName=link?.menuName||r[1],sale=payhereOf(menuName);
  if(sale)lines.splice(7,0,'가격 (페이히어 '+payhere.readAt+'): '+sale.price+'원 · '+'화이트·로제 '+sale.number+'번');
+ const red=redOf(menuName)||(mv&&redOf(mv[2]));if(red)lines.splice(7,0,'가격 (페이히어 '+payRed.readAt+'): '+red.price+'원 · 레드 '+red.number+'번');
  const skipped=skip.find(x=>x.name===menuName);if(skipped)lines.unshift('추천 상태: '+skipped.reason+'('+skipped.at+'). 추천하지 않음 [확인].');
  if(offSale.includes(menuName))lines.unshift('판매 상태: 페이히어 판매 목록에 없음('+payhere.readAt+'). 추천하지 않음 [확인].');
  if(estimate)lines.push('추정 근거: '+estimate.scoreSources.join(' · '),'빈티지 유의: '+estimate.scoreVintageNote);
@@ -68,7 +75,7 @@ const sections=rows.map(r=>{
  return '## '+(link?.menuName||r[1])+' ('+label+')\n- 상태: '+(estimate?'웹 자료 기준 추정':'확정')+'\n- 키워드: '+Array.from(new Set([r[1],r[2],link?.menuName].filter(Boolean))).join(', ')+'\n'+lines.filter(Boolean).map(x=>'- '+x).join('\n');
 });
 fs.writeFileSync(path.join(root,'지식','12_와인_추가_설명.md'),'# 와인 추가 설명 (2026-10-08)\n\n> 출처: 와인추천 참고자료 최신화, gid=2027125317, A1:N120.뉘앙스·설명문 67종.가격은 메뉴판 List의 현행 확인 대상이다.점수 없는 제품은 추천에 넣지 않는다.\n\n'+sections.concat(payhere.items.filter(p=>!p.menuName).map(p=>'## '+p.name+' (화이트·로제)\n- 상태: 확인\n- 키워드: '+p.name+'\n- 가격 (페이히어 '+payhere.readAt+'): '+p.price+'원 · 화이트·로제 '+p.number+'번\n- 맛 점수: 자료 미완성. 취향 추천에서는 제외 [확인].\n- 설명: 시트 미등록. 맛·향은 병 라벨이나 선임에게 확인.')).join('\n\n')+'\n');
-fs.writeFileSync(path.join(root,'지식','11_와인_추천_데이터.md'),'# 와인 추천 데이터\n\n추천 가능 '+wines.length+'종 / 확인 필요 '+excluded.length+'종. 원문 '+wines.filter(w=>w.scoreSource!=='web-estimate').length+'종과 웹 자료 기준 추정 '+wines.filter(w=>w.scoreSource==='web-estimate').length+'종을 구분한다. 기존38종 점수는 유지했다. 최신 메뉴 연결로 원문 점수3종을 추가 연결했다.\n\n- 웹 추정: 도구/웹추정_맛점수_1011.json의 동일 제품·근거·빈티지·확신도를 함께 보관. 낮음은 제외.\n- 웹 추정 맛 점수는 실측값이 아니며 직원용에서만 사용한다. 손님용은 승인된 기존38종만 포함한다.\n- 뉘앙스·설명문: 기존 허용 스냅샷67종. 이번 작업에서 다른 탭을 읽지 않았다.\n- 가격·품종·도수: List A:H와 K, '+menu.readAt+' 읽음. 가격·재고를 웹에서 채우지 않는다.\n- 화이트·로제: 페이히어 판매 목록('+payhere.readAt+', 도구/페이히어_화이트로제_1023.json)이 기준. 번호·가격은 페이히어 값. 판매 목록에 없는 제품은 추천에서 뺀다.\n- 미션 레이트 하비스트의 충돌 원문은 보존하며 별도 웹 추정 점수만 사용한다.\n- 이름 연결 근거: 도구/와인_이름_연결표.json.\n- 재고는 직접 확인.\n');
+fs.writeFileSync(path.join(root,'지식','11_와인_추천_데이터.md'),'# 와인 추천 데이터\n\n추천 가능 '+wines.length+'종 / 확인 필요 '+excluded.length+'종. 원문 '+wines.filter(w=>w.scoreSource!=='web-estimate').length+'종과 웹 자료 기준 추정 '+wines.filter(w=>w.scoreSource==='web-estimate').length+'종을 구분한다. 기존38종 점수는 유지했다. 최신 메뉴 연결로 원문 점수3종을 추가 연결했다.\n\n- 웹 추정: 도구/웹추정_맛점수_1011.json의 동일 제품·근거·빈티지·확신도를 함께 보관. 낮음은 제외.\n- 웹 추정 맛 점수는 실측값이 아니며 직원용에서만 사용한다. 손님용은 승인된 기존38종만 포함한다.\n- 뉘앙스·설명문: 기존 허용 스냅샷67종. 이번 작업에서 다른 탭을 읽지 않았다.\n- 가격·품종·도수: List A:H와 K, '+menu.readAt+' 읽음. 가격·재고를 웹에서 채우지 않는다.\n- 화이트·로제: 페이히어 판매 목록('+payhere.readAt+', 도구/페이히어_화이트로제_1023.json)이 기준. 번호·가격은 페이히어 값. 판매 목록에 없는 제품은 추천에서 뺀다.\n- 레드: 페이히어 번호·가격('+payRed.readAt+', 도구/페이히어_레드_1027.json)을 쓴다. 메뉴판 코드 숫자와 다를 수 있다.\n- 미션 레이트 하비스트의 충돌 원문은 보존하며 별도 웹 추정 점수만 사용한다.\n- 이름 연결 근거: 도구/와인_이름_연결표.json.\n- 재고는 직접 확인.\n');
 const added=wines.filter(w=>w.scoreSource==='web-estimate'&&!links.some(l=>l.menuName===w.name&&rows.some(r=>r[1]===l.sourceName)));
 fs.writeFileSync(path.join(root,'지식','13_와인_웹추정_설명.md'),'# 신규 메뉴 와인 웹 추정 (2026-10-11)\n\n'+added.map(w=>'## '+w.name+' ('+w.category+')\n- 상태: 웹 자료 기준 추정\n- 키워드: '+w.name+', '+w.english+'\n- 영문명: '+w.english+'\n- 국가: '+w.country+'\n- 품종 (메뉴판): '+w.variety+'\n- 설명: '+w.description+'\n- 맛 점수: 웹 자료 기준 추정 · 당도 '+w.sweetness+'/5 · 산도 '+w.acidity+'/5 · 타닌 '+w.tannin+'/5 · 바디 '+w.body+'/5\n- 아로마: '+w.aromas+'\n- 안주: '+w.pairing+'\n- 추정 근거: '+w.scoreSources.join(' · ')+'\n- 빈티지 유의: '+w.scoreVintageNote).join('\n\n')+'\n');
 console.log('추천 '+wines.length+'종 (원문 '+wines.filter(w=>w.scoreSource!=='web-estimate').length+' + 웹추정 '+wines.filter(w=>w.scoreSource==='web-estimate').length+') / 제외 '+excluded.length+'종 / 설명 '+rows.length+'종');
