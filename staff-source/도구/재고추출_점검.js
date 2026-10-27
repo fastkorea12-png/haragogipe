@@ -13,6 +13,12 @@ const ph=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_화이트�
 assert.deepEqual(r.groups[1].items.map(i=>[i.order,i.name]),ph.items.map(p=>[p.number,p.name]));
 assert(!r.groups[1].items.some(i=>/킬리힐|상쎄르/.test(i.name)));
 assert.equal(r.groups[1].items.find(i=>i.order===13).id,'wc0ec4602','카룬도 샤도네이 id 유지');
+// 레드: 페이히어 번호·이름 그대로(10/27), CSV 26종의 id 모두 유지(비냐 란자 틴토=비노 틴토 22번, 도멘 말백=26번)
+const red=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_레드_1027.json'),'utf8'));
+assert.deepEqual(r.groups[0].items.map(i=>[i.order,i.name]),red.items.map(p=>[p.number,p.name]));
+const snapRed=JSON.parse(fs.readFileSync(extract.SNAPSHOT,'utf8')).groups.find(g=>g.id==='red').items;
+assert.deepEqual(r.groups[0].items.map(i=>i.id).sort(),snapRed.map(i=>i.id).sort(),'레드 id 유지');
+assert.equal(r.groups[0].items.find(i=>i.order===26).id,'w2895862b','도멘 말백 id 유지');
 for(const g of r.groups)g.items.forEach((it,i)=>{
   assert.match(it.id,/^[A-Za-z0-9_-]{1,24}$/);assert.equal(it.order,i+1);
   assert(it.name&&it.name===it.name.trim(),'이름 앞뒤 공백 없음 '+it.name);
@@ -20,7 +26,7 @@ for(const g of r.groups)g.items.forEach((it,i)=>{
   assert.deepEqual(Object.keys(it).filter(k=>!['id','name','order','confirm','min'].includes(k)),[],'허용 키만');
 });
 // 번호가 비었거나 숫자뿐인 줄이 제자리 칸에 들어감
-assert(r.groups[0].items.some(i=>i.name==='민친버리 피노누아'));assert(r.groups[0].items.some(i=>i.name==='도멘 말백'));assert(r.groups[4].items.some(i=>i.name==='롤 메소드 앙세스트랄'));
+assert(r.groups[0].items.some(i=>i.name==='민친버리 피노누아'));assert(r.groups[0].items.some(i=>i.name==='도멘 오뜨 블랑드 말백'));assert(r.groups[4].items.some(i=>i.name==='롤 메소드 앙세스트랄'));
 assert.equal(r.groups[0].items[8].name,'민친버리 피노누아');
 // 확인 필요 표기 보존
 const sh=r.groups[5].items.find(i=>/쇼토트/.test(i.name));assert(sh&&sh.confirm===true&&sh.name.includes('확인 필요'));

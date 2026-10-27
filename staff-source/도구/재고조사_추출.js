@@ -9,6 +9,9 @@ const CSV = path.join(__dirname, '..', '자료', '와인재고.csv');
 const SNAPSHOT = path.join(__dirname, '재고조사_와인목록.json');
 const snapshotText = (r) => JSON.stringify(r, null, 1) + '\n';
 const PAYHERE = path.join(__dirname, '페이히어_화이트로제_1023.json');
+const PAYHERE_RED = path.join(__dirname, '페이히어_레드_1027.json');
+// 재고 CSV와 페이히어 이름이 달라 자동으로 못 잇는 레드(10/27 회장 확인: 페이히어가 기준)
+const RED_ALIAS = { '비냐 란자 틴토': '비노 틴토', '도멘 말백': '도멘 오뜨 블랑드 말백', '미스터 피에레 피노누아': '미스터 피에르 피노누아', '프리마 피에트라 산지오베제 루비네코': '프리마 산지오베제 루비코네' };
 const GROUPS = [
   ['red', '레드', /^Red Wine/i],
   ['white', '화이트', /^White Wine/i],
@@ -48,9 +51,20 @@ function applyPayhere(result) {
   const groups = [];
   for (const g of result.groups) {
     if (g.id === 'white') groups.push({ id: 'white', name: '화이트 & 로제', items });
+    else if (g.id === 'red') groups.push(applyPayhereRed(g, key));
     else if (g.id !== 'whiterose') groups.push(g);
   }
   return { groups };
+}
+// 레드도 페이히어 번호·이름·순서를 따른다(10/27). 이름은 그대로 또는 메뉴판 이름·RED_ALIAS로 이어 기존 id(지난 조사 기록)를 유지한다.
+function applyPayhereRed(g, key) {
+  if (!fs.existsSync(PAYHERE_RED)) return g;
+  const ph = JSON.parse(fs.readFileSync(PAYHERE_RED, 'utf8'));
+  const items = ph.items.map((p) => {
+    const o = g.items.find((it) => [p.name, p.menuName].some((n) => key(n) === key(RED_ALIAS[it.name] || it.name)));
+    return { ...(o || { id: 'w' + hash('red', p.name) }), name: p.name, order: p.number };
+  });
+  return { ...g, items };
 }
 function extract(csvPath) {
   const file = csvPath || process.env.HARAGO_INVENTORY_CSV || CSV;
