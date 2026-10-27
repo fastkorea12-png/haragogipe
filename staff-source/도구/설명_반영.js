@@ -52,7 +52,7 @@ const payRed=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_레드
 const redAlias={'오젠느 르블랑 바케라스':'으젠느 르블랑 바케라스'},redOf=name=>payRed.items.find(p=>p.menuName===(redAlias[name]||name)||p.name===name);
 for(const p of payRed.items)if(!menu.rows.some(m=>/^Red/i.test(clean(m.values[0]))&&clean(m.values[2])===p.menuName))throw new Error('Payhere red menu link changed: '+p.name);
 for(const w of wines){if(!/^Red/i.test(w.menuCode))continue;const p=redOf(w.name);if(!p)throw new Error('Red not on Payhere: '+w.name);
- Object.assign(w,{price:p.price+'원',posNumber:'레드 '+p.number+'번',posName:p.name,priceSource:'페이히어 '+payRed.readAt});}
+ Object.assign(w,{price:p.price+'원',posNumber:'레드 '+p.number+'번',posName:p.name,priceSource:'페이히어 '+payRed.readAt});if(p.description)w.description=p.description;}
 // 품절 등으로 추천에서 빼는 와인. 원문 점수·설명은 지식에 남긴다.
 const skip=JSON.parse(fs.readFileSync(path.join(__dirname,'추천_제외.json'),'utf8')).items;
 for(const x of skip){const i=wines.findIndex(w=>w.name===x.name);if(i<0)throw new Error('Skip target not found: '+x.name);wines.splice(i,1);excluded.push([x.name,x.reason+'('+x.at+')']);}
