@@ -1142,6 +1142,7 @@ function applyProposal(p){
       var want=(p.current||"").trim(),slots=slotsOf(kind,f.it),hit=null;
       if(want)hit=slots.find(function(s){return String(s.get()||"").trim()===want;})||slots.find(function(s){return want.length>=4&&String(s.get()||"").indexOf(want)>=0;});
       if(hit){var cur=String(hit.get()||"");hit.set(want&&cur.trim()!==want?cur.replace(want,p.proposed):p.proposed);c.hl="pre:"+f.it.id+":"+hit.key;}
+      else if(kind==="recipes"&&!want&&/· 서빙 식기$/.test(p.targetLabel||"")){f.it.utensil=p.proposed;c.hl="pre:"+f.it.id+":utensil";}
       else q.note="현재 문구와 같은 입력칸을 찾지 못함. 제안 문구를 보고 직접 수정";
     }else if(p.type==="move")q.note="순서·위치 변경 제안. 목록에서 ▲▼로 직접 이동";
     render();window.scrollTo(0,0);

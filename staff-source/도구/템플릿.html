@@ -990,7 +990,7 @@ var recipeKind='안주',openFood='';
    var ph=photoBox(f,'food-photo');if(ph)body.append(ph);
    function field(label,text,confirm){var d=el('div','food-field'+(confirm?' confirm':''));d.append(el('strong','',label),el('span','',text));return d;}
    if(f.price)body.append(field('가격',fmtPrice(f.price)+' (페이히어)'));
-   body.append(field('서빙 식기',f.utensil||'식기 안내 없음',!f.utensil));
+   var uf=field('서빙 식기',f.utensil||'식기 안내 없음',!f.utensil),ut=rtgt('appetizers',f,'서빙 식기','utensil',0,f.utensil||'');uf.classList.add('food-utensil');uf.append(editMark(ut),editButton(ut,'✎ 제안'));body.append(uf);
    if(f.confirm)body.append(field('확인','[확인] '+(f.confirmNote||'관리자 확인 필요'),true));
    var prep=field('준비물 (도구·그릇)',f.ingredients.join(', ')||'단계 참고');prep.classList.add('food-prep');body.append(prep);
    var sw=el('div','food-field food-order');sw.append(el('strong','','만드는 순서'));var ol=el('ol','food-steps');
@@ -1007,7 +1007,7 @@ var recipeKind='안주',openFood='';
   recipeKind=kind;var food=kind==='안주';
   document.querySelectorAll('[data-recipe-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.recipeKind===kind));});
   document.getElementById('recipeCards').hidden=food;document.getElementById('foodCards').hidden=!food;document.getElementById('foodTools').hidden=!food;
-  document.getElementById('recipeIntro').textContent=food?'매장 안주 만드는 법. 이름을 누르면 펼침.':'주문한 병 와인으로 만드는 칼리모초·키르·미모사. 아래 기타 음료는 벽 메모(사장님 확인 전).';
+  document.getElementById('recipeIntro').textContent=food?'매장 안주 만드는 법. 이름을 누르면 펼침.':'주문한 병 와인으로 만드는 칼리모초·키르·미모사. 아래는 매장 메뉴 칵테일·음료(주방 벽 레시피).';
   if(food)renderFoods();else applyContent('recipes');
  }
  function rfield(group,it,label,value,slot,confirm){
@@ -1032,14 +1032,14 @@ var recipeKind='안주',openFood='';
    if(it.confirmNote)content.append(rfield(group,it,'확인 사항',it.confirmNote,'confirmNote',true));
    else{var cd=el('div','recipe-field confirm');cd.append(el('strong','','확인 사항'),el('span','','[확인] 관리자 확인 필요'));content.append(cd);}
   }
-  content.append(el('p','recipe-note','출처 · '+ctSrc('recipes')+(CT.recipes?'':' · 12_칵테일_레시피')+(etc?' / 벽 메모(사진), 사장님 확인 전':' / 주문한 병 와인 기준')));
+  content.append(el('p','recipe-note','출처 · '+ctSrc('recipes')+(CT.recipes?'':' · 12_칵테일_레시피')+(etc?' / 주방 벽 레시피(10/29 사진)':' / 주문한 병 와인 기준')));
   card.append(content);return card;
  }
  function renderRecipes(){
   var host=document.getElementById('recipeCards');host.replaceChildren();var R=recipesData();
   R.cocktails.filter(function(c){return c.status==='confirmed';}).forEach(function(it){host.append(recipeCard('cocktails',it));});
   if(R.others.length){
-   var sub=el('h3','recipe-sub','기타 음료 (벽 메모)');sub.id='recipeEtc';var nt=el('p','recipe-note','벽에 붙은 손글씨 레시피를 사진 기준으로 옮긴 메모. 사장님 확인 전이고 단위가 사진에 없음 [확인].');var wrap=el('div','recipe-etc-head');wrap.append(sub,nt);host.append(wrap);
+   var sub=el('h3','recipe-sub','매장 칵테일·음료 (벽 레시피)');sub.id='recipeEtc';var nt=el('p','recipe-note','주방 벽 손글씨 레시피(10/29 사진). 1·1.5 같은 숫자의 단위는 메모에 없음 [확인].');var wrap=el('div','recipe-etc-head');wrap.append(sub,nt);host.append(wrap);
    R.others.forEach(function(it){host.append(recipeCard('others',it));});
   }
  }

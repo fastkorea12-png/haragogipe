@@ -105,7 +105,7 @@ function cocktailItem(used, kind, sec, status) {
 }
 function cocktails(used) {
   const secs = sections(read('12_칵테일_레시피.md')), out = { cocktails: [], others: [] };
-  const confirmed = ['칼리모초', '키르', '미모사'], others = ['메론소다', '크림소다', '블랙러시안', '파우스트'];
+  const confirmed = ['칼리모초', '키르', '미모사'], others = ['퍼지네이블', '말리부오렌지', '스크류드라이버', '블랙러시안', '파우스트', '카타르시스', '크림소다', '메론소다', '뱅쇼', '샹그리아'];
   const find = (n) => secs.find((s) => s.title.indexOf(n + ' 레시피') === 0);
   confirmed.forEach((n) => out.cocktails.push(cocktailItem(used, 'cocktails', find(n), 'confirmed')));
   const cand = secs.filter((s) => /\(초안 후보/.test(s.title) && /레시피/.test(s.title));

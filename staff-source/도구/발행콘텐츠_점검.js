@@ -57,7 +57,7 @@ const server=http.createServer((req,res)=>{
 const B=extract();
 // 내장 사진이 있는 안주는 발행 사진 실패 시 내장 사진으로 바뀌므로, 실패·지연 사진 시험은 내장 사진 없는 안주로 한다.
 const hasBuiltin=a=>['png','jpg'].some(x=>fs.existsSync(path.join(root,'지식','사진',a.name.replace(/^\d+\.\s*/,'')+'.'+x)));
-const [BAD,SLOW]=B.recipes.appetizers.map((a,i)=>i).filter(i=>i>0&&!hasBuiltin(B.recipes.appetizers[i]));
+const BAD=B.recipes.appetizers.findIndex((a,i)=>i>0&&!hasBuiltin(a)),SLOW=BAD===1?2:1;// 지연 사진은 서버 사진을 먼저 쓰므로 내장 사진이 있어도 된다
 const REC_NAME='치즈 플레이트 (발행판)',STEP_NEW='발행 새 단계 문구: 접시에 치즈를 둥글게 배치.',STEP_NEW2='발행 두 번째 단계.';
 function mkRecipes(version,mut){
  const d=clone(B.recipes);
@@ -137,8 +137,8 @@ const resetStub=()=>{S.hits.length=0;S.props.length=0;S.chats.length=0;S.other.l
    // 칵테일
    await page.locator('[data-recipe-kind="칵테일"]').click();
    const cn=await cocktailNames(page),confirmed=B.recipes.cocktails.filter(x=>x.status==='confirmed').map(x=>x.name).concat(B.recipes.others.map(x=>x.name));
-   await check(A,'⑤ 칵테일: 확정 3 + 기타 음료 4만 표시, 후보 8종 미표시',async()=>{assert.deepEqual(cn,confirmed);B.recipes.cocktails.filter(x=>x.status==='candidate').forEach(c=>assert(!cn.includes(c.name),'후보 표시됨: '+c.name));assert.equal(B.recipes.cocktails.filter(x=>x.status==='candidate').length,8);});
-   await check(A,'① 칵테일 발행 문구·사진·확인 배너',async()=>{const c=page.locator('.recipe-card').first(),t=await c.innerText();assert(t.includes('발행 샹그리아 잔')&&t.includes('발행 칵테일 순서 1.')&&t.includes('서버 발행 v7'));assert.equal(await c.locator('.photo-box img.recipe-photo').count(),1);const et=page.locator('.recipe-etc').first();assert(await et.locator('.recipe-field.confirm').count()>=1);assert(/\[확인\]/.test(await et.innerText()));assert.equal(await page.locator('#recipeEtc').innerText(),'기타 음료 (벽 메모)');});
+   await check(A,'⑤ 칵테일: 확정 3 + 매장 칵테일·음료만 표시, 후보 미표시',async()=>{assert.deepEqual(cn,confirmed);B.recipes.cocktails.filter(x=>x.status==='candidate').forEach(c=>assert(!cn.includes(c.name),'후보 표시됨: '+c.name));assert.equal(B.recipes.cocktails.filter(x=>x.status==='candidate').length,7);});
+   await check(A,'① 칵테일 발행 문구·사진·확인 배너',async()=>{const c=page.locator('.recipe-card').first(),t=await c.innerText();assert(t.includes('발행 샹그리아 잔')&&t.includes('발행 칵테일 순서 1.')&&t.includes('서버 발행 v7'));assert.equal(await c.locator('.photo-box img.recipe-photo').count(),1);const et=page.locator('.recipe-etc').first();assert(await et.locator('.recipe-field.confirm').count()>=1);assert(/\[확인\]/.test(await et.innerText()));assert.equal(await page.locator('#recipeEtc').innerText(),'매장 칵테일·음료 (벽 레시피)');});
    if(A==='mobile'){await page.locator('.recipe-card').first().scrollIntoViewIfNeeded();await page.screenshot({path:shot('02_칵테일_사진카드_500')});}
    await check(A,'⑨ 레시피 탭 레이아웃',()=>layoutOk(page,'recipes'));
    // 응대 멘트
