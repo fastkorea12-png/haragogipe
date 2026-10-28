@@ -48,6 +48,8 @@ const photoNames=[...new Set((fs.existsSync(photoDir)?fs.readdirSync(photoDir):[
 for(const name of photoNames){
  const source=['jpg','png'].map(ext=>path.join(kdir,'사진',name+'.'+ext)).find(f=>fs.existsSync(f));
  if(!source)continue;
+ // JPG는 그대로 넣는다(배포 서버 ubuntu에는 sips가 없고, 로컬·서버 결과가 같아야 한다). PNG만 sips로 줄여 JPEG로 바꾼다.
+ if(/\.jpg$/i.test(source)){recipePhotos[name]='data:image/jpeg;base64,'+fs.readFileSync(source).toString('base64');continue;}
  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'harago-photo-')),out=path.join(tmp,'photo.jpg');
  try{
   execFileSync('sips',['--resampleHeightWidthMax','1000','--setProperty','format','jpeg','--setProperty','formatOptions','75',source,'--out',out],{stdio:'pipe'});

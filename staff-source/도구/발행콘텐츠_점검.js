@@ -55,12 +55,15 @@ const server=http.createServer((req,res)=>{
 
 // ---- 시험 자료
 const B=extract();
+// 내장 사진이 있는 안주는 발행 사진 실패 시 내장 사진으로 바뀌므로, 실패·지연 사진 시험은 내장 사진 없는 안주로 한다.
+const hasBuiltin=a=>['png','jpg'].some(x=>fs.existsSync(path.join(root,'지식','사진',a.name.replace(/^\d+\.\s*/,'')+'.'+x)));
+const [BAD,SLOW]=B.recipes.appetizers.map((a,i)=>i).filter(i=>i>0&&!hasBuiltin(B.recipes.appetizers[i]));
 const REC_NAME='치즈 플레이트 (발행판)',STEP_NEW='발행 새 단계 문구: 접시에 치즈를 둥글게 배치.',STEP_NEW2='발행 두 번째 단계.';
 function mkRecipes(version,mut){
  const d=clone(B.recipes);
  d.appetizers[0].name=REC_NAME;d.appetizers[0].ingredients=['발행 준비물 A','발행 준비물 B'];d.appetizers[0].steps=[STEP_NEW,STEP_NEW2];d.appetizers[0].photoId=PID1;d.appetizers[0].price='12,000원';
- d.appetizers[1].confirm=true;d.appetizers[1].confirmNote='발행 확인 문구 시험';d.appetizers[1].photoId=PIDBAD;
- d.appetizers[2].photoId=PIDSLOW;
+ d.appetizers[1].confirm=true;d.appetizers[1].confirmNote='발행 확인 문구 시험';d.appetizers[BAD].photoId=PIDBAD;
+ d.appetizers[SLOW].photoId=PIDSLOW;
  d.cocktails[0].photoId=PID1;d.cocktails[0].glass='발행 샹그리아 잔';d.cocktails[0].steps=['발행 칵테일 순서 1.','발행 칵테일 순서 2.'];
  if(mut)mut(d);
  return {published:true,kind:'recipes',version,publishedAt:'2026-10-14T05:51:58.958Z',data:d};
@@ -238,7 +241,7 @@ const resetStub=()=>{S.hits.length=0;S.props.length=0;S.chats.length=0;S.other.l
   {
    resetStub();setOk(mkRecipes(7),mkPhrases(7));
    const {context,page}=await open(profile);await tab(page,'recipes');await waitFood(page,REC_NAME);
-   const nm=B.recipes.appetizers[1].name,slow=B.recipes.appetizers[2].name;
+   const nm=B.recipes.appetizers[BAD].name,slow=B.recipes.appetizers[SLOW].name;
    await check(A,'④ 사진 로딩 실패(404): 사진 칸이 사라지고 글은 그대로',async()=>{await fc(page,nm).locator('.food-head').click();await page.waitForFunction(n=>{const c=[...document.querySelectorAll('.food-card')].find(x=>x.dataset.food===n);return c&&!c.querySelector('.photo-box');},nm,{timeout:5000});const t=await fc(page,nm).innerText();assert(t.includes('만드는 순서'));});
    await check(A,'④ 사진 로딩 중에도 칸 높이 예약(시프트 없음): 늦게 뜨는 사진 전후 높이·다음 요소 위치 동일',async()=>{
     await fc(page,nm).locator('.food-head').click();

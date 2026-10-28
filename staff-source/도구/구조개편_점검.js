@@ -42,7 +42,7 @@ assert(ctx.PHRASES.some(p=>/^5-7\b/.test(p.title)));
    assert(await page.locator('#log').isVisible());assert((await page.locator('#log').innerText()).includes('120ml'));
    assert.equal(await page.locator('.screen:visible').getAttribute('id'),'screen-'+id);
   }
-  await page.locator('[data-tab="recipes"]').click();assert.equal(await page.locator('.recipe-photo').count(),Object.keys(ctx.RECIPE_PHOTOS).length);
+  await page.locator('[data-tab="recipes"]').click();const foodKeys=fs.readFileSync(path.join(root,'지식','10_안주_가이드.md'),'utf8').split('\n').map(l=>(l.match(/^- \d+\.\s*([^:]+):/)||[])[1]).filter(Boolean).map(n=>n.replace(/[\s&·]/g,''));assert.equal(await page.locator('.recipe-photo').count(),Object.keys(ctx.RECIPE_PHOTOS).filter(k=>!foodKeys.includes(k.replace(/[\s&·]/g,''))).length);// 칵테일 카드 사진만 센다(안주 사진은 안주 카드)
   for(const img of await page.locator('.recipe-photo').all()){await img.scrollIntoViewIfNeeded();await img.evaluate(n=>n.decode());assert(await img.evaluate(n=>n.naturalWidth>0&&n.naturalWidth<=1000));}
   await page.locator('[data-tab="checklist"]').click();
   await page.locator('#checkContent input[type=checkbox]').first().check();await page.reload();

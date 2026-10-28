@@ -966,7 +966,7 @@ var recipeKind='안주',openFood='';
   }).catch(function(){}).then(release);
  }
  // 사진: 발행 데이터의 photoId 우선, 없으면 내장 사진, 둘 다 없으면 칸 없음. 불러오기 실패 시 내장 사진으로 바꾸고, 그것도 없으면 칸을 숨긴다.
- function builtinPhoto(name){var key=Object.keys(RECIPE_PHOTOS).find(function(k){return foodKey(k)===foodKey(name);});return key?RECIPE_PHOTOS[key]:'';}
+ function builtinPhoto(name){var bare=String(name).replace(/^\d+\.\s*/,'');var key=Object.keys(RECIPE_PHOTOS).find(function(k){return foodKey(k)===foodKey(name)||foodKey(k)===foodKey(bare);});return key?RECIPE_PHOTOS[key]:'';}
  function photoBox(it,cls){
   var id=CT.recipes&&CL_BASE&&isStr(it.photoId)&&PHOTO_RE.test(it.photoId)?it.photoId:'',built=builtinPhoto(it.name),src=id?CL_BASE+'/api/photo/'+id:built;
   if(!src)return null;
