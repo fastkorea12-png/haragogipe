@@ -75,18 +75,18 @@ const key=s=>s.replace(/[\s&·]/g,'');
     // 단계/수정 버튼 겹침: li 안 span과 edit-btn
     const overlap=await page.evaluate(()=>{const o=[];document.querySelectorAll('.food-body:not([hidden]) .food-steps li').forEach(li=>{const a=li.querySelector('span').getBoundingClientRect(),b=li.querySelector('.edit-btn').getBoundingClientRect();if(a.right>b.left+0.5&&a.bottom>b.top&&a.top<b.bottom)o.push(li.innerText)});return o});
     assert.equal(overlap.length,0,names[i]+' 글자·버튼 겹침');
-    if(label==='모바일'&&names[i]==='짜파게티')await page.screenshot({path:shotDir+'/펼친카드.png'});
+    if(label==='모바일'&&names[i]==='16. 트치소 짜파게티')await page.screenshot({path:shotDir+'/펼친카드.png'});
    }
    // 수정 요청 복사 대상 파일
    await page.locator('.food-card').first().locator('.food-head').click();
    await page.locator('.food-card').first().locator('.food-steps li .edit-btn').first().click();
-   const tgt=await page.locator('#editTarget').innerText();assert(/레시피 · 치즈 플레이트/.test(tgt));
+   const tgt=await page.locator('#editTarget').innerText();assert(/레시피 · 1. 올리브 8pc/.test(tgt));
    // 토글(같은 카드 다시 누르면 접힘)
    const closer2=page.locator('#editCancel,[data-edit-close],#formClose,#editClose').first();if(await closer2.count())await closer2.click();
    await page.locator('.food-card').first().locator('.food-head').click();
    assert.equal(await page.locator('.food-body:not([hidden])').count(),0);
    // 필터
-   await page.fill('#foodFilter','파스타');assert.equal(await page.locator('.food-card').count(),2);
+   await page.fill('#foodFilter','파스타');assert.equal(await page.locator('.food-card').count(),3);
    await page.fill('#foodFilter','없는안주');assert.equal(await page.locator('.food-card').count(),0);
    await page.fill('#foodFilter','');assert.equal(await page.locator('.food-card').count(),n);
    // 칵테일 복귀

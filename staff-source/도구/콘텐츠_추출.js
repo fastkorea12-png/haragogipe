@@ -17,11 +17,17 @@ const dedupe = (used, id) => { while (used.has(id)) id += 'x'; used.add(id); ret
 
 // ---- 안주 (템플릿.html foodCatalog 와 같은 규칙)
 const FOOD_TOOLS = ['전자레인지', '오븐', '토치', '밧드', '종이호일', '피자 종이', '머그컵', '종지', '작은 접시', '흰 접시', '앞접시', '아이스크림 그릇', '그릇', '작은 잔', '냅킨', '접시', '샐러드톱'];
+const NOT_RECIPE = ['서빙 식기', '안주 목록과 가격', '공통 · 기본 마무리와 전자레인지 시간'];
 function appetizers(used) {
   const secs = sections(read('10_안주_가이드.md')), ut = {}, price = {}, out = [];
   const tools = secs.find((e) => e.title === '서빙 식기'), list = secs.find((e) => e.title === '안주 목록과 가격');
   if (tools) tools.body.split('\n').forEach((l) => { const m = l.match(/^-\s*([^:]+):\s*(.+)$/); if (m) m[1].split(',').forEach((n) => { ut[foodKey(n)] = m[2].trim(); }); });
-  if (list) { const pm = list.body.match(/([가-힣 ]+?)만 메뉴판에 ([\d,]+원)/); if (pm) price[foodKey(pm[1])] = pm[2]; }
+  if (list) {
+    const pm = list.body.match(/([가-힣 ]+?)만 메뉴판에 ([\d,]+원)/); if (pm) price[foodKey(pm[1])] = pm[2];
+    // 페이히어 가격 줄: '- 가격(페이히어 …): 1. 올리브 8pc 8,000원 · 2. …'
+    const pl = list.body.split('\n').find((l) => /^-\s*가격\(페이히어/.test(l));
+    if (pl) pl.replace(/^[^:]+:\s*/, '').split(' · ').forEach((x) => { const m = x.trim().match(/^(.+?)\s+([\d,]+원)$/); if (m) price[foodKey(m[1])] = m[2]; });
+  }
   const make = (name, text, sec) => {
     const sentences = text.split(/\.\s*/).map((x) => x.trim()).filter(Boolean).map((x) => x + '.');
     const steps = [], finish = [];
@@ -39,7 +45,7 @@ function appetizers(used) {
     return it;
   };
   secs.forEach((e) => {
-    if (e.title === '서빙 식기' || e.title === '안주 목록과 가격') return;
+    if (NOT_RECIPE.includes(e.title)) return;
     const lines = e.body.split('\n').map((x) => x.trim()).filter(Boolean), bullets = lines.filter((l) => /^-\s*[^:]+:/.test(l));
     if (bullets.length) bullets.forEach((l) => { const m = l.match(/^-\s*([^:]+):\s*(.+)$/); out.push(make(m[1].trim(), m[2].trim(), e.title)); });
     else out.push(make(e.title, lines.join(' '), e.title));
