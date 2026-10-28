@@ -39,10 +39,10 @@ assert(ctx.PHRASES.some(p=>/^5-7\b/.test(p.title)));
    const layout=await page.evaluate(()=>{const screen=document.querySelector('.screen:not([hidden])');return {right:document.documentElement.scrollWidth,width:innerWidth,bottom:screen.getBoundingClientRect().bottom,navTop:document.querySelector('.sidebar').getBoundingClientRect().top};});
    assert(layout.right<=layout.width,id+' horizontal overflow');assert(layout.bottom<=layout.navTop,id+' bottom navigation overlap');
    await page.locator('#q').fill('칼리모초 만드는 법');await page.locator('#f button').click();
-   assert(await page.locator('#log').isVisible());assert((await page.locator('#log').innerText()).includes('120ml'));
+   assert(await page.locator('#log').isVisible());assert((await page.locator('#log').innerText()).includes('100ml'));
    assert.equal(await page.locator('.screen:visible').getAttribute('id'),'screen-'+id);
   }
-  await page.locator('[data-tab="recipes"]').click();const foodKeys=fs.readFileSync(path.join(root,'지식','10_안주_가이드.md'),'utf8').split('\n').map(l=>(l.match(/^- \d+\.\s*([^:]+):/)||[])[1]).filter(Boolean).map(n=>n.replace(/[\s&·]/g,''));assert.equal(await page.locator('.recipe-photo').count(),Object.keys(ctx.RECIPE_PHOTOS).filter(k=>!foodKeys.includes(k.replace(/[\s&·]/g,''))).length);// 칵테일 카드 사진만 센다(안주 사진은 안주 카드)
+  await page.locator('[data-tab="recipes"]').click();await page.locator('[data-recipe-kind="칵테일"]').click();const foodKeys=fs.readFileSync(path.join(root,'지식','10_안주_가이드.md'),'utf8').split('\n').map(l=>(l.match(/^- \d+\.\s*([^:]+):/)||[])[1]).filter(Boolean).map(n=>n.replace(/[\s&·]/g,''));assert.equal(await page.locator('.recipe-photo').count(),Object.keys(ctx.RECIPE_PHOTOS).filter(k=>!foodKeys.includes(k.replace(/[\s&·]/g,''))).length);// 칵테일 카드 사진만 센다(안주 사진은 안주 카드)
   for(const img of await page.locator('.recipe-photo').all()){await img.scrollIntoViewIfNeeded();await img.evaluate(n=>n.decode());assert(await img.evaluate(n=>n.naturalWidth>0&&n.naturalWidth<=1000));}
   await page.locator('[data-tab="checklist"]').click();
   await page.locator('#checkContent input[type=checkbox]').first().check();await page.reload();

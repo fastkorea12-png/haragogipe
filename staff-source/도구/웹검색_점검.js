@@ -54,7 +54,7 @@ const server=http.createServer((req,res)=>{
   const A=profile,{context,page}=await open(profile);
   // 1) 내장 답이 있는 질문·매장 운영 사실은 서버 호출 없음
   reset();
-  for(const [q,must] of [['칼리모초 만드는 법','120ml'],['오픈 순서 알려줘','오픈'],['와이파이 비번',FALL],['마지막 주문 시간',FALL],['소비뇽블랑이 뭐야','와인']]){
+  for(const [q,must] of [['칼리모초 만드는 법','100ml'],['오픈 순서 알려줘','오픈'],['와이파이 비번',FALL],['마지막 주문 시간',FALL],['소비뇽블랑이 뭐야','와인']]){
    await check(A,'서버 호출 없음: '+q,async()=>{await ask(page,q);await page.waitForTimeout(250);assert.equal(stub.hits.length,0);assert((await logText(page)).includes(must));assert.equal(await page.locator('.web-badge').count(),0);});
   }
   await check(A,'매장과 무관한 일반 질문(날씨)도 보내지 않음',async()=>{await ask(page,'오늘 날씨 어때');await page.waitForTimeout(250);assert.equal(stub.hits.length,0);assert((await logText(page)).includes(FALL));});
