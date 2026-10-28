@@ -34,7 +34,7 @@ const key=s=>s.replace(/[\s&·]/g,'');
    assert.equal(await page.locator('#recipeCards .recipe-card.recipe-etc').count(),10,'매장 칵테일·음료 10장');
    assert.equal((await page.locator('#recipeEtc').innerText()).trim(),'매장 칵테일·음료 (벽 레시피)');
    assert.deepEqual(await page.locator('#recipeCards .recipe-etc h3').allInnerTexts(),['퍼지네이블','말리부오렌지','스크류드라이버','블랙러시안','파우스트','카타르시스','크림소다','메론소다','뱅쇼','샹그리아']);
-   for(const n of ['퍼지네이블','블랙러시안','파우스트','카타르시스','크림소다','메론소다']){/* 단위가 메모에 없는 것은 [확인] 표시 */
+   for(const n of ['파우스트']){/* 양이 메모에 없는 것만 [확인] 표시 */
     const c=page.locator('.recipe-etc[data-etc="'+n+'"]');
     assert(await c.locator('.recipe-field.confirm').count()>=1,n+' [확인] 표시');
     assert(/\[확인\]/.test(await c.innerText()),n+' 확인 문구');
@@ -44,7 +44,7 @@ const key=s=>s.replace(/[\s&·]/g,'');
    await bl.locator('.edit-btn').first().click();
    assert.match(await page.locator('#editTarget').innerText(),/^레시피 · 블랙러시안/);
    const cl0=page.locator('#editCancel,[data-edit-close],#formClose,#editClose').first();if(await cl0.count())await cl0.click();
-   const tx=await bl.innerText();assert(/포트 와인잔/.test(tx)&&/깔루아 1/.test(tx)&&/단위 없음/.test(tx));
+   const tx=await bl.innerText();assert(/포트 와인잔/.test(tx)&&/깔루아 1온스/.test(tx));
    if(label==='모바일'){await page.locator('#recipeEtc').scrollIntoViewIfNeeded();await page.screenshot({path:shotDir+'/칵테일_기타음료.png'});await bl.scrollIntoViewIfNeeded();await page.screenshot({path:shotDir+'/블랙러시안.png'});}
    await page.locator('[data-recipe-kind="안주"]').click();
    // 안주 전환

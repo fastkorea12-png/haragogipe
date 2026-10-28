@@ -1039,7 +1039,7 @@ var recipeKind='안주',openFood='';
   var host=document.getElementById('recipeCards');host.replaceChildren();var R=recipesData();
   R.cocktails.filter(function(c){return c.status==='confirmed';}).forEach(function(it){host.append(recipeCard('cocktails',it));});
   if(R.others.length){
-   var sub=el('h3','recipe-sub','매장 칵테일·음료 (벽 레시피)');sub.id='recipeEtc';var nt=el('p','recipe-note','주방 벽 손글씨 레시피(10/29 사진). 1·1.5 같은 숫자의 단위는 메모에 없음 [확인].');var wrap=el('div','recipe-etc-head');wrap.append(sub,nt);host.append(wrap);
+   var sub=el('h3','recipe-sub','매장 칵테일·음료 (벽 레시피)');sub.id='recipeEtc';var nt=el('p','recipe-note','주방 벽 손글씨 레시피(10/29 사진). 숫자는 모두 온스(1온스 약 30ml).');var wrap=el('div','recipe-etc-head');wrap.append(sub,nt);host.append(wrap);
    R.others.forEach(function(it){host.append(recipeCard('others',it));});
   }
  }
