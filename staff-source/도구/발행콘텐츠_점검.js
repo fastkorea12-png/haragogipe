@@ -251,7 +251,7 @@ const resetStub=()=>{S.hits.length=0;S.props.length=0;S.chats.length=0;S.other.l
     await page.waitForFunction(n=>{const c=[...document.querySelectorAll('.food-card')].find(x=>x.dataset.food===n),i=c.querySelector('.photo-box img');return i&&i.complete&&i.naturalWidth>0;},slow,{timeout:5000});
     const after=await page.evaluate(n=>{const c=[...document.querySelectorAll('.food-card')].find(x=>x.dataset.food===n),b=c.querySelector('.photo-box'),next=b.nextElementSibling;return {h:b.getBoundingClientRect().height,t:next.getBoundingClientRect().top+scrollY};},slow);
     assert(Math.abs(after.h-before.h)<1,'사진 칸 높이 변함 '+before.h+'→'+after.h);assert(Math.abs(after.t-before.t)<1,'아래 요소 위치 변함');
-    assert(Math.abs(before.h-Math.min(280,before.w*9/16))<2,'16:9(최대 280px) 비율 예약 '+before.h+' / '+before.w);
+    assert(Math.abs(before.h-Math.min(360,before.w))<2,'안주 사진 정사각(최대 360px) 예약 '+before.h+' / '+before.w);
    });
    await context.close();
   }
