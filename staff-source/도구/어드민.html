@@ -1616,7 +1616,7 @@ function invResend(id){
 // ---- 주방재고(10/29): 현황(위치별/구입처별)·목록 편집(품목·위치·구입처, 발행=kind kitchen)·조사 이력. 와인 재고와 따로 불러온다.
 var EMBEDDED_KITCHEN=/*KITCHEN_JSON*/{"items":[]};
 var KIT_STATE={ok:["st-ok","● 충분","충분"],low:["st-low","▲ 부족","부족"],out:["st-none","✕ 없음","없음"]};
-var KIT_LOC_ORDER=["냉장고","냉장고 문","와인 냉장고","냉동실","조리대","싱크대 & 스텐다이","기본안주 아래","창고","조리대 수납함","스텐다이","싱크대"];
+var KIT_LOC_ORDER=["냉장고","냉장고 문","와인 냉장고","냉동실","조리대","싱크대 & 스텐다이","기타","기본안주 아래","창고","조리대 수납함","스텐다이","싱크대"];
 var KIT={loaded:false,loading:false,error:"",states:{},surveys:[],orig:null,draft:null,base:0,published:false,serverNote:"",view:"status",sort:"loc",low:false,paste:"",pasteMsg:null,detail:null,detailData:null,saving:false};
 function kitFrom(d){return (d&&d.items||[]).map(function(it){return {id:it.id,name:it.name||"",loc:it.loc||"",loc2:it.loc2||"",shop:it.shop||"",del:false};});}
 function kitPayload(){return {items:KIT.draft.filter(function(it){return !it.del;}).map(function(it){var o={id:it.id,name:it.name.trim(),loc:it.loc.trim()};if(it.loc2.trim())o.loc2=it.loc2.trim();if(it.shop.trim())o.shop=it.shop.trim();return o;})};}

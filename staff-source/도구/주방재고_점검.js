@@ -26,7 +26,7 @@ const kd=ms=>new Date(ms+9*3600000).toISOString().slice(0,10),TODAY=kd(Date.now(
 const initClip=()=>{window.__clip=[];Object.defineProperty(window,'isSecureContext',{value:true});Object.defineProperty(navigator,'clipboard',{value:{writeText:t=>{window.__clip.push(t);return Promise.resolve();}},configurable:true});};
 const byName=n=>list.items.find(i=>i.name===n);
 (async()=>{
- assert.equal(list.items.length,90,'CSV 90개');
+ assert.equal(list.items.length,88,'CSV 88개');
  assert(!list.items.some(i=>/진저비어|^메론$/.test(i.name)),'삭제한 품목 없음');assert.equal(byName('피클').loc,'냉장고');
  const browser=await chromium.launch({channel:'chrome',headless:true});
  const log=[],ok=m=>log.push(m);
@@ -41,9 +41,9 @@ const byName=n=>list.items.find(i=>i.name===n);
   assert.equal(await page.isVisible('#survey'),true);assert.equal(await page.isHidden('#kitchen'),true);assert.equal(await page.isHidden('#kbar'),true);
   await page.click('#modes [data-mode=kitchen]');await page.waitForTimeout(100);
   assert.equal(await page.isHidden('#wineArea'),true);assert.equal(await page.isHidden('#bar'),true,'와인 제출 바 숨김');
-  assert.equal(await page.locator('#kRows [data-kid]').count(),90,'90개 한 줄씩');
+  assert.equal(await page.locator('#kRows [data-kid]').count(),88,'88개 한 줄씩');
   const heads=await page.$$eval('#kRows [data-kgroup]',a=>a.map(x=>x.getAttribute('data-kgroup')));
-  assert.deepEqual(heads,['냉장고','냉장고 문','와인 냉장고','냉동실','조리대','싱크대 & 스텐다이','기본안주 아래','창고'],'위치 순서');ok('위치별 묶음 순서·90개');
+  assert.deepEqual(heads,['냉장고','냉장고 문','와인 냉장고','냉동실','조리대','싱크대 & 스텐다이','기타'],'위치 순서');ok('위치별 묶음 순서·88개');
   // 3단계: 누르기·바꾸기·다시 눌러 취소
   await row(page,'버터').locator('[data-st=low]').click();
   await row(page,'토닉워터').locator('[data-st=out]').click();
@@ -52,9 +52,9 @@ const byName=n=>list.items.find(i=>i.name===n);
   await row(page,'랩').locator('[data-st=ok]').click();await row(page,'랩').locator('[data-st=ok]').click();
   await row(page,'피클').locator('[data-st=ok]').click();await row(page,'피클').locator('[data-st=ok]').click();
   assert.equal(await row(page,'피클').locator('[aria-pressed=true]').count(),0,'다시 누르면 취소');
-  assert.match(await page.textContent('#kCount'),/입력 3\/90개 · 부족 1 · 없음 1/);
+  assert.match(await page.textContent('#kCount'),/입력 3\/88개 · 부족 1 · 없음 1/);
   assert.doesNotMatch(await row(page,'토닉워터').textContent(),/구입처 미정/,'빈 구입처는 입력 줄에 안 씀');
-  assert.match(await page.textContent('#kSum'),new RegExp('주방 · 조사 '+md(TODAY)+' · 입력 3/90개'));ok('3단계 입력·취소·개수');
+  assert.match(await page.textContent('#kSum'),new RegExp('주방 · 조사 '+md(TODAY)+' · 입력 3/88개'));ok('3단계 입력·취소·개수');
   await page.screenshot({path:path.join(shotDir,'주방_위치별_390.png'),fullPage:false});
   // 새로고침해도 입력 보존(주방 탭 기억)
   await page.waitForTimeout(300);await page.reload();await page.waitForSelector('#kRows [data-kid]');await page.waitForTimeout(300);
@@ -62,7 +62,7 @@ const byName=n=>list.items.find(i=>i.name===n);
   assert.equal(await row(page,'버터').locator('[data-st=low]').getAttribute('aria-pressed'),'true','초안 보존');ok('초안·탭 보존');
   // 제출
   await page.click('#kSubmit');await page.waitForSelector('#kDlgGo');
-  assert.match(await page.textContent('#kDlgSum'),/입력 3\/90개 · 충분 1 · 부족 1 · 없음 1/);
+  assert.match(await page.textContent('#kDlgSum'),/입력 3\/88개 · 충분 1 · 부족 1 · 없음 1/);
   assert.match(await page.textContent('#kDlgLines'),/버터: 부족/);
   await page.click('#kDlgGo');await page.waitForSelector('#dlgMsg');assert.match(await page.textContent('#dlgMsg'),/주방 3개 저장/);await page.click('#dlgClose');
   const st=Object.fromEntries(db.prepare('SELECT item_id,state FROM kitchen_states').all().map(r=>[r.item_id,r.state]));
@@ -75,7 +75,7 @@ const byName=n=>list.items.find(i=>i.name===n);
   await page.click('#kCopy');await page.waitForTimeout(100);
   let clip=(await page.evaluate(()=>window.__clip)).at(-1);
   assert.equal(clip,['주방 부족 목록 (조사일 '+md(TODAY)+')','[냉장고]','- 토닉워터 (없음)','- 버터 (부족)'].join('\n'));assert.doesNotMatch(clip,BANNED);
-  assert.match(await page.textContent('#kNeedUn summary'),/미조사 87개/);ok('필요 목록·복사(위치별)');
+  assert.match(await page.textContent('#kNeedUn summary'),/미조사 85개/);ok('필요 목록·복사(위치별)');
   await c.close();assert.equal(errors.length,0,errors.join());assert.equal(external.length,0,external.join());
   // 구입처를 넣어 발행 → 구입처별 정렬
   const login=await call('POST','/api/admin/login',{password:PW});const token=login.json.token;
@@ -109,7 +109,7 @@ const byName=n=>list.items.find(i=>i.name===n);
       const r=await worker.fetch(new Request(req.url(),{method:req.method(),headers,body:req.postData()||undefined}),env,{waitUntil(){}});route.fulfill({status:r.status,headers:{...CORS,'content-type':'application/json'},body:await r.text()});});
     await page.goto(ADMIN_URL);await page.waitForSelector('#loginGo');await page.fill('#pw',PW);await page.fill('#nick','점장');await page.click('#loginGo');await page.waitForSelector('#saveBtn');
     await page.click('#navInv');await page.waitForSelector('#invTabKitchen');await page.click('#invTabKitchen');await page.waitForSelector('[data-kit]');
-    assert.equal(await page.locator('[data-kit]').count(),90);assert.match(await page.textContent('#kitNeedCount'),/부족·없음 2개 · 미조사 87개/);
+    assert.equal(await page.locator('[data-kit]').count(),88);assert.match(await page.textContent('#kitNeedCount'),/부족·없음 2개 · 미조사 85개/);
     await page.click('#kitSortShop');await page.waitForTimeout(50);
     assert.deepEqual(await page.$$eval('[data-kitgroup]',a=>a.map(x=>x.getAttribute('data-kitgroup'))),['다이소','마트B','쿠팡','구입처 미정']);
     await page.click('#kitCopy');await page.waitForTimeout(50);
@@ -123,7 +123,7 @@ const byName=n=>list.items.find(i=>i.name===n);
     await page.screenshot({path:path.join(shotDir,'어드민_주방편집_390.png'),fullPage:false});
     await page.click('#kitSave');await page.waitForSelector('#kitTabEdit');await page.waitForTimeout(300);
     const pub=JSON.parse(db.prepare("SELECT data FROM content_versions WHERE kind='kitchen' ORDER BY version DESC LIMIT 1").get().data);
-    assert.equal(pub.items.length,89,'삭제 반영');assert.equal(pub.items.find(i=>i.name==='피클').shop,'트레이더스');ok('어드민 목록 편집·구입처 붙여넣기·삭제·발행');
+    assert.equal(pub.items.length,87,'삭제 반영');assert.equal(pub.items.find(i=>i.name==='피클').shop,'트레이더스');ok('어드민 목록 편집·구입처 붙여넣기·삭제·발행');
     await page.click('#kitTabHist');await page.waitForSelector('[data-kitsurvey]');await page.click('[data-kitsurvey]');await page.waitForSelector('[data-kitentry]');
     assert.equal(await page.locator('[data-kitentry]').count(),3);ok('어드민 조사 이력·상세');
     await noOverflow(page,'어드민 주방');assert.equal(errors.length,0,errors.join());await c.close(); }
