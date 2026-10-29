@@ -40,7 +40,7 @@ for(const section of phraseText.split(/\n(?=## )/).slice(1)){
 }
 for(const [file,title] of [['04_칵테일_전환_가격','안내 멘트 (손님에게)'],['05_이벤트_응대','손님에게 말할 문장 (이벤트)'],['05_이벤트_응대','리뷰 표기 원칙']]){
  const entry=kb.find(e=>e.file===file&&e.title===title);
- if(entry)phrases.push({group:'전환·리뷰 원문',title,speech:entry.body,notes:file,file,section:title,notice:'[확인] 이벤트 시작 여부·기간 확인 후 사용할 것.',confirm:true});
+ if(entry)phrases.push({group:'전환·리뷰 원문',title,speech:entry.body,notes:file,file,section:title,notice:'',confirm:false});
 }
 const recipePhotos={};
 const photoDir=path.join(kdir,'사진');
