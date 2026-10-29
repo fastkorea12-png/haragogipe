@@ -686,7 +686,7 @@ function loadStock(){
 // 품목마다 충분·부족·없음 3단계만 기록(수량 없음). 위치별·구입처별 정렬. 구입처는 직원에게 보여도 됨(회장 10/29). 와인 재고와 저장소·화면 상태를 따로 둔다.
 var KDRAFT_KEY="harago-kit-draft",KPENDING_KEY="harago-kit-pending",MODE_KEY="harago-inv-mode";
 var K_STATE={ok:["s-ok","● 충분","충분"],low:["s-low","▲ 부족","부족"],out:["s-none","✕ 없음","없음"]};
-var K_LOC_ORDER=["냉장고","냉동실","조리대","조리대 수납함","기본안주 아래","스텐다이","싱크대","창고"];
+var K_LOC_ORDER=["냉장고","냉장고 문","냉동실","조리대","싱크대 & 스텐다이","기본안주 아래","창고","조리대 수납함","스텐다이","싱크대"];
 var K={items:[],states:null,stockState:"loading",marks:{},sort:"loc",view:"input",sending:false};
 function kSetItems(data){
   K.items=(data&&data.items||[]).filter(function(it){return it&&it.id&&it.name;}).map(function(it){return {id:it.id,name:it.name,loc:it.loc||"위치 미정",loc2:it.loc2||"",shop:it.shop||""};});
