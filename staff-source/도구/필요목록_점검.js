@@ -95,7 +95,7 @@ const initClip=()=>{window.__clip=[];Object.defineProperty(window,'isSecureConte
     const {c,page,errors,external}=await open(w,h);await page.goto(ADMIN_URL);await page.waitForSelector('#loginGo');
     await page.fill('#pw',PW);await page.fill('#nick','점장');await page.click('#loginGo');await page.waitForSelector('#saveBtn');
     await page.click('#navInv');await page.waitForSelector('#invChips');
-    assert.deepEqual(await page.$$eval('.tabs.sub button',b=>b.map(x=>x.innerText.replace(/\s+/g,' ').trim())),['현황','필요 목록','조사 이력','와인 목록 편집']);
+    assert.deepEqual(await page.$$eval('.tabs.sub button',b=>b.map(x=>x.innerText.replace(/\s+/g,' ').trim())),['현황','필요 목록','조사 이력','와인 목록 편집','주방']);
     await page.click('#invTabNeed');await page.waitForSelector('#needCount');
     assert.match(await page.textContent('#needCount'),/필요·없음 4종/);
     const rows=await page.$$eval('[data-need]',e=>e.map(x=>({id:x.dataset.need,t:x.innerText.replace(/\s+/g,' ').trim()})));

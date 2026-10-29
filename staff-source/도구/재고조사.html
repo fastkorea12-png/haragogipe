@@ -59,6 +59,12 @@ details.un{margin:16px 0 0;background:var(--bot);border:1px solid var(--rule);bo
 .oqty{display:flex;align-items:center;gap:4px}.oqty button{min-width:44px;min-height:44px;padding:0 8px}.oqty input[type=text]{width:56px;min-height:44px;text-align:center;padding:6px}
 .omsg{font:inherit;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--soft);border-radius:10px;padding:10px 12px;margin:10px 0 8px}
 .alogin{display:flex;gap:8px;flex-wrap:wrap}.alogin input{flex:1 1 180px;min-height:48px;border:1px solid #CFC4B8;border-radius:10px;padding:10px 12px;font-size:16px}
+#modes{margin-bottom:16px}#modes button{min-height:48px;font-size:17px}
+.krow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;align-items:center;min-height:64px;background:var(--bot);border:1px solid var(--rule);border-left:4px solid var(--rule);border-radius:10px;padding:8px 10px}
+.krow.has{border-left-color:var(--ok)}.krow.chg{border-left-color:var(--warn)}
+.krow .rname,.krow .rsub{grid-column:1}.kst{grid-column:2;grid-row:1/3;display:flex;gap:4px}.kst button{width:52px;border:1px solid #CFC4B8;background:#fff;border-radius:10px;font-weight:700;font-size:15px;padding:0}
+@media (max-width:359px){.krow{grid-template-columns:1fr}.kst{grid-column:1;grid-row:auto}.kst button{flex:1;width:auto}}
+.kst button[data-st=ok][aria-pressed=true]{background:var(--ok);border-color:var(--ok);color:#fff}.kst button[data-st=low][aria-pressed=true]{background:var(--warn);border-color:var(--warn);color:#fff}.kst button[data-st=out][aria-pressed=true]{background:var(--wine);border-color:var(--wine);color:#fff}
 [hidden]{display:none!important}
 </style></head><body>
 <header><div class="brand"><img src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페"><p>재고 조사</p></div><a href="../" id="toNote">근무노트로</a></header>
@@ -66,6 +72,8 @@ details.un{margin:16px 0 0;background:var(--bot);border:1px solid var(--rule);bo
 <div id="net" class="msg warn" role="status" hidden>오프라인. 입력은 이 기기에 보존됨. 연결 후 제출</div>
 <div id="pendingBox"></div>
 <div id="stock" class="msg warn" role="status" hidden></div>
+<div class="seg" id="modes" role="group" aria-label="재고 종류"><button type="button" data-mode="wine" aria-pressed="true">와인</button><button type="button" data-mode="kitchen" aria-pressed="false">주방</button></div>
+<div id="wineArea">
 <div class="seg" id="views" role="group" aria-label="보기 선택"><button type="button" data-view="input" aria-pressed="true">수량 입력</button><button type="button" data-view="need" aria-pressed="false">필요 목록</button><button type="button" data-view="order" aria-pressed="false">발주 멘트</button></div>
 <label class="f" for="q" style="margin-top:0">와인 이름 검색</label>
 <input type="search" id="q" maxlength="40" autocomplete="off" autocapitalize="off" enterkeyhint="search" placeholder="예: 후안길, 포트" aria-label="와인 이름 검색">
@@ -89,7 +97,25 @@ details.un{margin:16px 0 0;background:var(--bot);border:1px solid var(--rule);bo
     <div class="acts"><button type="button" class="btn" id="resetManual" hidden>직접 수정 모두 취소</button></div>
   </div>
 </section>
+</div>
+<section id="kitchen" hidden>
+  <div id="kPendingBox"></div>
+  <div id="kStock" class="msg warn" role="status" hidden></div>
+  <div class="seg" id="kViews" role="group" aria-label="주방 보기 선택"><button type="button" data-kview="input" aria-pressed="true">상태 입력</button><button type="button" data-kview="need" aria-pressed="false">필요 목록</button></div>
+  <div class="sech">정렬</div>
+  <div class="seg" id="kSort" role="group" aria-label="정렬"><button type="button" data-ksort="loc" aria-pressed="true">위치별</button><button type="button" data-ksort="shop" aria-pressed="false">구입처별</button></div>
+  <div id="kInput">
+    <div class="sech">조사 일자</div>
+    <div class="datebox"><input type="date" id="kDate" aria-label="주방 조사 일자"><span class="hint" id="kDateNote" role="status"></span></div>
+    <p class="hint">품목마다 충분·부족·없음 중 하나를 누름. 다시 누르면 취소. 누르지 않은 품목은 기존 상태 유지.</p>
+    <div id="kMsg" role="status" aria-live="polite"></div>
+    <div id="kRows"></div>
+    <div class="acts"><button type="button" class="btn" id="kReset" hidden>입력 모두 지우기</button></div>
+  </div>
+  <div id="kNeed" hidden aria-live="polite"></div>
+</section>
 </main>
+<div class="bar" id="kbar" hidden><div class="in"><div class="sum" id="kSum"></div><button type="button" class="btn primary" id="kSubmit">제출</button></div></div>
 <div class="bar" id="bar" hidden><div class="in"><div class="sum" id="sum"></div><button type="button" class="btn primary" id="submitBtn">제출</button></div></div>
 <dialog id="dlg" aria-labelledby="dlgTitle"></dialog>
 <script>
@@ -97,10 +123,11 @@ details.un{margin:16px 0 0;background:var(--bot);border:1px solid var(--rule);bo
 var API_BASE=/*INV_API_BASE*/"";
 var EMBEDDED=/*WINES_JSON*/{"groups":[]};
 var DRAFT_KEY="harago-inv-draft",PENDING_KEY="harago-inv-pending";
+var EMBEDDED_KITCHEN=/*KITCHEN_JSON*/{"items":[]};
 var LOCS=[["fridge","냉장고"],["storage","창고"]];
 var LOC_NAME={fridge:"냉장고",storage:"창고"};
 var DEFAULT_MIN=6,MAX_PAST_DAYS=7,STALE_DAYS=7;
-var S={groups:[],counts:null,stockState:"loading",gid:null,loc:"fridge",digits:"",date:"",manual:{},query:"",detail:null,dEdit:null,sending:false,view:"input"};
+var S={mode:"wine",groups:[],counts:null,stockState:"loading",gid:null,loc:"fridge",digits:"",date:"",manual:{},query:"",detail:null,dEdit:null,sending:false,view:"input"};
 var mem={};
 var $=function(id){return document.getElementById(id);};
 
@@ -125,15 +152,15 @@ function dayDiff(a,b){var x=a.split("-"),y=b.split("-");return Math.round((Date.
 function validDate(d){return typeof d==="string"&&/^\d{4}-\d\d-\d\d$/.test(d)&&addDays(d,0)===d&&d<=todayKST()&&d>=addDays(todayKST(),-MAX_PAST_DAYS);}
 function fmtDate(d){var m=/^\d{4}-(\d\d)-(\d\d)$/.exec(d||"");return m?(+m[1])+"/"+(+m[2]):"";}
 function isStale(d){return !!d&&dayDiff(todayKST(),d)>=STALE_DAYS;}
-function setDateNote(t){var n=$("dateNote");if(n)n.textContent=t||"";}
+function setDateNote(t){["dateNote","kDateNote"].forEach(function(id){var n=$(id);if(n)n.textContent=t||"";});}
 // 날짜가 범위 밖이면 오늘로 맞춘다. 반환: 바뀌었는지
 function syncDate(note){
   if(validDate(S.date)){applyDateUi();return false;}
   S.date=todayKST();applyDateUi();if(note)setDateNote(note);return true;
 }
 function applyDateUi(){
-  var el=$("surveyDate");if(!el)return;
-  el.min=addDays(todayKST(),-MAX_PAST_DAYS);el.max=todayKST();if(el.value!==S.date)el.value=S.date;
+  ["surveyDate","kDate"].forEach(function(id){var el=$(id);if(!el)return;
+    el.min=addDays(todayKST(),-MAX_PAST_DAYS);el.max=todayKST();if(el.value!==S.date)el.value=S.date;});
 }
 function uuid(){
   if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();
@@ -241,7 +268,7 @@ function pickGroup(id){
 function pickDate(v){
   if(!/^\d{4}-\d\d-\d\d$/.test(v||"")){S.date=todayKST();setDateNote("날짜를 오늘로 맞춤");}
   else{S.date=v;if(!validDate(v)){S.date=todayKST();setDateNote("조사 일자는 오늘부터 "+MAX_PAST_DAYS+"일 전까지. 오늘로 맞춤");}else setDateNote(v===todayKST()?"":"오늘이 아님");}
-  applyDateUi();renderPanel();saveDraft();
+  applyDateUi();renderPanel();saveDraft();kUpdateBar();kSaveDraft();
 }
 function renderPanel(){
   var v=view();
@@ -314,7 +341,7 @@ function bump(id,d){
 }
 function updateBar(v){
   var bar=$("bar");
-  var show=!!v&&!S.query&&S.view==="input";
+  var show=!!v&&!S.query&&S.view==="input"&&S.mode!=="kitchen";
   bar.hidden=!show;
   if(!show)return;
   $("sum").textContent=v.g.name+" · "+LOC_NAME[S.loc]+" · 조사 "+fmtDate(S.date)+" · 입력 "+v.input+"/"+v.g.items.length+"종 · 변경 "+v.changed+"종";
@@ -569,7 +596,7 @@ function confirmSubmit(o){
 function showResult(kind,title,lines,opts){
   opts=opts||{};
   var acts=[];
-  if(opts.retry)acts.push(h("button",{type:"button",class:"btn primary",id:"dlgRetry",text:"같은 내용으로 다시 제출(중복 저장 안 됨)",onclick:function(){retryPending();}}));
+  if(opts.retry)acts.push(h("button",{type:"button",class:"btn primary",id:"dlgRetry",text:"같은 내용으로 다시 제출(중복 저장 안 됨)",onclick:function(){(opts.onRetry||retryPending)();}}));
   if(opts.reload)acts.push(h("button",{type:"button",class:"btn primary",id:"dlgReload",text:"새로고침",onclick:function(){location.reload();}}));
   acts.push(h("button",{type:"button",class:"btn",id:"dlgClose",text:"닫기",onclick:closeDlg}));
   dlg.replaceChildren(h("h2",{id:"dlgTitle",text:title}),h("div",{class:"msg "+kind,id:"dlgMsg"},lines.map(function(t){return h("div",{text:t});})),h("div",{class:"acts"},acts));
@@ -655,25 +682,239 @@ function loadStock(){
   });
 }
 
+// ---------- 주방재고(10/29) ----------
+// 품목마다 충분·부족·없음 3단계만 기록(수량 없음). 위치별·구입처별 정렬. 구입처는 직원에게 보여도 됨(회장 10/29). 와인 재고와 저장소·화면 상태를 따로 둔다.
+var KDRAFT_KEY="harago-kit-draft",KPENDING_KEY="harago-kit-pending",MODE_KEY="harago-inv-mode";
+var K_STATE={ok:["s-ok","● 충분","충분"],low:["s-low","▲ 부족","부족"],out:["s-none","✕ 없음","없음"]};
+var K_LOC_ORDER=["냉장고","냉동실","조리대","조리대 수납함","기본안주 아래","스텐다이","싱크대","창고"];
+var K={items:[],states:null,stockState:"loading",marks:{},sort:"loc",view:"input",sending:false};
+function kSetItems(data){
+  K.items=(data&&data.items||[]).filter(function(it){return it&&it.id&&it.name;}).map(function(it){return {id:it.id,name:it.name,loc:it.loc||"위치 미정",loc2:it.loc2||"",shop:it.shop||""};});
+  var ids={};K.items.forEach(function(it){ids[it.id]=1;});
+  Object.keys(K.marks).forEach(function(k){if(!ids[k])delete K.marks[k];});
+}
+function kItem(id){for(var i=0;i<K.items.length;i++)if(K.items[i].id===id)return K.items[i];return null;}
+function kPrev(id){var c=K.states&&K.states[id];return c&&K_STATE[c.state]?c:null;}
+function kBadge(st){var s=K_STATE[st];return s?h("span",{class:"badge "+s[0],text:s[1]}):h("span",{class:"badge s-na",text:"- 미조사"});}
+function kWhere(it){return it.loc+(it.loc2?"·"+it.loc2:"");}
+// 묶음: 위치별(매장 도는 순서) 또는 구입처별(이름순, 미정은 맨 뒤). 묶음 안은 목록 순서.
+function kGroups(items){
+  var by={},keys=[];
+  items.forEach(function(it){var k=K.sort==="shop"?it.shop:it.loc;if(!by[k]){by[k]=[];keys.push(k);}by[k].push(it);});
+  if(K.sort==="shop")keys.sort(function(a,b){if(!a)return 1;if(!b)return -1;return a.localeCompare(b,"ko");});
+  else keys.sort(function(a,b){var x=K_LOC_ORDER.indexOf(a),y=K_LOC_ORDER.indexOf(b);x=x<0?99:x;y=y<0?99:y;return x-y;});
+  return keys.map(function(k){return {key:k,label:k||(K.sort==="shop"?"구입처 미정":"위치 미정"),items:by[k]};});
+}
+function kCounts(){var n=0,low=0,out=0;Object.keys(K.marks).forEach(function(k){n++;if(K.marks[k]==="low")low++;if(K.marks[k]==="out")out++;});return {n:n,low:low,out:out};}
+var kDraftTimer=null;
+function kSaveDraft(){
+  clearTimeout(kDraftTimer);
+  kDraftTimer=setTimeout(function(){if(!Object.keys(K.marks).length){lsDel(KDRAFT_KEY);return;}lsSet(KDRAFT_KEY,JSON.stringify({date:S.date,day:todayKST(),marks:K.marks}));},200);
+}
+function kLoadDraft(){
+  try{var d=JSON.parse(lsGet(KDRAFT_KEY)||"null");if(!d||!d.marks)return;
+    Object.keys(d.marks).forEach(function(k){if(kItem(k)&&K_STATE[d.marks[k]])K.marks[k]=d.marks[k];});
+    if(d.date&&d.day===todayKST()&&validDate(d.date)&&!lsGet(DRAFT_KEY))S.date=d.date;
+  }catch(e){}
+}
+function kRowSub(it){
+  var c=kPrev(it.id),m=K.marks[it.id],parts=[];
+  var where=K.sort==="shop"?kWhere(it):it.shop;if(where)parts.push(h("span",{text:where}));
+  parts.push(h("span",{},"이전 ",kBadge(c?c.state:null),c?" "+fmtDate(c.surveyDate):""));
+  if(c)parts.push(staleTag(c.surveyDate));
+  if(m)parts.push(h("span",{},"→ ",kBadge(m)));
+  return parts;
+}
+function kRowClass(it){var m=K.marks[it.id],c=kPrev(it.id);return "krow"+(m?(c&&c.state===m?" has":" chg"):"");}
+function kRow(it){
+  return h("div",{class:kRowClass(it),"data-kid":it.id},
+    h("div",{class:"rname",text:it.name}),
+    h("div",{class:"rsub","data-ksub":it.id},kRowSub(it)),
+    h("div",{class:"kst",role:"group","aria-label":it.name+" 상태"},["ok","low","out"].map(function(st){
+      return h("button",{type:"button","data-st":st,"aria-pressed":String(K.marks[it.id]===st),text:K_STATE[st][2],onclick:function(){kMark(it.id,st);}});
+    })));
+}
+function kMark(id,st){
+  if(K.marks[id]===st)delete K.marks[id];else K.marks[id]=st;
+  var row=document.querySelector('#kRows [data-kid="'+id+'"]'),it=kItem(id);
+  if(row&&it){row.className=kRowClass(it);var sub=row.querySelector("[data-ksub]");sub.replaceChildren.apply(sub,kRowSub(it));
+    Array.prototype.forEach.call(row.querySelectorAll("[data-st]"),function(b){b.setAttribute("aria-pressed",String(K.marks[id]===b.getAttribute("data-st")));});}
+  kRenderMsg();kUpdateBar();kSaveDraft();
+}
+function kRenderMsg(){
+  var c=kCounts(),t=K.items.length;
+  $("kMsg").replaceChildren(h("div",{class:"msg"+(c.n?" ok":""),id:"kCount",text:c.n?"입력 "+c.n+"/"+t+"개 · 부족 "+c.low+" · 없음 "+c.out:"주방 품목 "+t+"개. 품목마다 상태를 누름"}));
+  $("kReset").hidden=!c.n;
+}
+function kRenderInput(){
+  kRenderMsg();
+  var kids=[];
+  kGroups(K.items).forEach(function(g){
+    kids.push(h("div",{class:"sech","data-kgroup":g.label,text:g.label+" "+g.items.length+"개"}));
+    kids.push(h("div",{class:"rows"},g.items.map(kRow)));
+  });
+  $("kRows").replaceChildren.apply($("kRows"),kids);
+  kUpdateBar();
+}
+function kUpdateBar(){
+  var show=S.mode==="kitchen"&&K.view==="input";
+  $("kbar").hidden=!show;if(!show)return;
+  var c=kCounts();
+  $("kSum").textContent="주방 · 조사 "+fmtDate(S.date)+" · 입력 "+c.n+"/"+K.items.length+"개";
+  $("kSubmit").disabled=!c.n||K.sending;
+}
+// 필요 목록: 최신 상태가 부족·없음인 품목. 복사 문구도 지금 정렬(위치별/구입처별) 묶음 그대로.
+function kNeedData(){
+  var rows=[],un=[];
+  K.items.forEach(function(it){var c=kPrev(it.id);if(!c){un.push(it);return;}if(c.state==="low"||c.state==="out")rows.push(it);});
+  return {groups:kGroups(rows),un:un,total:rows.length};
+}
+function kNeedText(d){
+  var latest="";d.groups.forEach(function(g){g.items.forEach(function(it){var c=kPrev(it.id);if(c.surveyDate>latest)latest=c.surveyDate;});});
+  var out=["주방 부족 목록"+(latest?" (조사일 "+fmtDate(latest)+")":"")];
+  d.groups.forEach(function(g){
+    out.push("["+g.label+"]");
+    g.items.forEach(function(it){var c=kPrev(it.id);out.push("- "+it.name+" ("+K_STATE[c.state][2]+(c.surveyDate!==latest?", 조사 "+fmtDate(c.surveyDate):"")+")");});
+  });
+  return out.join("\n");
+}
+function kRenderNeed(){
+  var box=$("kNeed"),kids=[];
+  if(K.stockState==="loading"){box.replaceChildren(h("div",{class:"msg",id:"kNeedState",text:"최신 상태 불러오는 중"}));return;}
+  if(!K.states||K.stockState==="fail"){box.replaceChildren(h("div",{class:"msg warn",id:"kNeedState",text:"최신 상태 없음. 필요 목록 표시 불가. 연결 후 새로고침"}));return;}
+  var d=kNeedData();
+  if(!d.total)kids.push(h("div",{class:"msg ok",id:"kNeedEmpty",text:"지금 부족한 주방 품목이 없어요"}));
+  else{
+    var msg=h("div",{id:"kCopyMsg",class:"hint",role:"status"});
+    kids.push(h("div",{class:"acts",style:"margin:0 0 8px;align-items:center"},h("b",{id:"kNeedCount",text:"부족·없음 "+d.total+"개"}),h("button",{type:"button",class:"btn primary",id:"kCopy",text:"목록 복사",onclick:function(){
+      copyText(kNeedText(kNeedData())).then(function(){msg.textContent="복사됨. 메신저에 붙여넣기";},function(){msg.textContent="복사 실패. 직접 선택해 복사";});
+    }})),msg);
+    d.groups.forEach(function(g){
+      kids.push(h("div",{class:"sech","data-kngroup":g.label,text:g.label+" "+g.items.length+"개"}));
+      kids.push(h("div",{class:"rows"},g.items.map(function(it){var c=kPrev(it.id);
+        return h("div",{class:"nrow"+(c.state==="out"?" none":""),"data-kneed":it.id},h("div",{class:"rname",text:it.name}),
+          h("div",{class:"nsub"},kBadge(c.state),h("span",{text:K.sort==="shop"?kWhere(it):(it.shop||"구입처 미정")}),h("span",{text:"조사 "+fmtDate(c.surveyDate)}),staleTag(c.surveyDate)));
+      })));
+    });
+  }
+  if(d.un.length)kids.push(h("details",{class:"un",id:"kNeedUn"},h("summary",{text:"미조사 "+d.un.length+"개 (필요 목록에 넣지 않음)"}),h("ul",{},d.un.map(function(it){return h("li",{text:it.name});}))));
+  box.replaceChildren.apply(box,kids);
+}
+function kRender(){
+  $("kInput").hidden=K.view!=="input";$("kNeed").hidden=K.view!=="need";
+  Array.prototype.forEach.call(document.querySelectorAll("#kViews button"),function(b){b.setAttribute("aria-pressed",String(b.getAttribute("data-kview")===K.view));});
+  Array.prototype.forEach.call(document.querySelectorAll("#kSort button"),function(b){b.setAttribute("aria-pressed",String(b.getAttribute("data-ksort")===K.sort));});
+  if(K.view==="input")kRenderInput();else kRenderNeed();
+  kUpdateBar();kRenderPending();
+}
+function setMode(m){
+  S.mode=m==="kitchen"?"kitchen":"wine";lsSet(MODE_KEY,S.mode);
+  Array.prototype.forEach.call(document.querySelectorAll("#modes button"),function(b){b.setAttribute("aria-pressed",String(b.getAttribute("data-mode")===S.mode));});
+  $("wineArea").hidden=S.mode!=="wine";$("kitchen").hidden=S.mode!=="kitchen";
+  if(S.mode==="kitchen"){updateBar(null);kRender();}else{$("kbar").hidden=true;renderSearch();}
+}
+// 제출
+function kSig(b){return JSON.stringify([b.surveyDate,b.entries.map(function(e){return [e.itemId,e.state];})]);}
+function kReadPending(){try{var p=JSON.parse(lsGet(KPENDING_KEY)||"null");return p&&p.id&&p.body?p:null;}catch(e){return null;}}
+function kConfirm(){
+  if(K.sending)return;
+  if(navigator.onLine===false){showNet(true);showResult("warn","오프라인",["인터넷 연결 없음. 입력은 이 기기에 보존됨. 연결 후 다시 제출"]);return;}
+  syncDate("날짜를 오늘로 맞춤");
+  var c=kCounts(),entries=K.items.filter(function(it){return K.marks[it.id];}).map(function(it){return {itemId:it.id,state:K.marks[it.id],name:it.name};});
+  var bad=entries.filter(function(e){return e.state!=="ok";});
+  var go=h("button",{type:"button",class:"btn primary",id:"kDlgGo",text:"제출",onclick:function(){go.disabled=true;kSend({surveyId:null,surveyDate:S.date,entries:entries});}});
+  dlg.replaceChildren(h("h2",{id:"dlgTitle",text:"주방재고 제출 확인"}),
+    h("ul",{id:"kDlgSum"},h("li",{id:"kDlgDate",text:"조사 일자: "+S.date+(S.date===todayKST()?" (오늘)":" (오늘 아님)")}),h("li",{text:"입력 "+c.n+"/"+K.items.length+"개 · 충분 "+(c.n-c.low-c.out)+" · 부족 "+c.low+" · 없음 "+c.out})),
+    bad.length?h("ul",{class:"keep",id:"kDlgLines"},bad.map(function(e){return h("li",{text:e.name+": "+K_STATE[e.state][2]});})):null,
+    h("p",{class:"hint",text:"누르지 않은 품목은 기존 상태 유지. 더 늦은 조사 일자의 상태는 덮어쓰지 않음."}),
+    h("div",{class:"acts"},go,h("button",{type:"button",class:"btn",id:"dlgCancel",text:"취소",onclick:closeDlg})));
+  openDlg();
+}
+function kSend(body){
+  var p=kReadPending(),sig=kSig(body);
+  body.surveyId=p&&p.sig===sig?p.id:uuid();
+  lsSet(KPENDING_KEY,JSON.stringify({id:body.surveyId,sig:sig,body:body,at:Date.now(),n:body.entries.length}));
+  kPost(body);
+}
+function kPost(body){
+  K.sending=true;kUpdateBar();
+  dlg.replaceChildren(h("h2",{id:"dlgTitle",text:"제출 중"}),h("div",{class:"msg",role:"status",text:"제출 중. 창을 닫지 말고 잠시 기다림"}));openDlg();
+  var ctl=new AbortController(),to=setTimeout(function(){ctl.abort();},15000);
+  var done=function(){K.sending=false;kUpdateBar();};
+  fetch(API_BASE+"/api/inventory/kitchen/survey",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body),signal:ctl.signal,cache:"no-store"}).then(function(r){
+    clearTimeout(to);return r.json().catch(function(){return {};}).then(function(d){return {status:r.status,d:d};});
+  }).then(function(res){
+    done();var st=res.status,d=res.d||{};
+    if((st===201||st===200)&&d.saved===true){kSaved(body,!!d.alreadySaved);return;}
+    if(st===400){lsDel(KPENDING_KEY);kRenderPending();showResult("err","제출 불가",[d.error||"입력 내용 확인 필요"].concat((d.details||[]).slice(0,3).map(function(x){return x.reason;})));return;}
+    if(st===409){lsDel(KPENDING_KEY);kRenderPending();showResult("err","제출 안 됨",[d.error||"주방 목록이 바뀜. 새로고침 후 다시 입력"],{reload:true});return;}
+    if(st===429){lsDel(KPENDING_KEY);kRenderPending();showResult("warn","제출 횟수 초과",[d.error||"잠시 후 다시 제출","입력은 보존됨"]);return;}
+    kUncertain(d.error);
+  },function(){done();clearTimeout(to);kUncertain();});
+}
+function kUncertain(msg){
+  showResult("warn","저장 여부 확인 안 됨",[msg||"연결이 불안정함. 저장됐는지 확인하지 못함","같은 내용으로 다시 제출하면 중복 저장되지 않음","입력은 이 기기에 보존됨"],{retry:true,onRetry:kRetry});
+  kRenderPending();
+}
+function kRetry(){var p=kReadPending();if(!p){closeDlg();return;}if(navigator.onLine===false){showResult("warn","오프라인",["연결 후 다시 시도"],{retry:true,onRetry:kRetry});return;}kPost(p.body);}
+function kSaved(body,already){
+  lsDel(KPENDING_KEY);lsDel(KDRAFT_KEY);
+  if(!K.states)K.states={};
+  var now=new Date().toISOString();
+  body.entries.forEach(function(e){var old=K.states[e.itemId];if(old&&old.surveyDate>body.surveyDate)return;K.states[e.itemId]={state:e.state,surveyDate:body.surveyDate,at:now};});
+  K.marks={};kRender();
+  var low=body.entries.filter(function(e){return e.state!=="ok";}).length;
+  showResult("ok","제출 완료",["주방 "+body.entries.length+"개 저장"+(already?" (이미 저장돼 있었음)":""),"부족·없음 "+low+"개는 '필요 목록'에서 복사","조사 일자 "+body.surveyDate,"입력 초기화됨"]);
+}
+function kRenderPending(){
+  var p=kReadPending(),box=$("kPendingBox");
+  if(!p){box.replaceChildren();return;}
+  box.replaceChildren(h("div",{class:"msg pending",id:"kPendingMsg",role:"status"},
+    h("div",{text:"이전 주방 제출 결과 확인 안 됨: "+p.n+"개 · "+fmtTime(new Date(p.at).toISOString())}),
+    h("div",{class:"acts"},h("button",{type:"button",class:"btn primary",id:"kPendingRetry",text:"같은 내용 다시 제출(중복 안 됨)",onclick:kRetry}),
+      h("button",{type:"button",class:"btn danger",id:"kPendingDrop",text:"버리기",onclick:function(){lsDel(KPENDING_KEY);kRenderPending();}}))));
+}
+function kLoad(){
+  var ctl=new AbortController(),to=setTimeout(function(){ctl.abort();},4000);
+  return fetch(API_BASE+"/api/inventory/kitchen",{signal:ctl.signal,cache:"no-store"}).then(function(r){
+    clearTimeout(to);if(!r.ok)throw new Error("http "+r.status);return r.json();
+  }).then(function(d){
+    K.states=d.states||{};K.stockState="ok";
+    if(d.kitchen&&d.kitchen.items&&d.kitchen.items.length)kSetItems(d.kitchen);
+    $("kStock").hidden=true;
+  }).catch(function(){
+    clearTimeout(to);K.stockState="fail";
+    $("kStock").hidden=false;$("kStock").textContent="최신 상태 없음. 이전 상태 표시 안 됨. 입력·제출은 가능";
+  });
+}
+Array.prototype.forEach.call(document.querySelectorAll("#modes button"),function(b){b.addEventListener("click",function(){setMode(b.getAttribute("data-mode"));});});
+Array.prototype.forEach.call(document.querySelectorAll("#kViews button"),function(b){b.addEventListener("click",function(){K.view=b.getAttribute("data-kview");kRender();});});
+Array.prototype.forEach.call(document.querySelectorAll("#kSort button"),function(b){b.addEventListener("click",function(){K.sort=b.getAttribute("data-ksort");lsSet("harago-kit-sort",K.sort);kRender();});});
+$("kDate").addEventListener("change",function(ev){pickDate(ev.target.value);});
+$("kReset").addEventListener("click",function(){K.marks={};kSaveDraft();kRenderInput();});
+$("kSubmit").addEventListener("click",function(){if(!kCounts().n||K.sending)return;kConfirm();});
+
 // ---------- 연결 ----------
 $("digits").addEventListener("input",function(ev){S.digits=ev.target.value;renderPreview();saveDraft();});
 Array.prototype.forEach.call(document.querySelectorAll("#views button"),function(b){b.addEventListener("click",function(){setView(b.getAttribute("data-view"));});});
 $("q").addEventListener("input",function(ev){S.query=ev.target.value;S.detail=null;S.dEdit=null;renderSearch();});
 $("surveyDate").addEventListener("change",function(ev){pickDate(ev.target.value);});
-function recheckDay(){var was=S.date;if(S.dayAt&&S.dayAt!==todayKST()){S.dayAt=todayKST();if(S.date===S.dayPrev||!validDate(S.date)){S.date=todayKST();setDateNote("날짜를 오늘로 맞춤");}}else if(!validDate(S.date)){S.date=todayKST();setDateNote("날짜를 오늘로 맞춤");}S.dayPrev=todayKST();if(was!==S.date){applyDateUi();renderPanel();}else applyDateUi();}
+function recheckDay(){var was=S.date;if(S.dayAt&&S.dayAt!==todayKST()){S.dayAt=todayKST();if(S.date===S.dayPrev||!validDate(S.date)){S.date=todayKST();setDateNote("날짜를 오늘로 맞춤");}}else if(!validDate(S.date)){S.date=todayKST();setDateNote("날짜를 오늘로 맞춤");}S.dayPrev=todayKST();if(was!==S.date){applyDateUi();renderPanel();kUpdateBar();}else applyDateUi();}
 document.addEventListener("visibilitychange",function(){if(!document.hidden)recheckDay();});window.addEventListener("focus",recheckDay);
 $("resetManual").addEventListener("click",function(){S.manual={};renderPreview();saveDraft();});
 $("submitBtn").addEventListener("click",function(){var o=surveyOf();var v=view();if(!o||!v||v.blocked||S.sending)return;confirmSubmit(o);});
 window.addEventListener("online",function(){showNet(false);});
 window.addEventListener("offline",function(){showNet(true);});
-window.addEventListener("beforeunload",function(){clearTimeout(draftTimer);if(S.gid&&(S.digits||Object.keys(S.manual).length))lsSet(DRAFT_KEY,JSON.stringify({gid:S.gid,loc:S.loc,date:S.date,day:todayKST(),digits:S.digits,manual:S.manual}));});
+window.addEventListener("beforeunload",function(){clearTimeout(draftTimer);clearTimeout(kDraftTimer);if(Object.keys(K.marks).length)lsSet(KDRAFT_KEY,JSON.stringify({date:S.date,day:todayKST(),marks:K.marks}));if(S.gid&&(S.digits||Object.keys(S.manual).length))lsSet(DRAFT_KEY,JSON.stringify({gid:S.gid,loc:S.loc,date:S.date,day:todayKST(),digits:S.digits,manual:S.manual}));});
 (function init(){
-  setGroups(EMBEDDED);
+  setGroups(EMBEDDED);kSetItems(EMBEDDED_KITCHEN);
   S.date=todayKST();S.dayAt=S.dayPrev=S.date;
-  loadDraft();
+  loadDraft();kLoadDraft();
+  K.sort=lsGet("harago-kit-sort")==="shop"?"shop":"loc";
   applyDateUi();if(S.dateReset)setDateNote("날짜를 오늘로 맞춤");
   $("digits").value=S.digits;
   renderChips();renderPanel();renderPendingBox();
+  setMode(location.hash==="#kitchen"?"kitchen":lsGet(MODE_KEY)==="kitchen"?"kitchen":"wine");
   if(navigator.onLine===false)showNet(true);
   loadStock().then(function(){
     renderChips();renderNeed();if(S.view==="order")renderOrder();
@@ -681,5 +922,7 @@ window.addEventListener("beforeunload",function(){clearTimeout(draftTimer);if(S.
     if(a&&a.closest&&a.closest("#rows")){var v=view();if(v)v.rows.forEach(function(r){updateRow(r.it.id,true);});}else renderPanel();
     if(S.query&&!S.detail)renderSearch();
   });
+  // 주방 상태는 와인 수량 다음에 요청한다(와인 화면 동작·요청 순서는 그대로).
+  kLoad().then(function(){if(S.mode==="kitchen"){var a=document.activeElement;if(a&&a.closest&&a.closest("#kRows")){kRenderMsg();}else kRender();}});
 })();
 </script></body></html>

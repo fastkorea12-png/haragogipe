@@ -1806,7 +1806,7 @@ var recipeKind='안주',openFood='';
  [['home','홈','⌂'],['training','신입 교육','☆'],['checklist','체크리스트','☑'],['recipes','레시피','♧'],['wine','와인','♢'],['phrases','응대 멘트','“']].forEach(function(tab){
   var b=button(tab[1],function(){showTab(tab[0]);});b.dataset.tab=tab[0];b.prepend(el('span','tab-icon',tab[2]));document.getElementById('departments').append(b);
  });
- [['checklist','체크리스트','오늘의 오픈과 마감'],['recipes','레시피','잔·재료·순서 한눈에'],['wine','와인','취향과 안주로 추천'],['phrases','응대 멘트','상황별 안내와 복사'],['inventory','재고 조사','와인 수량 입력·검색'],['requests','내 수정 제안','보낸 제안·전송 상태 확인'],['training','신입 교육','하루 4시간 · 홀부터 레시피까지']].forEach(function(item){
+ [['checklist','체크리스트','오늘의 오픈과 마감'],['recipes','레시피','잔·재료·순서 한눈에'],['wine','와인','취향과 안주로 추천'],['phrases','응대 멘트','상황별 안내와 복사'],['inventory','재고 조사','와인 수량 · 주방 재고'],['requests','내 수정 제안','보낸 제안·전송 상태 확인'],['training','신입 교육','하루 4시간 · 홀부터 레시피까지']].forEach(function(item){
   var link=item[0]==='inventory',b=link?el('a','home-card featured'):button('',function(){showTab(item[0]);},'home-card');if(link){b.href='./inventory/';b.id='homeInventory';b.style.textDecoration='none';}var sm=el('small','',item[2]);if(item[0]==='requests'){sm.id='homeReqSmall';b.classList.add('featured');}b.append(el('strong','',item[1]),sm,el('span','card-action','열기 →'));document.getElementById('homeCards').append(b);
  });
  document.querySelectorAll('[data-check-kind]').forEach(function(b){b.onclick=function(){checkKind=b.dataset.checkKind;renderChecklist();};});

@@ -21,7 +21,7 @@ const homeLayout=async(page,label)=>{const l=await page.evaluate(()=>{window.scr
    const card=page.locator('#homeCards a.home-card',{hasText:'재고 조사'});
    assert(await card.isVisible(),'재고 조사 카드 표시');
    assert.equal(await card.getAttribute('href'),'./inventory/');assert.equal(await card.getAttribute('target'),null,'같은 탭 이동');
-   const t=await card.innerText();assert(t.includes('와인 수량 입력·검색')&&t.includes('열기 →'));
+   const t=await card.innerText();assert(t.includes('와인 수량 · 주방 재고')&&t.includes('열기 →'));
    assert.equal(await page.locator('#homeCards .home-card').count(),7,'홈 카드 7장(4 탭 + 재고 조사 + 내 수정 제안 + 신입 교육)');
    const full=await page.evaluate(()=>{const g=document.getElementById('homeCards').getBoundingClientRect(),c=document.getElementById('homeInventory').getBoundingClientRect();return Math.abs(c.width-g.width)<2;});assert(full,'전체 폭 1장');
    await homeLayout(page,name);await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:shot(name)});

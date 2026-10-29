@@ -49,6 +49,7 @@ dialog ul{padding-left:20px;margin:6px 0}dialog li{margin:4px 0;overflow-wrap:an
 .cmp{color:var(--muted)}
 .pv-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 14px}.pv-full{grid-column:1/-1}.pv-h{margin:14px 0 4px!important;padding-bottom:4px;border-bottom:1px solid var(--rule);color:var(--wine);font-size:16px}
 .pv-item{display:flex;gap:8px;align-items:flex-start;padding:8px 2px;border-bottom:1px solid var(--rule)}.pv-box{flex:none;width:20px;height:20px;border:2px solid #CFC4B8;border-radius:4px;margin-top:3px}.pv-text{overflow-wrap:anywhere;line-height:1.4}.pv-text .tag{margin-left:6px}
+.kitgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px}
 .sub-card{display:block;width:100%;text-align:left;margin-bottom:8px}.sub-card.bad{border-color:var(--wine);border-left:4px solid var(--wine)}.row.sub-missing{border-left-color:var(--wine);background:#FBF3F1}.row.sub-done{border-left-color:var(--add)}
 @media(max-width:340px){.pv-grid{grid-template-columns:1fr}}
 .tabs.top{position:relative;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}.tabs.top button{flex:1 0 auto;padding:0 12px;white-space:nowrap}.tabs.sub button{font-weight:600}
@@ -1292,7 +1293,7 @@ function wApply(d,keepDraft){
 function wFetch(keepDraft){return api("GET","/api/admin/content/wines").then(function(d){wApply(d,keepDraft);});}
 function invFetch(){return api("GET","/api/admin/inventory").then(function(d){INV.items=d.items||{};INV.surveys=d.surveys||[];INV.sheetMode=d.sheetMode||"";});}
 function loadInv(force){
-  if(INV.loaded&&!force){render();invFetch().then(function(){if(S.top==="inv"&&INV.sub!=="wines")render();},function(){});return;}
+  if(INV.loaded&&!force){render();invFetch().then(function(){if(S.top==="inv"&&INV.sub!=="wines"&&INV.sub!=="kitchen")render();},function(){});return;}
   INV.loading=true;INV.error="";render();
   Promise.all([invFetch(),wFetch(true),supFetch()]).then(function(){INV.loaded=true;INV.loading=false;if(!INV.gid)INV.gid=INV.w.orig.groups.length?INV.w.orig.groups[0].id:null;if(!INV.w.gid)INV.w.gid=INV.gid;render();},function(e){
     INV.loading=false;if(e.status===401)return;
@@ -1307,8 +1308,8 @@ function viewInv(){
   if(INV.loading&&!INV.loaded){box.append(h("div",{class:"card",text:"불러오는 중"}));return box;}
   if(INV.error)box.append(h("div",{class:"msg err",id:"invError"},INV.error,h("div",{class:"acts"},h("button",{class:"btn",type:"button",id:"invRetry",text:"다시 불러오기",onclick:function(){INV.loaded=false;loadInv(true);}}))));
   var tb=function(id,key,label,extra){return h("button",{type:"button",id:id,"aria-pressed":String(INV.sub===key),onclick:function(){INV.sub=key;INV.detail=null;INV.w.pendingRestore=null;S.notice=null;render();}},label,extra);};
-  box.append(h("div",{class:"tabs sub"},tb("invTabStatus","status","현황"),tb("invTabNeed","need","필요 목록"),tb("invTabHist","history","조사 이력"),tb("invTabWines","wines","와인 목록 편집",wDirty()?h("span",{class:"nbadge",text:String(wDirty())}):null)));
-  box.append(INV.sub==="status"?viewInvStatus():INV.sub==="need"?viewInvNeed():INV.sub==="history"?viewInvHistory():viewInvWines());
+  box.append(h("div",{class:"tabs sub"},tb("invTabStatus","status","현황"),tb("invTabNeed","need","필요 목록"),tb("invTabHist","history","조사 이력"),tb("invTabWines","wines","와인 목록 편집",wDirty()?h("span",{class:"nbadge",text:String(wDirty())}):null),tb("invTabKitchen","kitchen","주방",kitDirty()?h("span",{class:"nbadge",text:String(kitDirty())}):null)));
+  box.append(INV.sub==="status"?viewInvStatus():INV.sub==="need"?viewInvNeed():INV.sub==="history"?viewInvHistory():INV.sub==="kitchen"?viewKit():viewInvWines());
   return box;
 }
 function invGroups(){return INV.w.orig?INV.w.orig.groups:[];}
@@ -1612,6 +1613,146 @@ function invResend(id){
     return invFetch().then(function(){return api("GET","/api/admin/inventory/survey/"+id);}).then(function(x){INV.detailData=x;render();});
   }).catch(function(e){delete INV.resend[id];if(e.status===401)return;notice(e.status===409?"warn":"err",e.status===409?e.message:"재전송 실패: "+e.message);invFetch().then(function(){return api("GET","/api/admin/inventory/survey/"+id);}).then(function(x){INV.detailData=x;render();},function(){render();});});
 }
+// ---- 주방재고(10/29): 현황(위치별/구입처별)·목록 편집(품목·위치·구입처, 발행=kind kitchen)·조사 이력. 와인 재고와 따로 불러온다.
+var EMBEDDED_KITCHEN={"items":[{"id":"kf03ae6a5","name":"바질 페스토","loc":"냉장고"},{"id":"k06969e9a","name":"참기름","loc":"조리대 수납함"},{"id":"kb875bbe5","name":"치즈 프레첼","loc":"창고"},{"id":"k2ec7c223","name":"육포","loc":"냉장고"},{"id":"k42fc841d","name":"브라운치즈","loc":"냉장고"},{"id":"k9acc19f2","name":"샐러드","loc":"냉장고"},{"id":"kbc3d8ba5","name":"브리치즈","loc":"냉장고"},{"id":"k662e5d7d","name":"일반쓰레기 봉투","loc":"스텐다이"},{"id":"k7f6e9e7a","name":"케찹","loc":"냉장고"},{"id":"k1fb4c7d5","name":"라이터 가스","loc":"조리대 수납함"},{"id":"kb3a839d7","name":"분다버그 자몽","loc":"냉장고","loc2":"창고"},{"id":"k7cc0ae72","name":"초","loc":"기본안주 아래"},{"id":"kbd127a17","name":"초코시럽","loc":"냉장고"},{"id":"k4682c92c","name":"발사믹","loc":"냉장고"},{"id":"k99672689","name":"올리브","loc":"냉장고"},{"id":"kcbaba8b7","name":"토닉워터","loc":"냉장고","loc2":"창고"},{"id":"k4fb2dc61","name":"과일치즈","loc":"냉장고"},{"id":"k75ea0d68","name":"머스타드","loc":"냉장고"},{"id":"kb142819d","name":"아이스크림","loc":"냉장고"},{"id":"kc80778a8","name":"생모짜렐라","loc":"냉장고"},{"id":"k4f678ffd","name":"버터","loc":"냉장고"},{"id":"k4a9c0eb8","name":"그라노파다노 치즈","loc":"냉장고"},{"id":"k54b94428","name":"훈제치즈","loc":"냉장고"},{"id":"kac8d5e5c","name":"딸기잼","loc":"냉장고"},{"id":"k10034111","name":"몬테리잭 치즈","loc":"냉장고"},{"id":"k04e0c487","name":"방울토마토","loc":"냉장고"},{"id":"ka1f14ff9","name":"오렌지","loc":"냉장고"},{"id":"k41e2122c","name":"체다 치즈","loc":"냉장고"},{"id":"k6187422a","name":"흰 슬라이스 치즈","loc":"냉장고"},{"id":"k60afd667","name":"메이플시럽","loc":"냉장고"},{"id":"k56a4d523","name":"슈레더 치즈","loc":"냉장고"},{"id":"kcccc1cc0","name":"콜비잭 치즈","loc":"냉장고"},{"id":"k76f66f79","name":"크림치즈","loc":"냉장고"},{"id":"k3d0c1d24","name":"사과","loc":"냉장고"},{"id":"ke85f0ab8","name":"샤인머스켓","loc":"냉장고"},{"id":"k1b321a5d","name":"하몽","loc":"냉장고"},{"id":"k413d48ff","name":"멜론","loc":"냉장고"},{"id":"k2bfe5b92","name":"레드와인 하우스","loc":"냉장고","loc2":"스텐다이"},{"id":"kcba82811","name":"핸드워시","loc":"스텐다이"},{"id":"k7e4768ba","name":"피자","loc":"냉장고"},{"id":"k982cd3b8","name":"랩","loc":"스텐다이"},{"id":"k26cccf38","name":"스크럽대디","loc":"싱크대"},{"id":"k12b3bf50","name":"고무장갑","loc":"스텐다이"},{"id":"k8ba1ae1d","name":"초콜릿","loc":"조리대"},{"id":"k4ade7ab6","name":"아몬드 슬라이스","loc":"조리대 수납함"},{"id":"kfa415db9","name":"주방세제","loc":"스텐다이"},{"id":"k0b1701f3","name":"베이킹 소다","loc":"스텐다이"},{"id":"k1122687a","name":"믹스너트","loc":"조리대 수납함"},{"id":"k97610024","name":"샐러드톱","loc":"조리대 수납함"},{"id":"kc24262d9","name":"솔트 프레첼","loc":"조리대 수납함","loc2":"창고"},{"id":"k91101ae4","name":"트러플 오일","loc":"조리대 수납함"},{"id":"k1f61ff59","name":"팝콘","loc":"조리대 수납함"},{"id":"k7eb99e26","name":"화이트와인박스","loc":"조리대 수납함","loc2":"창고"},{"id":"k1114140a","name":"종이컵","loc":"조리대 수납함","loc2":"창고"},{"id":"k72e77ac4","name":"물티슈","loc":"조리대 수납함","loc2":"창고"},{"id":"k9dd1ddbd","name":"피노그라지오 팩와인","loc":"창고"},{"id":"k461005c1","name":"오레가노 럽드","loc":"조리대 수납함"},{"id":"kb603e49c","name":"부탄가스","loc":"조리대 수납함"},{"id":"k0ab717f2","name":"짜파게티","loc":"조리대 수납함","loc2":"창고"},{"id":"k2e390c6c","name":"피클","loc":"냉장고"},{"id":"kb490da0f","name":"스테이크","loc":"냉장고"},{"id":"kd44dd405","name":"기본 비스킷","loc":"조리대 수납함","loc2":"창고"},{"id":"kc7b80d0d","name":"라구파스타","loc":"냉동실"},{"id":"kb86401fd","name":"알리오올리오","loc":"냉동실"},{"id":"k1ea44b51","name":"일회용 행주","loc":"스텐다이"},{"id":"k13f7dc16","name":"일회용 장갑","loc":"스텐다이"},{"id":"k5aef09de","name":"과일칩","loc":"조리대 수납함"},{"id":"ka4f40421","name":"하수구 거름망","loc":"스텐다이"},{"id":"k671128f6","name":"키친타월","loc":"창고"},{"id":"k9507ca99","name":"화장실 휴지","loc":"창고"},{"id":"kb6946a26","name":"음식물 쓰레기 봉투","loc":"스텐다이"},{"id":"k43ce8dc7","name":"칵테일 휴지","loc":"창고"},{"id":"kc68a9744","name":"손님용 일회용 물티슈","loc":"창고"},{"id":"k44636906","name":"화이트 와인잔","loc":"창고"},{"id":"kd7049d57","name":"청소기 세제","loc":"스텐다이"},{"id":"k00d4fb17","name":"비프 프레첼","loc":"창고"},{"id":"k006a01e0","name":"샴페인잔","loc":"창고"},{"id":"ka5818538","name":"올리브 오일","loc":"조리대 수납함"}]};
+var KIT_STATE={ok:["st-ok","● 충분","충분"],low:["st-low","▲ 부족","부족"],out:["st-none","✕ 없음","없음"]};
+var KIT_LOC_ORDER=["냉장고","냉동실","조리대","조리대 수납함","기본안주 아래","스텐다이","싱크대","창고"];
+var KIT={loaded:false,loading:false,error:"",states:{},surveys:[],orig:null,draft:null,base:0,published:false,serverNote:"",view:"status",sort:"loc",low:false,paste:"",pasteMsg:null,detail:null,detailData:null,saving:false};
+function kitFrom(d){return (d&&d.items||[]).map(function(it){return {id:it.id,name:it.name||"",loc:it.loc||"",loc2:it.loc2||"",shop:it.shop||"",del:false};});}
+function kitPayload(){return {items:KIT.draft.filter(function(it){return !it.del;}).map(function(it){var o={id:it.id,name:it.name.trim(),loc:it.loc.trim()};if(it.loc2.trim())o.loc2=it.loc2.trim();if(it.shop.trim())o.shop=it.shop.trim();return o;})};}
+function kitDirty(){if(!KIT.draft)return 0;var a={},n=0;KIT.orig.forEach(function(it){a[it.id]=it;});
+  KIT.draft.forEach(function(it){var o=a[it.id];if(!o){if(!it.del)n++;return;}if(it.del||o.name!==it.name||o.loc!==it.loc||o.loc2!==it.loc2||o.shop!==it.shop)n++;});return n;}
+function kitLoad(){
+  KIT.loading=true;KIT.error="";render();
+  Promise.all([api("GET","/api/admin/inventory/kitchen"),api("GET","/api/admin/content/kitchen")]).then(function(r){
+    KIT.states=r[0].states||{};KIT.surveys=r[0].surveys||[];
+    var cur=r[1].current;KIT.published=!!r[1].published;KIT.base=cur?cur.version:0;KIT.serverNote=cur?"":"서버 발행본 없음. 내장 목록(자료/주방재고.csv)이 시작값";
+    KIT.orig=kitFrom(cur?cur.data:EMBEDDED_KITCHEN);if(!KIT.draft||!kitDirty())KIT.draft=clone(KIT.orig);
+    KIT.loaded=true;KIT.loading=false;render();
+  },function(e){
+    KIT.loading=false;if(e.status===401)return;
+    KIT.error=e.status===503?"주방 재고 저장소 없음 또는 연결 안 됨. 서버 설정(kitchen-schema.sql) 확인":e.message;
+    if(!KIT.orig){KIT.orig=kitFrom(EMBEDDED_KITCHEN);KIT.draft=clone(KIT.orig);KIT.serverNote="서버 연결 안 됨. 내장 목록이 시작값";}
+    KIT.loaded=true;render();
+  });
+}
+function kitItems(){return (KIT.orig||[]).filter(function(it){return it.name;});}
+function kitGroups(items){
+  var by={},keys=[];
+  items.forEach(function(it){var k=KIT.sort==="shop"?it.shop:it.loc;if(!by[k]){by[k]=[];keys.push(k);}by[k].push(it);});
+  if(KIT.sort==="shop")keys.sort(function(a,b){if(!a)return 1;if(!b)return -1;return a.localeCompare(b,"ko");});
+  else keys.sort(function(a,b){var x=KIT_LOC_ORDER.indexOf(a),y=KIT_LOC_ORDER.indexOf(b);return (x<0?99:x)-(y<0?99:y);});
+  return keys.map(function(k){return {key:k,label:k||(KIT.sort==="shop"?"구입처 미정":"위치 미정"),items:by[k]};});
+}
+function kitBadge(st){var s=KIT_STATE[st];return h("span",{class:"badge "+(s?s[0]:"st-na"),text:s?s[1]:"- 미조사"});}
+function kitWhere(it){return it.loc+(it.loc2?"·"+it.loc2:"");}
+function kitNeedText(groups){
+  var latest="";groups.forEach(function(g){g.items.forEach(function(it){var c=KIT.states[it.id];if(c.surveyDate>latest)latest=c.surveyDate;});});
+  var out=["주방 부족 목록"+(latest?" (조사일 "+invMD(latest)+")":"")];
+  groups.forEach(function(g){out.push("["+g.label+"]");g.items.forEach(function(it){var c=KIT.states[it.id];out.push("- "+it.name+" ("+KIT_STATE[c.state][2]+(c.surveyDate!==latest?", 조사 "+invMD(c.surveyDate):"")+")");});});
+  return out.join("\n");
+}
+function viewKit(){
+  var box=h("div",{});
+  if(!KIT.loaded){if(!KIT.loading)kitLoad();box.append(h("div",{class:"card",text:"불러오는 중"}));return box;}
+  if(KIT.error)box.append(h("div",{class:"msg err",id:"kitError"},KIT.error,h("div",{class:"acts"},h("button",{class:"btn",type:"button",text:"다시 불러오기",onclick:function(){KIT.loaded=false;kitLoad();}}))));
+  var tb=function(id,key,label,extra){return h("button",{type:"button",id:id,"aria-pressed":String(KIT.view===key),onclick:function(){KIT.view=key;KIT.detail=null;S.notice=null;render();}},label,extra);};
+  var dn=kitDirty();
+  box.append(h("div",{class:"tabs sub"},tb("kitTabStatus","status","현황"),tb("kitTabEdit","edit","목록 편집",dn?h("span",{class:"nbadge",text:String(dn)}):null),tb("kitTabHist","history","조사 이력")));
+  box.append(KIT.view==="status"?viewKitStatus():KIT.view==="edit"?viewKitEdit():viewKitHistory());
+  return box;
+}
+function viewKitStatus(){
+  var box=h("div",{}),seg=function(id,key,label){return h("button",{type:"button",class:"btn tog",id:id,"aria-pressed":String(KIT.sort===key),text:label,onclick:function(){KIT.sort=key;render();}});};
+  box.append(h("div",{class:"bar"},seg("kitSortLoc","loc","위치별"),seg("kitSortShop","shop","구입처별"),h("button",{type:"button",class:"btn tog",id:"kitLow","aria-pressed":String(KIT.low),text:"부족·없음만 보기",onclick:function(){KIT.low=!KIT.low;render();}}),h("span",{class:"sp"}),
+    h("button",{class:"btn",type:"button",id:"kitRefresh",text:"새로고침",onclick:function(){KIT.loaded=false;kitLoad();}})));
+  var all=kitItems(),need=all.filter(function(it){var c=KIT.states[it.id];return c&&(c.state==="low"||c.state==="out");}),ng=kitGroups(need);
+  var msg=h("span",{class:"hint",role:"status",id:"kitCopyMsg"});
+  box.append(h("div",{class:"bar"},h("b",{id:"kitNeedCount",text:"부족·없음 "+need.length+"개 · 미조사 "+all.filter(function(it){return !KIT.states[it.id];}).length+"개"}),
+    h("button",{class:"btn primary",type:"button",id:"kitCopy",text:"부족 목록 복사",disabled:!need.length,onclick:function(){invCopy(kitNeedText(ng)).then(function(){msg.textContent="복사됨";},function(){msg.textContent="복사 실패";});}}),msg));
+  var groups=kitGroups(KIT.low?need:all);
+  if(!groups.length)box.append(h("div",{class:"card",id:"kitEmpty",text:KIT.low?"부족·없음 품목 없음":"품목 없음"}));
+  groups.forEach(function(g){
+    box.append(h("h3",{"data-kitgroup":g.label,text:g.label+" "+g.items.length+"개"}));
+    g.items.forEach(function(it){var c=KIT.states[it.id];
+      box.append(h("div",{class:"row","data-kit":it.id},h("b",{text:it.name}),h("div",{class:"bar",style:"margin:4px 0 0"},kitBadge(c?c.state:null),
+        h("span",{class:"small",text:(KIT.sort==="shop"?kitWhere(it):(it.shop||"구입처 미정"))+" · "+(c?"조사 "+invMD(c.surveyDate):"조사 기록 없음")}),c&&invStale(c.surveyDate)?h("span",{class:"tag",text:"오래됨"}):null)));
+    });
+  });
+  return box;
+}
+function viewKitEdit(){
+  var box=h("div",{}),dn=kitDirty();
+  if(KIT.serverNote)box.append(h("div",{class:"msg warn",text:KIT.serverNote}));
+  box.append(h("div",{class:"bar"},h("span",{class:"count",id:"kitChg",text:"변경 "+dn+"건"}),h("span",{class:"small",text:KIT.published?"발행본 v"+KIT.base+" 기준":"발행 전 · 내장 목록 기준"}),h("span",{class:"sp"}),
+    h("button",{class:"btn",type:"button",id:"kitResetEdit",text:"모두 되돌리기",disabled:!dn,onclick:function(){KIT.draft=clone(KIT.orig);render();}}),
+    h("button",{class:"btn primary",type:"button",id:"kitSave",text:"저장·발행",disabled:!dn||KIT.saving,onclick:kitSave})));
+  box.append(h("p",{class:"hint",text:"발행하면 직원 재고 조사 화면 '주방'에 바로 반영(기존 상태 기록은 유지). 구입처는 직원 화면에도 보임. 가격·연락처는 넣지 않음."}));
+  // 구입처 일괄 붙여넣기: 품목<TAB>구입처
+  var ta=h("textarea",{id:"kitPaste","aria-label":"구입처 일괄 붙여넣기",placeholder:"시트에서 '품목' '구입처' 두 열을 복사해 붙여넣기",rows:"3",oninput:function(ev){KIT.paste=ev.target.value;}});ta.value=KIT.paste;
+  box.append(h("details",{class:"card",id:"kitPasteBox",open:!!KIT.paste||!!KIT.pasteMsg},h("summary",{text:"구입처 일괄 붙여넣기"}),ta,
+    h("div",{class:"acts"},h("button",{class:"btn",type:"button",id:"kitPasteGo",text:"적용",onclick:kitApplyPaste})),
+    KIT.pasteMsg?h("div",{class:"msg "+(KIT.pasteMsg.fail.length?"warn":"ok"),id:"kitPasteMsg"},KIT.pasteMsg.text,KIT.pasteMsg.fail.length?h("ul",{},KIT.pasteMsg.fail.slice(0,10).map(function(t){return h("li",{text:t});})):null):null));
+  var orig={};KIT.orig.forEach(function(it){orig[it.id]=it;});
+  KIT.draft.forEach(function(it){
+    var o=orig[it.id],cls="row"+(it.del?" del":!o?" added":(o.name!==it.name||o.loc!==it.loc||o.loc2!==it.loc2||o.shop!==it.shop)?" edited":"");
+    var inp=function(f,label,max){return h("input",{type:"text","data-f":f,maxlength:String(max),"aria-label":(it.name||"새 품목")+" "+label,placeholder:label,value:it[f],disabled:it.del,oninput:function(ev){it[f]=ev.target.value;var r=ev.target.closest("[data-kitrow]"),oo=orig[it.id];r.className="row"+(!oo?" added":(oo.name!==it.name||oo.loc!==it.loc||oo.loc2!==it.loc2||oo.shop!==it.shop)?" edited":"");var n=kitDirty();document.getElementById("kitChg").textContent="변경 "+n+"건";document.getElementById("kitSave").disabled=!n;document.getElementById("kitResetEdit").disabled=!n;}});};
+    box.append(h("div",{class:cls,"data-kitrow":it.id},
+      h("div",{class:"kitgrid"},inp("name","품목",40),inp("loc","위치",20),inp("loc2","위치2(선택)",20),inp("shop","구입처(선택)",30)),
+      h("div",{class:"acts",style:"margin-top:4px"},h("button",{class:"btn"+(it.del?"":" danger"),type:"button","data-kitdel":it.id,text:it.del?"삭제 취소":"삭제",onclick:function(){if(!orig[it.id]){KIT.draft=KIT.draft.filter(function(x){return x!==it;});}else it.del=!it.del;renderKeep("[data-kitrow]");}}))));
+  });
+  box.append(h("div",{class:"add-row"},h("button",{class:"btn",type:"button",id:"kitAdd",text:"+ 품목 추가",onclick:function(){
+    KIT.draft.push({id:"k"+Date.now().toString(36)+(uid++).toString(36),name:"",loc:"",loc2:"",shop:"",del:false});renderKeep("#kitAdd");
+    var ins=root.querySelectorAll("[data-kitrow] input[data-f=name]");if(ins.length)ins[ins.length-1].focus();}})));
+  return box;
+}
+function kitApplyPaste(){
+  var key=function(s){return invNorm(s);},byName={},ok=0,fail=[];
+  KIT.draft.forEach(function(it){if(it.del)return;var k=key(it.name);(byName[k]=byName[k]||[]).push(it);});
+  String(KIT.paste).split(/\r?\n/).forEach(function(line,i){
+    if(!line.trim())return;var p=line.split("\t");
+    if(p.length<2){fail.push((i+1)+"줄: 탭으로 나뉜 두 열 아님");return;}
+    var hit=byName[key(p[0])]||[];
+    if(hit.length!==1){fail.push((i+1)+"줄 '"+p[0].trim().slice(0,20)+"': "+(hit.length?"같은 이름 여러 개":"일치하는 품목 없음"));return;}
+    hit[0].shop=p[1].trim().slice(0,30);ok++;
+  });
+  KIT.pasteMsg={text:"구입처 "+ok+"개 적용"+(fail.length?" · 실패 "+fail.length+"줄":"")+". '저장·발행'을 눌러야 반영",fail:fail};
+  render();
+}
+function kitSave(){
+  var bad=KIT.draft.filter(function(it){return !it.del&&(!it.name.trim()||!it.loc.trim());});
+  if(bad.length){notice("err","품목 이름과 위치는 비울 수 없음("+bad.length+"개)");render();window.scrollTo(0,0);return;}
+  KIT.saving=true;S.notice=null;render();
+  api("PUT","/api/admin/content/kitchen",{data:kitPayload(),nickname:S.nick,note:"",baseVersion:KIT.base}).then(function(d){
+    KIT.saving=false;KIT.draft=null;KIT.pasteMsg=null;KIT.paste="";notice("ok","발행 완료 · 주방 목록 버전 "+d.version+" ("+d.summary+")");KIT.loaded=false;kitLoad();window.scrollTo(0,0);
+  },function(e){
+    KIT.saving=false;if(e.status===401)return;
+    if(e.status===409)notice("err","다른 매니저가 먼저 저장함. '새로고침' 후 다시 편집");
+    else notice("err","저장 실패: "+e.message,((e.data&&e.data.details)||[]).slice(0,5).map(function(x){var it=x.id&&KIT.draft.filter(function(y){return y.id===x.id;})[0];return (it?it.name+": ":"")+x.reason;}));
+    render();window.scrollTo(0,0);
+  });
+}
+function viewKitHistory(){
+  var box=h("div",{}),names={};(KIT.orig||[]).forEach(function(it){names[it.id]=it.name;});
+  if(KIT.detail){
+    var d=KIT.detailData;
+    box.append(h("button",{class:"btn",type:"button",id:"kitBack",text:"← 이력 목록",onclick:function(){KIT.detail=null;KIT.detailData=null;render();}}));
+    if(!d){box.append(h("div",{class:"card",text:"불러오는 중"}));return box;}
+    box.append(h("div",{class:"card",id:"kitDetail"},h("h3",{text:d.surveyDate+" · 주방 "+d.entries.length+"개"}),h("p",{class:"hint",text:"제출 시각 "+invFmt(d.createdAt)+(d.surveyedBy?" · "+d.surveyedBy:"")})));
+    d.entries.forEach(function(e){var chg=e.prev!==e.state;
+      box.append(h("div",{class:"row"+(chg?" edited":""),"data-kitentry":e.itemId},h("b",{text:e.name||names[e.itemId]||e.itemId}),h("div",{},e.prev?kitBadge(e.prev):h("span",{class:"small",text:"이전 기록 없음"})," → ",kitBadge(e.state))));
+    });
+    return box;
+  }
+  box.append(h("h2",{text:"주방 조사 이력"}),h("p",{class:"hint",text:"최근 30건. 30일 지난 이력은 자동 삭제(최신 상태는 유지)."}));
+  if(!KIT.surveys.length)box.append(h("div",{class:"card",id:"kitNoHist",text:"조사 이력 없음"}));
+  KIT.surveys.forEach(function(s){
+    box.append(h("button",{type:"button",class:"card sub-card","data-kitsurvey":s.id,onclick:function(){KIT.detail=s.id;KIT.detailData=null;render();
+      api("GET","/api/admin/inventory/kitchen/survey/"+s.id).then(function(x){KIT.detailData=x;render();},function(e){if(e.status!==401){KIT.detail=null;notice("err","상세 불러오기 실패: "+e.message);render();}});}},
+      h("div",{class:"ver"},h("div",{class:"top"},h("b",{text:s.surveyDate}),h("span",{class:"small",text:"입력 "+s.itemCount+"개"}),h("span",{class:"small",text:"제출 "+invFmt(s.createdAt)}),s.surveyedBy?h("span",{class:"small",text:s.surveyedBy}):null))));
+  });
+  return box;
+}
 // ---- 와인 목록 편집
 function viewInvWines(){
   var w=INV.w,box=h("div",{});
@@ -1780,7 +1921,7 @@ function wRestore(version){
   }).catch(function(e){w.pendingRestore=null;if(e.status===409){notice("warn","다른 매니저가 먼저 저장함. 새로고침 후 다시 확인");wFetch(true).then(render,render);}else if(e.status!==401){notice("err","복원 실패: "+e.message);render();}});
 }
 
-document.getElementById("logout").addEventListener("click",function(){S.token=null;store(TOKEN_KEY,null);S.draft=null;S.orig=null;S.loginMsg={cls:"ok",text:"로그아웃 완료"};S.notice=null;C=cNew();draftPhotos={};S.applyCl={};S.top="cl";S.pr.loaded=false;S.pr.count=null;S.pr.list=[];INV=invNew();render();});
+document.getElementById("logout").addEventListener("click",function(){S.token=null;store(TOKEN_KEY,null);S.draft=null;S.orig=null;S.loginMsg={cls:"ok",text:"로그아웃 완료"};S.notice=null;C=cNew();draftPhotos={};S.applyCl={};S.top="cl";S.pr.loaded=false;S.pr.count=null;S.pr.list=[];INV=invNew();KIT.loaded=false;KIT.draft=null;KIT.orig=null;KIT.states={};KIT.surveys=[];render();});
 window.addEventListener("beforeunload",function(ev){if(S.token&&(dirty()>0||cDirty("recipes")>0||cDirty("phrases")>0||wDirty()>0)){ev.preventDefault();ev.returnValue="";}});
 window.addEventListener("resize",function(){autosize();});
 (function init(){
