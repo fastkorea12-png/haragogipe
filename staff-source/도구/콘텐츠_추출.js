@@ -56,7 +56,7 @@ function appetizers(used) {
 // ---- 칵테일·기타 음료
 const bullets = (body) => body.split('\n').map((l) => l.trim()).filter((l) => /^[•-]\s*/.test(l)).map((l) => l.replace(/^[•-]\s*/, ''));
 const sentencesOf = (t) => t.split(/\.\s*/).map((x) => x.trim()).filter(Boolean);
-const INGREDIENT_LABELS = ['와인', '콜라', '오렌지주스', '크렘 드 카시스', '얼음'];
+const INGREDIENT_LABELS = ['와인', '콜라', '레몬즙', '오렌지주스', '크렘 드 카시스', '얼음'];
 function cocktailItem(used, kind, sec, status) {
   const name = sec.title.replace(/\s*레시피.*$/, '').trim(), pre = kind === 'others' ? 'x' : 'k';
   const it = { id: dedupe(used, pre + hash(kind, sec.title, name)), name };
