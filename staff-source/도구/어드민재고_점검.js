@@ -77,7 +77,7 @@ async function mock(page){
   // ---- 로그인과 탭
   await page.goto(pageUrl);await page.waitForSelector('#loginGo');
   await page.fill('#pw',PW);await page.fill('#nick','점장');await page.click('#loginGo');await page.waitForSelector('#saveBtn');
-  assert.deepEqual(await texts('.tabs.top button'),['체크리스트','레시피','응대 멘트','제안함','제출 현황','재고 조사','신입 교육'].map((t,i,a)=>t).map(t=>t));
+  assert.deepEqual(await texts('.tabs.top button'),['체크리스트','레시피','응대 멘트','제안함','제출 현황','재고 조사','신입 교육','경영 보고서'].map((t,i,a)=>t).map(t=>t));
   const tabInfo=await page.evaluate(()=>{const t=document.querySelector('.tabs.top'),r=t.getBoundingClientRect();return {ow:getComputedStyle(t).overflowX,wrap:getComputedStyle(t).flexWrap,sw:t.scrollWidth,cw:t.clientWidth,h:Math.round(r.height),pageOverflow:document.documentElement.scrollWidth>window.innerWidth};});
   assert.equal(tabInfo.wrap,'nowrap');assert.equal(tabInfo.pageOverflow,false);assert(tabInfo.h<=60,'탭이 한 줄: '+tabInfo.h);
   ok('상단 탭 6개 한 줄(스크롤 '+tabInfo.sw+'/'+tabInfo.cw+')');
