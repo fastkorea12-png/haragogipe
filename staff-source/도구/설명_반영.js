@@ -50,7 +50,8 @@ for(const p of payhere.items.filter(p=>!p.menuName))excluded.push([p.name,'페�
 // 레드도 페이히어 번호(QR 주문 번호)와 가격을 쓴다(10/27). 메뉴판 코드 Red Wine N의 숫자와 다를 수 있다.
 const payRed=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_레드_1027.json'),'utf8'));
 const redAlias={'오젠느 르블랑 바케라스':'으젠느 르블랑 바케라스'},redOf=name=>payRed.items.find(p=>p.menuName===(redAlias[name]||name)||p.name===name);
-for(const p of payRed.items)if(!menu.rows.some(m=>/^Red/i.test(clean(m.values[0]))&&clean(m.values[2])===p.menuName))throw new Error('Payhere red menu link changed: '+p.name);
+// menuName이 없는 항목(11/2 호노로 베라, QR 숨김)은 메뉴판·맛 점수에 없어 추천에 쓰지 않고 재고조사 번호 자리만 채운다.
+for(const p of payRed.items)if(p.menuName&&!menu.rows.some(m=>/^Red/i.test(clean(m.values[0]))&&clean(m.values[2])===p.menuName))throw new Error('Payhere red menu link changed: '+p.name);
 for(const w of wines){if(!/^Red/i.test(w.menuCode))continue;const p=redOf(w.name);if(!p)throw new Error('Red not on Payhere: '+w.name);
  Object.assign(w,{price:p.price+'원',posNumber:'레드 '+p.number+'번',posName:p.name,priceSource:'페이히어 '+payRed.readAt});if(p.description)w.description=p.description;}
 // 품절 등으로 추천에서 빼는 와인. 원문 점수·설명은 지식에 남긴다.

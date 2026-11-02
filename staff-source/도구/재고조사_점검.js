@@ -13,7 +13,7 @@ assert(!/<script[^>]+src=|<link[^>]+href="https?:|@import|fonts\.googleapis/.tes
 assert(!html.includes(PW));
 const wl=extract();
 const RED=wl.groups[0].items,WHITE=wl.groups[1].items;
-assert.equal(RED.length,26);
+assert.equal(RED.length,27);
 const db=new DatabaseSync(':memory:');for(const f of ['checklist-schema.sql','shifts-schema.sql','content-schema.sql','inventory-schema.sql','inventory-schema-2.sql'])db.exec(fs.readFileSync(path.join(root,'서버',f),'utf8'));
 const d1={prepare(sql){const st=db.prepare(sql);let a=[];const o={bind(...x){a=x.map(v=>v instanceof ArrayBuffer?new Uint8Array(v):v);return o;},async run(){return{meta:{changes:Number(st.run(...a).changes)}};},async first(){return st.get(...a)||null;},async all(){return{results:st.all(...a)};}};return o;}};
 const env={AI_LIMITER:{async limit(){return{success:true};}},SHIFTS_DB:d1,ADMIN_PASSWORD:PW,ADMIN_TOKEN_SECRET:SECRET};
@@ -89,12 +89,12 @@ async function mock(page){
   assert.match(await page.getAttribute('#digits','placeholder'),/3345633432.*3,3,4,12/);
   await page.fill('#digits','');
   await stable('숫자열 입력창',  '#digits',async()=>{await page.type('#digits','3345633432',{delay:20});});
-  let vals=await rowVals();assert.deepEqual(vals.slice(0,10),['3','3','4','5','6','3','3','4','3','2']);assert.equal(vals.length,26);assert(vals.slice(10).every(v=>v===''));
+  let vals=await rowVals();assert.deepEqual(vals.slice(0,10),['3','3','4','5','6','3','3','4','3','2']);assert.equal(vals.length,27);assert(vals.slice(10).every(v=>v===''));
   const names=await texts('#rows .rname');RED.forEach((it,i)=>assert(names[i].includes(it.name),'이름 순서 '+i));
   assert.equal(names[0].startsWith('1.'),true);
   const subs=await texts('#rows [data-sub]');assert.match(subs[0],new RegExp('이전 4 \\('+md(TODAY)+'\\) → 3'));assert.doesNotMatch(subs[0],/오래됨/);assert.match(subs[10],/이전 - → 미입력, 기존 유지/);assert.match(subs[1],/이전 2 \(\d+\/\d+\) → 3/);
-  assert.match(await page.textContent('#msg'),/10\/26종 입력됨\. 나머지 16종은 미입력, 기존 유지/);
-  assert.match(await page.textContent('#sum'),new RegExp('레드 · 냉장고 · 조사 '+md(TODAY)+' · 입력 10/26종 · 변경 10종')); // 이전 수량 4,2,0과 모두 다르고 나머지 7종은 신규
+  assert.match(await page.textContent('#msg'),/10\/27종 입력됨\. 나머지 17종은 미입력, 기존 유지/);
+  assert.match(await page.textContent('#sum'),new RegExp('레드 · 냉장고 · 조사 '+md(TODAY)+' · 입력 10/27종 · 변경 10종')); // 이전 수량 4,2,0과 모두 다르고 나머지 7종은 신규
   ok('숫자열 3345633432 → 레드 앞 10종 매핑 정확');
   await page.evaluate(()=>window.scrollTo(0,0));await shot('digits_preview');
   await noOverflow('숫자열');
@@ -102,11 +102,11 @@ async function mock(page){
   const badges=await texts('#rows .badge');assert.match(badges[0],/충분/);assert.match(badges[9],/필요/);assert.match(badges[10],/미조사/);
   // 쉼표 입력
   await page.fill('#digits','3,3,4,12');vals=await rowVals();assert.deepEqual(vals.slice(0,5),['3','3','4','12','']);
-  assert.match(await page.textContent('#msg'),/4\/26종 입력됨/);
+  assert.match(await page.textContent('#msg'),/4\/27종 입력됨/);
   await page.fill('#digits','３，３，４');vals=await rowVals();assert.deepEqual(vals.slice(0,4),['3','3','4','']);ok('쉼표·전각 입력');
   await page.fill('#digits','3,3,');vals=await rowVals();assert.deepEqual(vals.slice(0,3),['3','3',''],'끝 쉼표 허용');assert.equal(await page.isDisabled('#submitBtn'),false);
   // 오류: 초과·숫자 아님·99 초과·빈 칸
-  await page.fill('#digits','3'.repeat(27));assert.match(await page.textContent('#msg'),/27개 입력됨\. 이 칸은 26종\. 1개 초과/);assert.equal(await page.isDisabled('#submitBtn'),true);assert.equal((await rowVals()).filter(Boolean).length,26);
+  await page.fill('#digits','3'.repeat(28));assert.match(await page.textContent('#msg'),/28개 입력됨\. 이 칸은 27종\. 1개 초과/);assert.equal(await page.isDisabled('#submitBtn'),true);assert.equal((await rowVals()).filter(Boolean).length,27);
   await page.fill('#digits','12a4');assert.match(await page.textContent('#msg'),/3번째 "a"는 숫자 아님/);assert.equal(await page.isDisabled('#submitBtn'),true);
   await page.fill('#digits','3,100');assert.match(await page.textContent('#msg'),/2번째 100는 99 초과/);assert.equal(await page.isDisabled('#submitBtn'),true);
   await page.fill('#digits','3,,4');assert.match(await page.textContent('#msg'),/2번째 칸이 비어 있음/);assert.equal(await page.isDisabled('#submitBtn'),true);
@@ -127,12 +127,12 @@ async function mock(page){
   // 미입력 행에 직접 입력
   const r12='#rows [data-id="'+RED[11].id+'"]';await page.fill(r12+' [data-qty]','5');assert.match(await page.textContent(r12),/→ 5/);
   assert.equal(await page.isVisible('#resetManual'),true);
-  assert.match(await page.textContent('#sum'),/입력 11\/26종/);
+  assert.match(await page.textContent('#sum'),/입력 11\/27종/);
   await page.click('#resetManual');vals=await rowVals();assert.equal(vals[0],'3');assert.equal(vals[1],'3');assert.equal(vals[11],'');assert.equal(await page.isHidden('#resetManual'),true);
   ok('미리보기 수정(±·직접 입력·초기화), 포커스 유지');
   // 위치 전환: 창고 이전 수량
   await page.click('#locs [data-loc=storage]');assert.match((await texts('#rows [data-sub]'))[0],/이전 1 \(\d+\/\d+\) → 3/);assert.equal(await page.locator('#rows .badge').count(),0,'창고는 상태 배지 없음');
-  await page.click('#locs [data-loc=fridge]');assert.equal((await texts('#rows .badge')).length,26);
+  await page.click('#locs [data-loc=fridge]');assert.equal((await texts('#rows .badge')).length,27);
 
   // 검색
   const q=async t=>{await page.fill('#q',t);await page.waitForTimeout(60);};
@@ -315,7 +315,7 @@ async function mock(page){
    // 오늘 저장한 초안의 의도적 과거 날짜는 유지
    await setLs('harago-inv-draft',{gid:'red',loc:'fridge',date:'2026-10-12',day:'2026-10-14',digits:'33',manual:{}});
    await p3.reload();await p3.waitForSelector('#chips button');await p3.waitForTimeout(300);assert.equal(await p3.inputValue('#surveyDate'),'2026-10-12');assert.equal((await p3.textContent('#dateNote')).trim(),'');
-   assert.match(await p3.textContent('#sum'),/레드 · 냉장고 · 조사 10\/12 · 입력 2\/26종/);
+   assert.match(await p3.textContent('#sum'),/레드 · 냉장고 · 조사 10\/12 · 입력 2\/27종/);
    // 이전 수량 옆 마지막 조사 일자·오래됨(7일 이상)
    const sb=await T('#rows [data-sub]');
    assert.match(sb[0],/이전 4 \(10\/5\) → 3 오래됨 ● 충분/);assert.match(sb[1],/이전 2 \(10\/10\) → 3 ● 충분/);assert.doesNotMatch(sb[1],/오래됨/);assert.match(sb[2],/이전 6 \(10\/7\) → 오래됨|이전 6 \(10\/7\) → 미입력, 기존 유지 오래됨/);
@@ -347,7 +347,7 @@ async function mock(page){
   // 정적: 자료 원문 미포함
   assert(!/가격|주류회사|도매가|희망가|급여|계좌|시급/.test(html.replace(/<script>[\s\S]*<\/script>/,'')),'화면 문구에 민감어 없음');
   const embedded=JSON.parse(html.match(/var EMBEDDED=(\{[\s\S]*?\});\nvar DRAFT_KEY/)[1]);
-  assert.equal(embedded.groups.reduce((n,g)=>n+g.items.length,0),72);
+  assert.equal(embedded.groups.reduce((n,g)=>n+g.items.length,0),73);
   assert.deepEqual(Object.keys(embedded.groups[0].items[0]).sort(),['id','name','order']);
   console.log(log.join('\n'));console.log('캡처:\n'+shots.join('\n'));console.log('재고조사 화면 점검 통과');
  }finally{await browser.close();global.fetch=realFetch;}
