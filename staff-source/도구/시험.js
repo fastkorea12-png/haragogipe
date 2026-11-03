@@ -85,7 +85,7 @@ const wineData=JSON.parse(fs.readFileSync(path.join(__dirname,'와인_추천_데
 const template=fs.readFileSync(path.join(__dirname,'템플릿.html'),'utf8');
 const needText=fs.readFileSync(path.join(root,'지식','와인추천_확인필요.md'),'utf8');
 const excludedCount=(needText.match(/^\| \d+ \|/gm)||[]).length;
-const payhereNew=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_화이트로제_1023.json'),'utf8')).items.filter(p=>!p.menuName).length;
+const payhereNew=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_화이트로제_1023.json'),'utf8')).items.filter(p=>!p.menuName).length+JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_스파클링_1103.json'),'utf8')).items.filter(p=>!p.menuName).length; // 화이트·로제(10/23)·스파클링(11/3) 페이히어 신규
 const integrity=wineData.length+excludedCount===66+payhereNew&&wineData.every(w=>[w.sweetness,w.body,w.acidity,w.tannin].every(x=>Number.isInteger(x)&&x>=1&&x<=5))&&!wineData.some(w=>/미션 리즐링|그랑 띠에라 비노 틴토|군터록 리즐링/.test(w.name));
 let ok=0,unk=0,bad=0;const rows=[];
 T.forEach((t,i)=>{

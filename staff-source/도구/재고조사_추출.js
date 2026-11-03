@@ -10,6 +10,9 @@ const SNAPSHOT = path.join(__dirname, '재고조사_와인목록.json');
 const snapshotText = (r) => JSON.stringify(r, null, 1) + '\n';
 const PAYHERE = path.join(__dirname, '페이히어_화이트로제_1023.json');
 const PAYHERE_RED = path.join(__dirname, '페이히어_레드_1027.json');
+const PAYHERE_SPARKLING = path.join(__dirname, '페이히어_스파클링_1103.json');
+// 재고 CSV와 페이히어 이름이 다른 스파클링(같은 병: Miravento Pink Moscato Spumante)
+const SPARKLING_ALIAS = { '미라벤토 모스카토 핑크': '핑크 모스카토 스푸만테' };
 // 재고 CSV와 페이히어 이름이 달라 자동으로 못 잇는 레드(10/27 회장 확인: 페이히어가 기준)
 const RED_ALIAS = { '비냐 란자 틴토': '비노 틴토', '도멘 말백': '도멘 오뜨 블랑드 말백', '미스터 피에레 피노누아': '미스터 피에르 피노누아', '프리마 피에트라 산지오베제 루비네코': '프리마 산지오베제 루비코네' };
 const GROUPS = [
@@ -52,6 +55,7 @@ function applyPayhere(result) {
   for (const g of result.groups) {
     if (g.id === 'white') groups.push({ id: 'white', name: '화이트 & 로제', items });
     else if (g.id === 'red') groups.push(applyPayhereRed(g, key));
+    else if (g.id === 'sparkling') groups.push(applyPayhereSparkling(g, key));
     else if (g.id !== 'whiterose') groups.push(g);
   }
   return { groups };
@@ -63,6 +67,16 @@ function applyPayhereRed(g, key) {
   const items = ph.items.map((p) => {
     const o = g.items.find((it) => [p.name, p.menuName].some((n) => key(n) === key(RED_ALIAS[it.name] || it.name)));
     return { ...(o || { id: 'w' + hash('red', p.name) }), name: p.name, order: p.number };
+  });
+  return { ...g, items };
+}
+// 스파클링도 페이히어 번호·이름·순서를 따른다(11/3). CSV에 없는 페이히어 신규는 새 id, 페이히어에 없는 CSV 항목은 빠진다.
+function applyPayhereSparkling(g, key) {
+  if (!fs.existsSync(PAYHERE_SPARKLING)) return g;
+  const ph = JSON.parse(fs.readFileSync(PAYHERE_SPARKLING, 'utf8'));
+  const items = ph.items.map((p) => {
+    const o = g.items.find((it) => [p.name, p.menuName].some((n) => n && key(n) === key(SPARKLING_ALIAS[it.name] || it.name)));
+    return { ...(o || { id: 'w' + hash('sparkling', p.name) }), name: p.name, order: p.number };
   });
   return { ...g, items };
 }
