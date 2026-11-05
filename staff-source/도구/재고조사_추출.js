@@ -11,6 +11,8 @@ const snapshotText = (r) => JSON.stringify(r, null, 1) + '\n';
 const PAYHERE = path.join(__dirname, '페이히어_화이트로제_1023.json');
 const PAYHERE_RED = path.join(__dirname, '페이히어_레드_1027.json');
 const PAYHERE_SPARKLING = path.join(__dirname, '페이히어_스파클링_1103.json');
+// 재고에서 빼는 와인(11/5~). 페이히어 원장에는 남아 있어도 재고 목록에서는 뺀다.
+const EXCLUDE = path.join(__dirname, '재고_제외.json');
 // 재고 CSV와 페이히어 이름이 다른 스파클링(같은 병: Miravento Pink Moscato Spumante)
 const SPARKLING_ALIAS = { '미라벤토 모스카토 핑크': '핑크 모스카토 스푸만테' };
 // 재고 CSV와 페이히어 이름이 달라 자동으로 못 잇는 레드(10/27 회장 확인: 페이히어가 기준)
@@ -58,7 +60,8 @@ function applyPayhere(result) {
     else if (g.id === 'sparkling') groups.push(applyPayhereSparkling(g, key));
     else if (g.id !== 'whiterose') groups.push(g);
   }
-  return { groups };
+  const ex = fs.existsSync(EXCLUDE) ? JSON.parse(fs.readFileSync(EXCLUDE, 'utf8')).items.map((x) => key(x.name)) : [];
+  return { groups: groups.map((g) => ({ ...g, items: g.items.filter((it) => !ex.includes(key(it.name))).map((it, i) => ({ ...it, order: i + 1 })) })) }; // 뺀 자리는 순서를 당긴다(화면 번호는 칸 안 순서)
 }
 // 레드도 페이히어 번호·이름·순서를 따른다(10/27). 이름은 그대로 또는 메뉴판 이름·RED_ALIAS로 이어 기존 id(지난 조사 기록)를 유지한다.
 function applyPayhereRed(g, key) {

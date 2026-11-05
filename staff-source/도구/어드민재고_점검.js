@@ -86,7 +86,7 @@ async function mock(page){
   await shot('0_tabs');
   // ---- 현황
   assert.deepEqual(await texts('#invChips button'),['레드','화이트 & 로제','스파클링','포트','내추럴','하프']);
-  assert.equal((await page.$$('#invRows [data-inv]')).length,27);
+  assert.equal((await page.$$('#invRows [data-inv]')).length,26);
   const row=id=>'#invRows [data-inv="'+id+'"]';
   const rt=async id=>(await texts(row(id)))[0];
   assert.match(await rt(RED[0].id),new RegExp('레드 · 1번 · 올드 핸즈 호벤.*냉장고 0병 ✕ 없음 조사 일자 '+TODAY+'.*창고 5병 조사 일자 '+TODAY+'.*마지막 조사 일자 '+TODAY+'.*냉장고: 냉장고 2번째 칸'));
@@ -144,9 +144,9 @@ async function mock(page){
   // ---- 와인 목록 편집
   await page.click('#invTabWines');await page.waitForSelector('[data-wrow]');
   assert.match(await page.textContent('.msg.warn'),/서버 발행본 없음\. 내장 목록이 시작값/);
-  assert.equal((await page.$$('[data-wrow]')).length,27);assert.match(await page.textContent('#wChg'),/변경 0건/);assert.equal(await page.isDisabled('#wSave'),true);
+  assert.equal((await page.$$('[data-wrow]')).length,26);assert.match(await page.textContent('#wChg'),/변경 0건/);assert.equal(await page.isDisabled('#wSave'),true);
   assert.deepEqual((await texts('#wChips button')).map(t=>t.replace(/\s*\d+$/,'')),['레드','화이트 & 로제','스파클링','포트','내추럴','하프']);
-  assert.match((await texts('#wChips button'))[0],/레드 27/);
+  assert.match((await texts('#wChips button'))[0],/레드 26/);
   await check('와인 편집');await shot('4_wines_edit');
   const W=id=>'[data-wrow="'+id+'"]';
   // 이름 수정(타이핑 중 다른 행 위치·포커스 유지)
@@ -160,11 +160,11 @@ async function mock(page){
   await page.click('#wAdd');await page.waitForTimeout(50);
   const newInput=page.locator('[data-wrow] [data-f=name]').last();await newInput.fill('새 와인 시험');
   await page.selectOption(W(RED[5].id)+' [data-f=group]','white');await page.waitForTimeout(50);
-  assert.equal((await page.$$('[data-wrow]')).length,27,'칸 이동한 행은 현재 칸에서 사라짐(27 +추가 1 -이동 1)');
+  assert.equal((await page.$$('[data-wrow]')).length,26,'칸 이동한 행은 현재 칸에서 사라짐(26 +추가 1 -이동 1)');
   assert.match(await noticeText(),/화이트 & 로제 칸 맨 끝으로 이동/);
   assert.match(await page.textContent('#wChg'),/변경 6건/);
   // 되돌리기 확인 흐름
-  await page.click('#wReset');assert.match(await page.textContent('.bar'),/모두 되돌릴지 확인/);await page.click('#wResetYes');assert.match(await page.textContent('#wChg'),/변경 0건/);assert.equal((await page.$$('[data-wrow]')).length,27);
+  await page.click('#wReset');assert.match(await page.textContent('.bar'),/모두 되돌릴지 확인/);await page.click('#wResetYes');assert.match(await page.textContent('#wChg'),/변경 0건/);assert.equal((await page.$$('[data-wrow]')).length,26);
   // 다시 수정 후 사전 검사(빈 이름)·요약
   await page.fill(W(RED[0].id)+' [data-f=name]','');await page.fill(W(RED[1].id)+' [data-f=min]','5');
   await page.click('#wSave');assert.match(await noticeText(),/입력 확인 필요 1곳/);assert.match(await page.textContent(W(RED[0].id)),/빈 이름 금지/);
