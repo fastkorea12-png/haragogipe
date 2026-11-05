@@ -892,7 +892,7 @@
     "descriptionUpdatedAt": "2026-10-08",
     "posNumber": "스파클링 1번",
     "posName": "시드르 부쉐 바이오",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Sparkling Wine 2",
@@ -920,7 +920,7 @@
     "descriptionUpdatedAt": "2026-10-08",
     "posNumber": "스파클링 3번",
     "posName": "발레벨보 브라께토",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Sparkling Wine 3",
@@ -946,9 +946,9 @@
     "nuance": "복숭아·리치·꽃·꿀 / 달콤한 스파클링",
     "serviceDescription": "복숭아와 리치, 꽃과 꿀 느낌이 풍부한 핑크 모스카토입니다. 달콤하고 바디가 가벼운 스파클링으로 페이스트리나 과일 타르트와 곁들이기 좋습니다.",
     "descriptionUpdatedAt": "2026-10-08",
-    "posNumber": "스파클링 4번",
+    "posNumber": "스파클링 6번",
     "posName": "핑크 모스카토 스푸만테",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Sparkling Wine 4",
@@ -974,37 +974,9 @@
     "nuance": "딸기·모스카토 향 / 달콤하고 가벼운 스파클링",
     "serviceDescription": "짙은 딸기 향과 모스카토의 향긋함이 어우러지는 스파클링입니다. 5.5%의 낮은 알코올에 달콤하고 가벼운 질감이 특징입니다. 과일 타르트·케이크·푸딩·베리류나 매콤한 아시아 요리와 곁들이기 좋습니다.",
     "descriptionUpdatedAt": "2026-10-08",
-    "posNumber": "스파클링 5번",
+    "posNumber": "스파클링 4번",
     "posName": "미라벤토 모스카토 스트로베리",
-    "priceSource": "페이히어 2026-11-03"
-  },
-  {
-    "menuCode": "Sparkling Wine 5",
-    "menuRow": 46,
-    "name": "데코디 프라골리노 로쏘",
-    "sourceName": "데코디 프라골리노 로쏘",
-    "english": "Fragolino Rosso",
-    "sweetness": 4,
-    "body": 5,
-    "acidity": 2,
-    "tannin": 2,
-    "aromas": "딸기",
-    "pairing": "디저트, 잼 타르트, 과일 샐러드",
-    "country": "이탈리아",
-    "variety": "Vitis Lambrusca, Isabella",
-    "category": "스파클링 & 포트",
-    "wineKind": "sparkling",
-    "volumeLabel": "",
-    "alcohol": "alc 7.5%",
-    "region": "Lombardia, Italy",
-    "price": "39,000원",
-    "description": "부드러운 거품과 상큼달콤한 향이 지친 하루를 가볍고 행복하게 마무리해 줄 수 있는 친구 같은 와인이예요. 한 잔을 따르는 순간, 눈길을 사로잡는 붉은 색과 상큼한 딸기와 라즈베리의 향기가 퍼져요. 단맛이 강하지만 너무 무겁지 않고 산뜻한 산미가 조화로워 부담 없이 즐기기 좋아요.",
-    "nuance": "딸기·라즈베리 / 달콤한 탄산감",
-    "serviceDescription": "딸기 향이 뚜렷한 달콤한 세미 스파클링입니다. 생산자 자료상 도수 7.5%, 잔당 100~120g/L이며, 디저트·잼 타르트·과일 샐러드와 차갑게 곁들이기 좋습니다.",
-    "descriptionUpdatedAt": "2026-10-08",
-    "posNumber": "스파클링 6번",
-    "posName": "데코디 프라골리노 로쏘",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Sparkling Wine 6",
@@ -1030,9 +1002,9 @@
     "nuance": "꽃·꿀 / 균형 잡힌 카바",
     "serviceDescription": "꽃과 꿀 느낌을 참고할 수 있는 스페인 카바 브뤼입니다. 바디와 산도가 중간 정도로 균형을 이뤄 볶은 채소나 담백한 한식·아시아 요리와 곁들이기 좋습니다.",
     "descriptionUpdatedAt": "2026-10-08",
-    "posNumber": "스파클링 7번",
+    "posNumber": "스파클링 5번",
     "posName": "세구라 비우다스 레세르바 에레다드 브뤼",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Sparkling Wine 7",
@@ -1058,9 +1030,9 @@
     "nuance": "꽃·허브·보리수 / 달콤한 모스카토",
     "serviceDescription": "꽃·허브·보리수 느낌이 있는 달콤한 모스카토 다스티입니다. 과일 타르트나 케이크와 함께 향과 단맛을 즐기기 좋은 스타일입니다.",
     "descriptionUpdatedAt": "2026-10-08",
-    "posNumber": "스파클링 8번",
+    "posNumber": "스파클링 7번",
     "posName": "톨라스코 모스카토 다스티",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Sparkling Wine 8",
@@ -1086,9 +1058,9 @@
     "nuance": "리치·꿀 / 달콤하고 가벼운 모스카토",
     "serviceDescription": "리치와 꿀 느낌이 중심인 달콤한 모스카토 다스티입니다. 가벼운 바디와 낮은 타닌으로 비스킷·케이크 같은 디저트와 편하게 곁들이기 좋습니다.",
     "descriptionUpdatedAt": "2026-10-08",
-    "posNumber": "스파클링 9번",
+    "posNumber": "스파클링 8번",
     "posName": "발레벨보 모스카토 다스티",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Sparkling Wine 9",
@@ -1114,9 +1086,9 @@
     "nuance": "아카시아·세이지·꿀 / 달콤한 꽃향",
     "serviceDescription": "등나무꽃·아카시아꽃·세이지·꿀 느낌이 풍부한 아스티입니다. 달콤하고 화사한 스타일로 과일 타르트나 케이크, 블루 치즈와 곁들이기 좋습니다.",
     "descriptionUpdatedAt": "2026-10-08",
-    "posNumber": "스파클링 10번",
+    "posNumber": "스파클링 9번",
     "posName": "간치아 아스티",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Sparkling Wine 10",
@@ -1156,9 +1128,9 @@
       "화이트 크레망·타닌 구조 없음 → 1",
       "généreuse·블렌딩·효모숙성 → 중간 바디"
     ],
-    "posNumber": "스파클링 11번",
+    "posNumber": "스파클링 10번",
     "posName": "루이 부요 크레망 드 부르고 그랑 리저브",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Sparkling Wine 11",
@@ -1198,9 +1170,9 @@
       "화이트 크레망·타닌 구조 없음 → 1",
       "섬세한 기포·크리미한 질감,12.5% → 가벼운 바디 추론"
     ],
-    "posNumber": "스파클링 12번",
+    "posNumber": "스파클링 11번",
     "posName": "투렌 크레망 드 루아르",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Sparkling Wine 12",
@@ -1241,7 +1213,7 @@
     ],
     "posNumber": "스파클링 13번",
     "posName": "폴 당장 뀌베 카르트 누와",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Sparkling Wine 13",
@@ -1267,9 +1239,9 @@
     "nuance": "사과·파인애플·버터 / 또렷한 산도",
     "serviceDescription": "노란 사과와 파인애플에 버터·분필 느낌을 참고할 수 있는 샴페인 브뤼입니다. 단맛이 적고 산도가 또렷해 새우·게·조개류나 레몬 리조또와 곁들이기 좋습니다.",
     "descriptionUpdatedAt": "2026-10-08",
-    "posNumber": "스파클링 16번",
+    "posNumber": "스파클링 15번",
     "posName": "샤를 도떼일 샴페인 브륏",
-    "priceSource": "페이히어 2026-11-03"
+    "priceSource": "페이히어 2026-11-06"
   },
   {
     "menuCode": "Port Wine 1",

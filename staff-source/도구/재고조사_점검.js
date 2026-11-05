@@ -347,7 +347,7 @@ async function mock(page){
   // 정적: 자료 원문 미포함
   assert(!/가격|주류회사|도매가|희망가|급여|계좌|시급/.test(html.replace(/<script>[\s\S]*<\/script>/,'')),'화면 문구에 민감어 없음');
   const embedded=JSON.parse(html.match(/var EMBEDDED=(\{[\s\S]*?\});\nvar DRAFT_KEY/)[1]);
-  assert.equal(embedded.groups.reduce((n,g)=>n+g.items.length,0),75);
+  assert.equal(embedded.groups.reduce((n,g)=>n+g.items.length,0),74);
   assert.deepEqual(Object.keys(embedded.groups[0].items[0]).sort(),['id','name','order']);
   console.log(log.join('\n'));console.log('캡처:\n'+shots.join('\n'));console.log('재고조사 화면 점검 통과');
  }finally{await browser.close();global.fetch=realFetch;}

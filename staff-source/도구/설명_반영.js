@@ -58,6 +58,11 @@ for(const w of wines){if(!/^Red/i.test(w.menuCode))continue;const p=redOf(w.name
 const paySpk=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_스파클링_1103.json'),'utf8'));
 const spkCode=c=>/^Sparkling/i.test(clean(c)),spkOf=name=>paySpk.items.find(p=>p.menuName&&p.menuName===clean(name));
 for(const p of paySpk.items)if(p.menuName&&!menu.rows.some(m=>spkCode(m.values[0])&&clean(m.values[2])===p.menuName))throw new Error('Payhere sparkling menu link changed: '+p.name);
+// 페이히어에서 지운 스파클링(11/6 데코디 프라골리노 로쏘)은 화이트처럼 추천에서 빼고 확인 목록에 남긴다.
+const offSaleSpk=menu.rows.filter(m=>spkCode(m.values[0])&&!spkOf(clean(m.values[2]))).map(m=>clean(m.values[2]));
+for(let i=wines.length-1;i>=0;i--)if(spkCode(wines[i].menuCode)&&!spkOf(wines[i].name))wines.splice(i,1);
+for(const name of offSaleSpk){const reason='페이히어 판매 목록에 없음('+paySpk.readAt+')',x=excluded.find(x=>x[0]===name);if(x)x[1]=reason;else excluded.push([name,reason]);}
+offSale.push(...offSaleSpk);
 for(const w of wines){if(!spkCode(w.menuCode))continue;const p=spkOf(w.name);if(!p)throw new Error('Sparkling not on Payhere: '+w.name);
  Object.assign(w,{price:p.price+'원',posNumber:'스파클링 '+p.number+'번',posName:p.name,priceSource:'페이히어 '+paySpk.readAt});if(p.description)w.description=p.description;}
 for(const p of paySpk.items.filter(p=>!p.menuName))excluded.push([p.name,'페이히어 신규('+paySpk.readAt+', '+p.price+'원) · 맛 점수·설명 시트 미등록']);
@@ -82,7 +87,7 @@ const sections=rows.map(r=>{
  const red=redOf(menuName)||(mv&&redOf(mv[2]));if(red)lines.splice(7,0,'가격 (페이히어 '+payRed.readAt+'): '+red.price+'원 · 레드 '+red.number+'번');
  const spk=spkOf(menuName)||(mv&&spkOf(mv[2]));if(spk)lines.splice(7,0,'가격 (페이히어 '+paySpk.readAt+'): '+spk.price+'원 · 스파클링 '+spk.number+'번','페이히어 설명: '+spk.description);
  const skipped=skip.find(x=>x.name===menuName);if(skipped)lines.unshift('추천 상태: '+skipped.reason+'('+skipped.at+'). 추천하지 않음 [확인].');
- if(offSale.includes(menuName))lines.unshift('판매 상태: 페이히어 판매 목록에 없음('+payhere.readAt+'). 추천하지 않음 [확인].');
+ if(offSale.includes(menuName))lines.unshift('판매 상태: 페이히어 판매 목록에 없음('+(offSaleSpk.includes(menuName)?paySpk.readAt:payhere.readAt)+'). 추천하지 않음 [확인].');
  if(estimate)lines.push('추정 근거: '+estimate.scoreSources.join(' · '),'빈티지 유의: '+estimate.scoreVintageNote);
  if(/미션 레이트 하비스트/.test(r[1]))lines.push('주의: 기존 원문의 당도 1/5와 달콤한 설명은 충돌한다. 원문은 보존하고 공식 자료의 웹 추정 점수를 별도로 사용한다.');
  return '## '+(link?.menuName||r[1])+' ('+label+')\n- 상태: '+(estimate?'웹 자료 기준 추정':'확정')+'\n- 키워드: '+Array.from(new Set([r[1],r[2],link?.menuName].filter(Boolean))).join(', ')+'\n'+lines.filter(Boolean).map(x=>'- '+x).join('\n');
