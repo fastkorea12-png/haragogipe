@@ -14,6 +14,8 @@ assert(!html.includes(PW)&&!html.includes(SHEET_TOKEN));
 assert(!html.includes('/*WINES_JSON*/'),'와인 목록 시작값이 빌드로 채워짐');
 const wl=extract(),RED=wl.groups[0].items;
 const db=new DatabaseSync(':memory:');for(const f of ['checklist-schema.sql','shifts-schema.sql','content-schema.sql','inventory-schema.sql','inventory-schema-2.sql'])db.exec(fs.readFileSync(path.join(root,'서버',f),'utf8'));
+// 거래처별 보기용: 레드 1~3번 유와인, 4번 케이앤제이, 나머지는 미입력
+db.exec(fs.readFileSync(path.join(root,'서버','inventory-schema-3.sql'),'utf8'));{const st=db.prepare('INSERT INTO inventory_suppliers(item_id,supplier,updated_at) VALUES (?,?,1)');[0,1,2].forEach(i=>st.run(RED[i].id,'유와인'));st.run(RED[3].id,'케이앤제이');}
 const d1={prepare(sql){const st=db.prepare(sql);let a=[];const o={bind(...x){a=x.map(v=>v instanceof ArrayBuffer?new Uint8Array(v):v);return o;},async run(){return{meta:{changes:Number(st.run(...a).changes)}};},async first(){return st.get(...a)||null;},async all(){return{results:st.all(...a)};}};return o;}};
 const env={AI_LIMITER:{async limit(){return{success:true};}},SHIFTS_DB:d1,ADMIN_PASSWORD:PW,ADMIN_TOKEN_SECRET:SECRET};
 const waits=[],wctx={waitUntil(p){waits.push(p);}};
@@ -102,6 +104,18 @@ async function mock(page){
   assert.equal((await page.$$('#invRows [data-inv]')).length,2);
   await page.fill('#invQ','');await page.click('#invChips [data-gid=port]');assert.equal((await page.$$('#invRows [data-inv]')).length,5);await page.click('#invChips [data-gid=red]');
   ok('현황 필터·검색·칸 선택');
+  // 거래처별 보기
+  await page.click('#invBySup');await page.waitForSelector('#invSupChips');
+  assert.equal(await page.getAttribute('#invBySup','aria-pressed'),'true');
+  const supChips=await texts('#invSupChips button');assert.deepEqual(supChips.slice(0,2),['유와인 3','케이앤제이 1']);assert.match(supChips[2],/^거래처 미입력 \d+$/);assert.equal(supChips.length,3);
+  assert.equal((await page.$$('#invRows [data-inv]')).length,3);assert.match(await rt(RED[0].id),/레드 · 1번 · 올드 핸즈 호벤.*거래처 유와인/);
+  assert.match(await page.textContent('#invSupSum'),/유와인 · 3종.*냉장고 4병 · 창고 6병 · 필요·없음 3종/);
+  await page.click('#invSupChips [data-sup="케이앤제이"]');assert.equal((await page.$$('#invRows [data-inv]')).length,1);assert.match(await page.textContent('#invSupSum'),/케이앤제이 · 1종.*필요·없음 0종/);
+  await page.click('#invLow');assert.match(await page.textContent('#invEmpty'),/필요·없음 상태인 와인 없음/);await page.click('#invLow');
+  await page.click('#invSupChips [data-sup=""]');assert.equal((await page.$$('#invRows [data-inv]')).length,wl.groups.reduce((n,g)=>n+g.items.length,0)-4);assert.match(await page.textContent('#invSupSum'),/거래처 미입력/);
+  await check('거래처별');await shot('1b_by_supplier');
+  await page.click('#invByGroup');await page.waitForSelector('#invChips');assert.equal((await page.$$('#invRows [data-inv]')).length,26);
+  ok('현황 거래처별 보기: 거래처 칩·합계·미입력 묶음, 칸별로 복귀');
   // ---- 이력
   await page.click('#invTabHist');await page.waitForSelector('[data-survey]');
   assert.equal((await page.$$('[data-survey]')).length,3);assert.match(await page.textContent('#invMode'),/앱스크립트 미설정\. 구글 양식으로 대체 기록 중/);
