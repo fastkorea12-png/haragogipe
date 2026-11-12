@@ -210,9 +210,9 @@ async function mock(page){
   await check('버전 기록');await shot('8_wines_versions');
   assert.equal(JSON.parse(db.prepare("SELECT data FROM content_versions WHERE kind='wines' AND version=3").get().data).groups[0].items[0].name,'올드 핸즈 호벤 (수정)');
   ok('버전 기록·복원(새 버전으로)');
-  // 하프 칸의 확인 필요 표시(내장 목록에는 있었고 서버에도 유지)
+  // 하프 칸: 확인 필요 항목이던 쇼토트 화이트는 11/13 삭제(재고_제외.json)되어 확인 필요 표시 없음
   await page.click('#wTabEdit');await page.click('#wChips [data-gid=half]');await page.waitForSelector('[data-wrow]');
-  assert.equal(await page.locator('[data-f=confirm][aria-pressed=true]').count(),1);
+  assert.equal(await page.locator('[data-f=confirm][aria-pressed=true]').count(),0);
   await check('하프 칸');
   // 오류 표시: 서버 연결 안 됨
   flags.abort=true;await page.click('#navCl');await page.click('#navInv');

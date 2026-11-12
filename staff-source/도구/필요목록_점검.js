@@ -43,7 +43,7 @@ const initClip=()=>{window.__clip=[];Object.defineProperty(window,'isSecureConte
   { const {c,page,errors}=await open(390,844);await page.goto(STAFF_URL);await page.waitForSelector('#chips button');await page.waitForTimeout(300);
     await page.click('#views [data-view=need]');await page.waitForTimeout(100);
     assert.match(await page.textContent('#needEmpty'),/지금 필요한 와인이 없어요/);assert.equal(await page.locator('#needCopy').count(),0,'빈 목록은 복사 버튼 없음');
-    assert.match(await page.textContent('#needUn summary'),/미조사 74종/);ok('빈 목록 안내·전부 미조사');assert.equal(errors.length,0,errors.join());await c.close(); }
+    assert.match(await page.textContent('#needUn summary'),/미조사 73종/);ok('빈 목록 안내·전부 미조사');assert.equal(errors.length,0,errors.join());await c.close(); }
   // ---- 시드: 레드 냉장고 [0,1,2,3,4] (첫 와인은 7일 전), 창고 [_,3], 레드 6번째 창고만 2(냉장고 기록 없음), 화이트 냉장고 [1,5]
   await survey('red','레드',RED,'fridge',[0],AGO(7));
   await survey('red','레드',RED.slice(1),'fridge',[1,2,3,4],TODAY);
@@ -71,7 +71,7 @@ const initClip=()=>{window.__clip=[];Object.defineProperty(window,'isSecureConte
     const rows=await page.$$eval('#need [data-need]',e=>e.map(x=>({id:x.dataset.need,t:x.innerText.replace(/\s+/g,' ').trim()})));
     assert.deepEqual(rows.map(r=>r.id),[RED[0].id,RED[1].id,RED[2].id,WHITE[0].id]);
     assert.match(rows[0].t,new RegExp(RED[0].name+' ✕ 없음 냉장고 0 · 창고 7 조사 '+md(AGO(7))+' 오래됨'));assert.match(rows[1].t,/▲ 필요 냉장고 1 · 창고 3 조사/);assert.doesNotMatch(rows[1].t,/오래됨/);assert.match(rows[2].t,/창고 -/);
-    assert.match(await page.textContent('#needUn summary'),/미조사 67종/);
+    assert.match(await page.textContent('#needUn summary'),/미조사 66종/);
     assert.equal(await page.locator('#needUn').evaluate(e=>e.open),false);
     const need=await page.textContent('#need');assert.doesNotMatch(need,BANNED);
     await page.click('#needCopy');await page.waitForTimeout(80);
@@ -102,7 +102,7 @@ const initClip=()=>{window.__clip=[];Object.defineProperty(window,'isSecureConte
     assert.deepEqual(rows.map(r=>r.id),[RED[0].id,RED[1].id,RED[2].id,WHITE[0].id]);
     assert.match(rows[0].t,/✕ 없음 냉장고 0 · 창고 7 조사 \d+\/\d+ 오래됨/);assert.match(rows[1].t,/▲ 필요 냉장고 1 · 창고 3/);
     assert.deepEqual(await page.$$eval('[data-ngroup]',e=>e.map(x=>x.textContent)),['레드 3종',wl.groups[1].name+' 1종']);
-    assert.match(await page.textContent('#needUn summary'),/미조사 67종/);
+    assert.match(await page.textContent('#needUn summary'),/미조사 66종/);
     // 어드민에는 10/19부터 '발주 멘트' 보기 버튼(관리자 전용)이 있으므로 필요 목록 본문(#needList)만 검사한다. 직원 화면은 위에서 화면 전체를 검사.
     assert.deepEqual(await page.$$eval('#needViews button',b=>b.map(x=>x.textContent)),['필요 목록','발주 멘트']);assert.equal(await page.getAttribute('#needViews [data-nview=list]','aria-pressed'),'true');
     const txt=await page.evaluate(()=>document.getElementById('needList').innerText);assert.doesNotMatch(txt,/주류회사|매입|도매|희망|발주|국가|품종|가격|수입사/);
