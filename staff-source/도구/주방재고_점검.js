@@ -115,6 +115,20 @@ const byName=n=>list.items.find(i=>i.name===n);
     await page.click('#kitCopy');await page.waitForTimeout(50);
     assert.equal((await page.evaluate(()=>window.__clip)).at(-1),['주방 부족 목록 (조사일 '+md(TODAY)+')','[마트B]','- 버터 (부족)','[쿠팡]','- 토닉워터 (없음)'].join('\n'));
     await page.click('#kitLow');await page.waitForTimeout(50);assert.equal(await page.locator('[data-kit]').count(),2);ok('어드민 현황·구입처별·복사·부족만');
+    // 구입처 옮기기(11/18): 버터 마트B→쿠팡, 피클 → 새 구입처, 저장·발행 전에는 '옮김' 표시와 변경 건수
+    await page.click('#kitLow');await page.waitForTimeout(50);
+    const butter=byName('버터').id,pickle=byName('피클').id;
+    await page.selectOption('[data-kitmove="'+butter+'"]','쿠팡');await page.waitForTimeout(50);
+    assert.deepEqual(await page.$$eval('[data-kitgroup]',a=>a.map(x=>x.getAttribute('data-kitgroup'))),['다이소','쿠팡','구입처 미정'],'마트B가 비면 묶음이 사라짐');
+    assert.match(await page.textContent('[data-kit="'+butter+'"]'),/옮김: 마트B →/);
+    await page.selectOption('[data-kitmove="'+pickle+'"]','\u0001new');await page.waitForTimeout(50);
+    await page.fill('[aria-label="피클 새 구입처"]','동네시장');await page.click('[data-kit="'+pickle+'"] button:has-text("옮기기")');await page.waitForTimeout(50);
+    assert.match(await page.textContent('#kitMoveBar'),/구입처 변경 2건/);
+    await page.screenshot({path:path.join(shotDir,'어드민_주방_구입처옮기기_390.png'),fullPage:false});
+    await page.click('#kitMoveSave');await page.waitForTimeout(400);
+    {const pub=JSON.parse(db.prepare("SELECT data FROM content_versions WHERE kind='kitchen' ORDER BY version DESC LIMIT 1").get().data);
+     assert.equal(pub.items.find(i=>i.id===butter).shop,'쿠팡');assert.equal(pub.items.find(i=>i.id===pickle).shop,'동네시장');assert.equal(pub.items.length,86);}
+    await page.waitForSelector('#kitMoveBar');assert.doesNotMatch(await page.textContent('#kitMoveBar'),/변경/);ok('어드민 구입처 옮기기·새 구입처·발행');
     // 목록 편집: 붙여넣기로 구입처 2개, 1줄 실패 → 발행
     await page.click('#kitTabEdit');await page.waitForSelector('[data-kitrow]');
     await page.click('#kitPasteBox summary');await page.fill('#kitPaste','피클\t트레이더스\n바질페스토\t트레이더스\n없는품목\t쿠팡');await page.click('#kitPasteGo');

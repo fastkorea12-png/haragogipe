@@ -1686,7 +1686,7 @@ function invResend(id){
 var EMBEDDED_KITCHEN=/*KITCHEN_JSON*/{"items":[]};
 var KIT_STATE={ok:["st-ok","● 충분","충분"],low:["st-low","▲ 부족","부족"],out:["st-none","✕ 없음","없음"]};
 var KIT_LOC_ORDER=["냉장고","냉장고 문","와인 냉장고","냉동실","조리대","싱크대 & 스텐다이","기타","기본안주 아래","창고","조리대 수납함","스텐다이","싱크대"];
-var KIT={loaded:false,loading:false,error:"",states:{},surveys:[],orig:null,draft:null,base:0,published:false,serverNote:"",view:"status",sort:"loc",low:false,paste:"",pasteMsg:null,detail:null,detailData:null,saving:false};
+var KIT={moveNew:{},loaded:false,loading:false,error:"",states:{},surveys:[],orig:null,draft:null,base:0,published:false,serverNote:"",view:"status",sort:"loc",low:false,paste:"",pasteMsg:null,detail:null,detailData:null,saving:false};
 function kitFrom(d){return (d&&d.items||[]).map(function(it){return {id:it.id,name:it.name||"",loc:it.loc||"",loc2:it.loc2||"",shop:it.shop||"",del:false};});}
 function kitPayload(){return {items:KIT.draft.filter(function(it){return !it.del;}).map(function(it){var o={id:it.id,name:it.name.trim(),loc:it.loc.trim()};if(it.loc2.trim())o.loc2=it.loc2.trim();if(it.shop.trim())o.shop=it.shop.trim();return o;})};}
 function kitDirty(){if(!KIT.draft)return 0;var a={},n=0;KIT.orig.forEach(function(it){a[it.id]=it;});
@@ -1706,9 +1706,28 @@ function kitLoad(){
   });
 }
 function kitItems(){return (KIT.orig||[]).filter(function(it){return it.name;});}
+// 구입처별 보기의 '구입처 옮기기'(11/18)는 편집 초안(KIT.draft)의 구입처를 바꾼다. 묶음도 초안 기준으로 보여 주고, 저장·발행해야 반영된다.
+function kitDraftOf(id){return KIT.draft?KIT.draft.filter(function(x){return x.id===id&&!x.del;})[0]:null;}
+function kitShopOf(it){var d=kitDraftOf(it.id);return d?d.shop.trim():it.shop;}
+function kitShopList(){var seen={},out=[];(KIT.draft||KIT.orig||[]).forEach(function(x){var v=(x.shop||"").trim();if(!x.del&&v&&!seen[v]){seen[v]=1;out.push(v);}});return out.sort(function(a,b){return a.localeCompare(b,"ko");});}
+function kitMove(it,shop){var d=kitDraftOf(it.id);if(!d)return;d.shop=shop;delete KIT.moveNew[it.id];S.notice=null;render();}
+function kitMoveCtl(it){
+  var cur=kitShopOf(it),wrap=h("span",{class:"kitmove"});
+  if(KIT.moveNew[it.id]!==undefined){
+    var inp=h("input",{type:"text",maxlength:"30","aria-label":it.name+" 새 구입처",placeholder:"새 구입처 이름",value:KIT.moveNew[it.id],oninput:function(ev){KIT.moveNew[it.id]=ev.target.value;}});
+    wrap.append(inp,h("button",{class:"btn",type:"button",text:"옮기기",onclick:function(){var v=(KIT.moveNew[it.id]||"").trim();if(v)kitMove(it,v);}}),h("button",{class:"btn",type:"button",text:"취소",onclick:function(){delete KIT.moveNew[it.id];render();}}));
+    setTimeout(function(){try{inp.focus();}catch(e){}},0);return wrap;
+  }
+  var sel=h("select",{"aria-label":it.name+" 구입처 옮기기","data-kitmove":it.id,onchange:function(ev){var v=ev.target.value;if(v==="\u0001new"){KIT.moveNew[it.id]="";render();}else kitMove(it,v);}});
+  sel.append(h("option",{value:cur,text:"구입처 옮기기…"}));
+  kitShopList().forEach(function(v){if(v!==cur)sel.append(h("option",{value:v,text:"→ "+v}));});
+  if(cur)sel.append(h("option",{value:"",text:"→ 구입처 미정"}));
+  sel.append(h("option",{value:"\u0001new",text:"+ 새 구입처 입력"}));
+  wrap.append(sel);return wrap;
+}
 function kitGroups(items){
   var by={},keys=[];
-  items.forEach(function(it){var k=KIT.sort==="shop"?it.shop:it.loc;if(!by[k]){by[k]=[];keys.push(k);}by[k].push(it);});
+  items.forEach(function(it){var k=KIT.sort==="shop"?kitShopOf(it):it.loc;if(!by[k]){by[k]=[];keys.push(k);}by[k].push(it);});
   if(KIT.sort==="shop")keys.sort(function(a,b){if(!a)return 1;if(!b)return -1;return a.localeCompare(b,"ko");});
   else keys.sort(function(a,b){var x=KIT_LOC_ORDER.indexOf(a),y=KIT_LOC_ORDER.indexOf(b);return (x<0?99:x)-(y<0?99:y);});
   return keys.map(function(k){return {key:k,label:k||(KIT.sort==="shop"?"구입처 미정":"위치 미정"),items:by[k]};});
@@ -1740,12 +1759,16 @@ function viewKitStatus(){
   box.append(h("div",{class:"bar"},h("b",{id:"kitNeedCount",text:"부족·없음 "+need.length+"개 · 미조사 "+all.filter(function(it){return !KIT.states[it.id];}).length+"개"}),
     h("button",{class:"btn primary",type:"button",id:"kitCopy",text:"부족 목록 복사",disabled:!need.length,onclick:function(){invCopy(kitNeedText(ng)).then(function(){msg.textContent="복사됨";},function(){msg.textContent="복사 실패";});}}),msg));
   var groups=kitGroups(KIT.low?need:all);
+  if(KIT.sort==="shop"){var dn=kitDirty();
+    box.append(h("div",{class:dn?"msg warn":"hint",id:"kitMoveBar"},dn?"구입처 변경 "+dn+"건 · 저장·발행해야 직원 화면에 반영":"품목 옆 '구입처 옮기기'로 다른 구입처로 옮길 수 있음",
+      dn?h("div",{class:"acts"},h("button",{class:"btn",type:"button",id:"kitMoveReset",text:"되돌리기",onclick:function(){KIT.draft=clone(KIT.orig);KIT.moveNew={};render();}}),h("button",{class:"btn primary",type:"button",id:"kitMoveSave",text:"저장·발행",disabled:KIT.saving,onclick:kitSave})):null));}
   if(!groups.length)box.append(h("div",{class:"card",id:"kitEmpty",text:KIT.low?"부족·없음 품목 없음":"품목 없음"}));
   groups.forEach(function(g){
     box.append(h("h3",{"data-kitgroup":g.label,text:g.label+" "+g.items.length+"개"}));
     g.items.forEach(function(it){var c=KIT.states[it.id];
       box.append(h("div",{class:"row","data-kit":it.id},h("b",{text:it.name}),h("div",{class:"bar",style:"margin:4px 0 0"},kitBadge(c?c.state:null),
-        h("span",{class:"small",text:(KIT.sort==="shop"?kitWhere(it):(it.shop||"구입처 미정"))+" · "+(c?"조사 "+invMD(c.surveyDate):"조사 기록 없음")}),c&&invStale(c.surveyDate)?h("span",{class:"tag",text:"오래됨"}):null)));
+        h("span",{class:"small",text:(KIT.sort==="shop"?kitWhere(it):(it.shop||"구입처 미정"))+" · "+(c?"조사 "+invMD(c.surveyDate):"조사 기록 없음")}),c&&invStale(c.surveyDate)?h("span",{class:"tag",text:"오래됨"}):null,
+          KIT.sort==="shop"&&kitShopOf(it)!==it.shop?h("span",{class:"tag",text:"옮김: "+(it.shop||"미정")+" →"}):null),KIT.sort==="shop"?h("div",{class:"bar",style:"margin:6px 0 0"},kitMoveCtl(it)):null));
     });
   });
   return box;
