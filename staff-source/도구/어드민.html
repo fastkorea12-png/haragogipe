@@ -86,6 +86,12 @@ details.un{margin:16px 0 0;background:var(--bot);border:1px solid var(--rule);bo
 .rlog{list-style:none;padding:0;margin:0}.rlog li{border-bottom:1px solid var(--rule);padding:8px 2px;overflow-wrap:anywhere}
 [hidden]{display:none!important}
 @media(min-width:900px){main{max-width:880px}.row{padding:10px 14px}}
+.kitbox{background:var(--bot);border:1px solid var(--rule);border-radius:10px;padding:4px 10px;margin-bottom:10px}.kitbox h3{margin:6px 0 2px;font-size:16px}
+.kitrow{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--rule)}.kitrow:first-of-type{border-top:0}
+.kitrow .kitmain{flex:1;min-width:0}.kitrow .kitname{font-weight:700;overflow-wrap:anywhere}.kitrow .kitmeta{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;margin-top:2px}
+.kitrow.bought .kitname{color:var(--muted);text-decoration:line-through}
+.kitbuy{flex:none;display:flex;flex-direction:column;align-items:center;min-width:44px;font-size:11px;color:var(--muted);cursor:pointer}.kitbuy input{width:22px;height:22px;margin:4px 0 0;accent-color:var(--wine)}
+.kitmove{flex:none;display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.kitmove select{max-width:118px;font-size:14px;min-height:40px;padding:0 4px}.kitmove input{width:120px}
 </style></head><body>
 <header><div class="brand"><img src="/*LOGO_URL*/" width="243" height="80" alt="Haragogipe 하라고지페"><p>근무노트 어드민</p></div><div style="display:flex;gap:10px;align-items:center"><a href="../" id="toNote" style="font-size:16px;color:inherit;padding:10px 4px">근무노트로</a><button class="btn" id="logout" type="button" hidden>로그아웃</button></div></header>
 <main id="root"></main>
@@ -1686,7 +1692,7 @@ function invResend(id){
 var EMBEDDED_KITCHEN=/*KITCHEN_JSON*/{"items":[]};
 var KIT_STATE={ok:["st-ok","● 충분","충분"],low:["st-low","▲ 부족","부족"],out:["st-none","✕ 없음","없음"]};
 var KIT_LOC_ORDER=["냉장고","냉장고 문","와인 냉장고","냉동실","조리대","싱크대 & 스텐다이","기타","기본안주 아래","창고","조리대 수납함","스텐다이","싱크대"];
-var KIT={moveNew:{},loaded:false,loading:false,error:"",states:{},surveys:[],orig:null,draft:null,base:0,published:false,serverNote:"",view:"status",sort:"loc",low:false,paste:"",pasteMsg:null,detail:null,detailData:null,saving:false};
+var KIT={moveNew:{},bought:{},boughtReady:true,buyBusy:{},loaded:false,loading:false,error:"",states:{},surveys:[],orig:null,draft:null,base:0,published:false,serverNote:"",view:"status",sort:"loc",low:false,paste:"",pasteMsg:null,detail:null,detailData:null,saving:false};
 function kitFrom(d){return (d&&d.items||[]).map(function(it){return {id:it.id,name:it.name||"",loc:it.loc||"",loc2:it.loc2||"",shop:it.shop||"",del:false};});}
 function kitPayload(){return {items:KIT.draft.filter(function(it){return !it.del;}).map(function(it){var o={id:it.id,name:it.name.trim(),loc:it.loc.trim()};if(it.loc2.trim())o.loc2=it.loc2.trim();if(it.shop.trim())o.shop=it.shop.trim();return o;})};}
 function kitDirty(){if(!KIT.draft)return 0;var a={},n=0;KIT.orig.forEach(function(it){a[it.id]=it;});
@@ -1694,7 +1700,7 @@ function kitDirty(){if(!KIT.draft)return 0;var a={},n=0;KIT.orig.forEach(functio
 function kitLoad(){
   KIT.loading=true;KIT.error="";render();
   Promise.all([api("GET","/api/admin/inventory/kitchen"),api("GET","/api/admin/content/kitchen")]).then(function(r){
-    KIT.states=r[0].states||{};KIT.surveys=r[0].surveys||[];
+    KIT.states=r[0].states||{};KIT.surveys=r[0].surveys||[];KIT.bought=r[0].bought||{};KIT.boughtReady=r[0].boughtReady!==false;
     var cur=r[1].current;KIT.published=!!r[1].published;KIT.base=cur?cur.version:0;KIT.serverNote=cur?"":"서버 발행본 없음. 내장 목록(자료/주방재고.csv)이 시작값";
     KIT.orig=kitFrom(cur?cur.data:EMBEDDED_KITCHEN);if(!KIT.draft||!kitDirty())KIT.draft=clone(KIT.orig);
     KIT.loaded=true;KIT.loading=false;render();
@@ -1719,11 +1725,19 @@ function kitMoveCtl(it){
     setTimeout(function(){try{inp.focus();}catch(e){}},0);return wrap;
   }
   var sel=h("select",{"aria-label":it.name+" 구입처 옮기기","data-kitmove":it.id,onchange:function(ev){var v=ev.target.value;if(v==="\u0001new"){KIT.moveNew[it.id]="";render();}else kitMove(it,v);}});
-  sel.append(h("option",{value:cur,text:"구입처 옮기기…"}));
+  sel.append(h("option",{value:cur,text:"옮기기…"}));
   kitShopList().forEach(function(v){if(v!==cur)sel.append(h("option",{value:v,text:"→ "+v}));});
   if(cur)sel.append(h("option",{value:"",text:"→ 구입처 미정"}));
   sel.append(h("option",{value:"\u0001new",text:"+ 새 구입처 입력"}));
   wrap.append(sel);return wrap;
+}
+// 구입 체크(11/18): 마지막 조사보다 나중에 체크한 것만 '구입함'. 다음 조사가 들어오면 자동으로 풀린다.
+function kitBought(id){var b=KIT.bought[id],c=KIT.states[id];return b&&(!c||!c.at||Date.parse(b.at)>Date.parse(c.at))?b:null;}
+function kitSetBought(it,on){
+  KIT.buyBusy[it.id]=true;var prev=KIT.bought[it.id];
+  if(on)KIT.bought[it.id]={at:new Date().toISOString(),by:S.nick||""};else delete KIT.bought[it.id];render();
+  api("PUT","/api/admin/inventory/kitchen/bought",{itemId:it.id,bought:on,nickname:S.nick}).then(function(d){delete KIT.buyBusy[it.id];if(on)KIT.bought[it.id]={at:d.at,by:S.nick||""};render();},
+    function(e){delete KIT.buyBusy[it.id];if(prev)KIT.bought[it.id]=prev;else delete KIT.bought[it.id];if(e.status===401)return;notice("err",e.status===503?"구입 체크 저장소 없음. 서버 설정(kitchen-schema.sql) 확인":"구입 체크 저장 실패: "+e.message);render();});
 }
 function kitGroups(items){
   var by={},keys=[];
@@ -1754,22 +1768,31 @@ function viewKitStatus(){
   var box=h("div",{}),seg=function(id,key,label){return h("button",{type:"button",class:"btn tog",id:id,"aria-pressed":String(KIT.sort===key),text:label,onclick:function(){KIT.sort=key;render();}});};
   box.append(h("div",{class:"bar"},seg("kitSortLoc","loc","위치별"),seg("kitSortShop","shop","구입처별"),h("button",{type:"button",class:"btn tog",id:"kitLow","aria-pressed":String(KIT.low),text:"부족·없음만 보기",onclick:function(){KIT.low=!KIT.low;render();}}),h("span",{class:"sp"}),
     h("button",{class:"btn",type:"button",id:"kitRefresh",text:"새로고침",onclick:function(){KIT.loaded=false;kitLoad();}})));
-  var all=kitItems(),need=all.filter(function(it){var c=KIT.states[it.id];return c&&(c.state==="low"||c.state==="out");}),ng=kitGroups(need);
+  var all=kitItems(),needAll=all.filter(function(it){var c=KIT.states[it.id];return c&&(c.state==="low"||c.state==="out");}),need=needAll.filter(function(it){return !kitBought(it.id);}),nBought=needAll.length-need.length,ng=kitGroups(need);
   var msg=h("span",{class:"hint",role:"status",id:"kitCopyMsg"});
-  box.append(h("div",{class:"bar"},h("b",{id:"kitNeedCount",text:"부족·없음 "+need.length+"개 · 미조사 "+all.filter(function(it){return !KIT.states[it.id];}).length+"개"}),
+  box.append(h("div",{class:"bar"},h("b",{id:"kitNeedCount",text:"부족·없음 "+need.length+"개"+(nBought?" (구입함 "+nBought+"개 제외)":"")+" · 미조사 "+all.filter(function(it){return !KIT.states[it.id];}).length+"개"}),
     h("button",{class:"btn primary",type:"button",id:"kitCopy",text:"부족 목록 복사",disabled:!need.length,onclick:function(){invCopy(kitNeedText(ng)).then(function(){msg.textContent="복사됨";},function(){msg.textContent="복사 실패";});}}),msg));
-  var groups=kitGroups(KIT.low?need:all);
+  var groups=kitGroups(KIT.low?needAll:all);
   if(KIT.sort==="shop"){var dn=kitDirty();
-    box.append(h("div",{class:dn?"msg warn":"hint",id:"kitMoveBar"},dn?"구입처 변경 "+dn+"건 · 저장·발행해야 직원 화면에 반영":"품목 옆 '구입처 옮기기'로 다른 구입처로 옮길 수 있음",
+    box.append(h("div",{class:dn?"msg warn":"hint",id:"kitMoveBar"},dn?"구입처 변경 "+dn+"건 · 저장·발행해야 직원 화면에 반영":"오른쪽 '옮기기'로 다른 구입처로 이동 · 왼쪽 '구입' 체크는 다음 조사 때 자동 해제",
       dn?h("div",{class:"acts"},h("button",{class:"btn",type:"button",id:"kitMoveReset",text:"되돌리기",onclick:function(){KIT.draft=clone(KIT.orig);KIT.moveNew={};render();}}),h("button",{class:"btn primary",type:"button",id:"kitMoveSave",text:"저장·발행",disabled:KIT.saving,onclick:kitSave})):null));}
   if(!groups.length)box.append(h("div",{class:"card",id:"kitEmpty",text:KIT.low?"부족·없음 품목 없음":"품목 없음"}));
+  if(!KIT.boughtReady)box.append(h("div",{class:"msg warn",text:"구입 체크 저장소 없음. 서버 설정(kitchen-schema.sql) 확인"}));
   groups.forEach(function(g){
-    box.append(h("h3",{"data-kitgroup":g.label,text:g.label+" "+g.items.length+"개"}));
-    g.items.forEach(function(it){var c=KIT.states[it.id];
-      box.append(h("div",{class:"row","data-kit":it.id},h("b",{text:it.name}),h("div",{class:"bar",style:"margin:4px 0 0"},kitBadge(c?c.state:null),
-        h("span",{class:"small",text:(KIT.sort==="shop"?kitWhere(it):(it.shop||"구입처 미정"))+" · "+(c?"조사 "+invMD(c.surveyDate):"조사 기록 없음")}),c&&invStale(c.surveyDate)?h("span",{class:"tag",text:"오래됨"}):null,
-          KIT.sort==="shop"&&kitShopOf(it)!==it.shop?h("span",{class:"tag",text:"옮김: "+(it.shop||"미정")+" →"}):null),KIT.sort==="shop"?h("div",{class:"bar",style:"margin:6px 0 0"},kitMoveCtl(it)):null));
+    var card=h("div",{class:"kitbox"},h("h3",{"data-kitgroup":g.label,text:g.label+" "+g.items.length+"개"}));
+    g.items.forEach(function(it){var c=KIT.states[it.id],b=kitBought(it.id),moved=KIT.sort==="shop"&&kitShopOf(it)!==it.shop;
+      var cb=h("input",{type:"checkbox","data-kitbuy":it.id,"aria-label":it.name+" 구입함",disabled:!!KIT.buyBusy[it.id]||!KIT.boughtReady,onchange:function(ev){kitSetBought(it,ev.target.checked);}});cb.checked=!!b;
+      card.append(h("div",{class:"kitrow"+(b?" bought":""),"data-kit":it.id},
+        h("label",{class:"kitbuy"},"구입",cb),
+        h("div",{class:"kitmain"},h("div",{class:"kitname",text:it.name}),
+          h("div",{class:"kitmeta"},kitBadge(c?c.state:null),
+            h("span",{class:"small",text:(KIT.sort==="shop"?kitWhere(it):(it.shop||"구입처 미정"))+" · "+(c?"조사 "+invMD(c.surveyDate):"조사 기록 없음")}),
+            c&&invStale(c.surveyDate)?h("span",{class:"tag",text:"오래됨"}):null,
+            b?h("span",{class:"tag",text:"구입 "+invMD(new Date(Date.parse(b.at)+9*3600000).toISOString().slice(0,10))+(b.by?" "+b.by:"")}):null,
+            moved?h("span",{class:"tag",text:"옮김: "+(it.shop||"미정")+" →"}):null)),
+        KIT.sort==="shop"?kitMoveCtl(it):null));
     });
+    box.append(card);
   });
   return box;
 }

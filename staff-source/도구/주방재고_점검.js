@@ -129,6 +129,19 @@ const byName=n=>list.items.find(i=>i.name===n);
     {const pub=JSON.parse(db.prepare("SELECT data FROM content_versions WHERE kind='kitchen' ORDER BY version DESC LIMIT 1").get().data);
      assert.equal(pub.items.find(i=>i.id===butter).shop,'쿠팡');assert.equal(pub.items.find(i=>i.id===pickle).shop,'동네시장');assert.equal(pub.items.length,86);}
     await page.waitForSelector('#kitMoveBar');assert.doesNotMatch(await page.textContent('#kitMoveBar'),/변경/);ok('어드민 구입처 옮기기·새 구입처·발행');
+    // 구입 체크(11/18): 부족 품목 체크 → 서버 저장·취소선·부족 수와 복사에서 제외, 해제하면 원래대로
+    await page.check('[data-kitbuy="'+butter+'"]');await page.waitForTimeout(300);
+    assert.equal(db.prepare('SELECT COUNT(*) n FROM kitchen_bought WHERE item_id=?').get(butter).n,1);
+    assert.match(await page.getAttribute('[data-kit="'+butter+'"]','class'),/bought/);assert.match(await page.textContent('[data-kit="'+butter+'"]'),/구입 \d+\/\d+ 점장/);
+    assert.match(await page.textContent('#kitNeedCount'),/부족·없음 1개 \(구입함 1개 제외\)/);
+    await page.click('#kitCopy');await page.waitForTimeout(50);assert.doesNotMatch((await page.evaluate(()=>window.__clip)).at(-1),/버터/);
+    await page.screenshot({path:path.join(shotDir,'어드민_주방_구입체크_390.png'),fullPage:false});
+    await page.uncheck('[data-kitbuy="'+butter+'"]');await page.waitForTimeout(300);
+    assert.equal(db.prepare('SELECT COUNT(*) n FROM kitchen_bought').get().n,0);assert.match(await page.textContent('#kitNeedCount'),/부족·없음 2개 ·/);
+    await page.check('[data-kitbuy="'+butter+'"]');await page.waitForTimeout(300);
+    await page.click('#kitSortLoc');await page.waitForTimeout(50);assert.equal(await page.locator('[data-kitmove]').count(),0,'위치별에는 옮기기 없음');assert.equal(await page.isChecked('[data-kitbuy="'+butter+'"]'),true);
+    await page.screenshot({path:path.join(shotDir,'어드민_주방_위치별_390.png'),fullPage:false});
+    await page.click('#kitSortShop');await page.waitForTimeout(50);ok('어드민 구입 체크·제외·해제');
     // 목록 편집: 붙여넣기로 구입처 2개, 1줄 실패 → 발행
     await page.click('#kitTabEdit');await page.waitForSelector('[data-kitrow]');
     await page.click('#kitPasteBox summary');await page.fill('#kitPaste','피클\t트레이더스\n바질페스토\t트레이더스\n없는품목\t쿠팡');await page.click('#kitPasteGo');
