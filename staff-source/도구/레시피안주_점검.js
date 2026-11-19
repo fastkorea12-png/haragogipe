@@ -75,7 +75,7 @@ const key=s=>s.replace(/[\s&·]/g,'');
     // 단계/수정 버튼 겹침: li 안 span과 edit-btn
     const overlap=await page.evaluate(()=>{const o=[];document.querySelectorAll('.food-body:not([hidden]) .food-steps li').forEach(li=>{const a=li.querySelector('span').getBoundingClientRect(),b=li.querySelector('.edit-btn').getBoundingClientRect();if(a.right>b.left+0.5&&a.bottom>b.top&&a.top<b.bottom)o.push(li.innerText)});return o});
     assert.equal(overlap.length,0,names[i]+' 글자·버튼 겹침');
-    if(label==='모바일'&&names[i]==='16. 트치소 짜파게티')await page.screenshot({path:shotDir+'/펼친카드.png'});
+    if(label==='모바일'&&names[i]==='17. 트치소 짜파게티')await page.screenshot({path:shotDir+'/펼친카드.png'});
    }
    // 수정 요청 복사 대상 파일
    await page.locator('.food-card').first().locator('.food-head').click();
