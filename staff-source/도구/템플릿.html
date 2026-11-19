@@ -508,7 +508,7 @@ function phraseAnswer(q){
 }
 function recipeAnswer(q){
   var n=norm(q),intent=/레시피|만들|만드|조리|요리법|준비법|준비방법|어떻게|전자레인지|오븐|몇분|돌려|돌리|재료|순서/.test(n);
-  if(/와인|레드|화이트|스파클링|포트|칵테일|미모사|칼리모초|스프리처|뱅쇼|키르|키어|상그리아|벨리니|휴고|틴토|블랙러시안|파우스트|크림소다|메론소다|멜론소다|기타음료|벽메모|벽레시피|벽에붙은/.test(n))return null;
+  if(/와인|레드|화이트|스파클링|포트|칵테일|미모사|칼리모초|아마레|스프리처|뱅쇼|키르|키어|상그리아|벨리니|휴고|틴토|블랙러시안|파우스트|크림소다|메론소다|멜론소다|기타음료|벽메모|벽레시피|벽에붙은/.test(n))return null;
   if(/응대|멘트|말해|설명해|대신|빼도|넣어도|대체|알레르기|없으면|없는데|부족|실수|손님/.test(n)&&!/레시피|만드는법|만드는순서|조리법/.test(n))return null;
   var catalog=recipeCatalog();
   var hits=catalog.map(function(r){var length=0;r.aliases.forEach(function(alias){var a=norm(alias);if(n.indexOf(a)>=0)length=Math.max(length,a.length);});return {recipe:r,length:length};}).filter(function(x){return x.length>0;}).sort(function(a,b){return b.length-a.length;});
@@ -1007,7 +1007,7 @@ var recipeKind='안주',openFood='';
   recipeKind=kind;var food=kind==='안주';
   document.querySelectorAll('[data-recipe-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.recipeKind===kind));});
   document.getElementById('recipeCards').hidden=food;document.getElementById('foodCards').hidden=!food;document.getElementById('foodTools').hidden=!food;
-  document.getElementById('recipeIntro').textContent=food?'매장 안주 만드는 법. 이름을 누르면 펼침.':'주문한 병 와인으로 만드는 칼리모초·키르·미모사. 아래는 매장 메뉴 칵테일·음료(주방 벽 레시피).';
+  document.getElementById('recipeIntro').textContent=food?'매장 안주 만드는 법. 이름을 누르면 펼침.':'주문한 병 와인으로 만드는 칼리모초·키르·미모사·포트로 아마레. 아래는 매장 메뉴 칵테일·음료(주방 벽 레시피).';
   if(food)renderFoods();else applyContent('recipes');
  }
  function rfield(group,it,label,value,slot,confirm){

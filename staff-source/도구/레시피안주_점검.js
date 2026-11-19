@@ -26,11 +26,11 @@ const key=s=>s.replace(/[\s&·]/g,'');
    assert(await page.locator('#foodCards').isVisible());assert(await page.locator('#recipeCards').isHidden());
    assert(await page.locator('.food-card').count()>=1,'처음 화면에 안주 목록');
    if(label==='모바일')await page.screenshot({path:shotDir+'/레시피첫화면_안주.png'});
-   // 칵테일 구역: 한 번의 탭, 확정 3 + 매장 칵테일·음료 6
+   // 칵테일 구역: 한 번의 탭, 확정 4(11/19 포트로 아마레) + 매장 칵테일·음료 6
    await page.locator('[data-recipe-kind="칵테일"]').click();
    assert.equal(await page.locator('[data-recipe-kind="칵테일"]').getAttribute('aria-pressed'),'true');
    assert(await page.locator('#foodCards').isHidden());
-   assert.equal(await page.locator('#recipeCards .recipe-card:not(.recipe-etc)').count(),3);
+   assert.equal(await page.locator('#recipeCards .recipe-card:not(.recipe-etc)').count(),4);
    assert.equal(await page.locator('#recipeCards .recipe-card.recipe-etc').count(),6,'매장 칵테일·음료 6장');
    assert.equal((await page.locator('#recipeEtc').innerText()).trim(),'매장 칵테일·음료 (벽 레시피)');
    assert.deepEqual(await page.locator('#recipeCards .recipe-etc h3').allInnerTexts(),['퍼지네이블','말리부오렌지','스크류드라이버','블랙러시안','뱅쇼','샹그리아']);
@@ -90,7 +90,7 @@ const key=s=>s.replace(/[\s&·]/g,'');
    await page.fill('#foodFilter','없는안주');assert.equal(await page.locator('.food-card').count(),0);
    await page.fill('#foodFilter','');assert.equal(await page.locator('.food-card').count(),n);
    // 칵테일 복귀
-   await page.locator('[data-recipe-kind="칵테일"]').click();assert.equal(await page.locator('#recipeCards .recipe-card').count(),9);assert(await page.locator('#foodCards').isHidden());
+   await page.locator('[data-recipe-kind="칵테일"]').click();assert.equal(await page.locator('#recipeCards .recipe-card').count(),10);assert(await page.locator('#foodCards').isHidden());
    assert.equal(errors.length,0,'JS 오류 '+errors.join('|'));
    if(label==='데스크톱')await page.screenshot({path:shotDir+'/데스크톱_칵테일.png'});
    results.push(label+' 통과 (카드 '+n+')');await context.close();

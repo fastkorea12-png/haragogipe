@@ -1,0 +1,51 @@
+// 콘텐츠 추출 JSON(안주·칵테일·기타 음료·응대 멘트)이 현재 직원 화면(근무노트.html)의 카드와 같은 항목·같은 순서인지, 서버 검증을 통과하는지 확인한다. (node 도구/콘텐츠추출_점검.js)
+const fs=require('fs'),path=require('path'),assert=require('assert/strict');
+const {chromium}=require(process.env.HARAGO_PLAYWRIGHT||'playwright');
+const root=path.join(__dirname,'..'),extract=require('./콘텐츠_추출.js');
+const CL_URL='https://haragogipe-staff-ai.haragogipe-staff-ai-worker.workers.dev/api/checklist';
+const H=require('./_점검공통.js');
+(async()=>{
+ const a=extract(),b=extract();
+ assert.deepEqual(a,b,'같은 입력에서 같은 결과(id 포함)');
+ const {validateRecipes,validatePhrases}=await import('../서버/content.js');
+ assert.deepEqual(validateRecipes(a.recipes).errors,[],'레시피 추출 결과가 서버 검증을 통과');
+ assert.deepEqual(validatePhrases(a.phrases).errors,[],'멘트 추출 결과가 서버 검증을 통과');
+ const ids=[...a.recipes.appetizers,...a.recipes.cocktails,...a.recipes.others].map(x=>x.id).concat(a.phrases.sections.flatMap(s=>[s.id,...s.items.map(i=>i.id)]));
+ assert.equal(new Set(ids).size,ids.length,'id 중복 없음');
+ assert(ids.every(i=>/^[A-Za-z0-9_-]{1,24}$/.test(i)));
+ const browser=await chromium.launch(process.env.HARAGO_PLAYWRIGHT?{channel:'chrome',headless:true}:{executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});
+ try{
+  const page=await (await browser.newContext({viewport:{width:500,height:900}})).newPage();
+  await H.stub(page);
+  await page.goto('file://'+path.join(root,'근무노트.html'));
+  await page.locator('[data-tab="recipes"]').click();
+  const foods=await page.locator('#foodCards .food-card').evaluateAll(c=>c.map(x=>x.dataset.food));
+  assert.equal(foods.length,a.recipes.appetizers.length);
+  assert.deepEqual(a.recipes.appetizers.map(x=>x.name),foods,'안주 이름·순서');
+  const prices=await page.locator('#foodCards .food-card .food-price').allInnerTexts();
+  assert.deepEqual(a.recipes.appetizers.map(x=>x.price||'가격 미정'),prices,'안주 가격');
+  const stepCounts=await page.locator('#foodCards .food-card').evaluateAll(c=>c.map(x=>x.querySelectorAll('.food-steps li').length));
+  assert.deepEqual(a.recipes.appetizers.map(x=>x.steps.length),stepCounts,'안주 단계 수');
+  await page.locator('[data-recipe-kind="칵테일"]').click();
+  const names=await page.locator('#recipeCards .recipe-card h3').allInnerTexts();
+  const confirmed=a.recipes.cocktails.filter(x=>x.status==='confirmed').map(x=>x.name);
+  assert.deepEqual(confirmed.concat(a.recipes.others.map(x=>x.name)),names,'칵테일 확정 4 + 매장 칵테일·음료 6');
+  assert.equal(confirmed.length,4);assert.equal(a.recipes.others.length,6);
+  assert.equal(a.recipes.cocktails.filter(x=>x.status==='candidate').length,7,'후보 7종은 화면에 없고 추출에만 있음');
+  assert.deepEqual(a.recipes.others.filter(x=>x.confirm).map(x=>x.name),[],'벽 레시피 [확인] 없음');
+  assert.equal(a.recipes.others.filter(x=>x.nonalcohol).length,0,'논알코올 소다는 뺐음(10/29)');
+  await page.locator('[data-tab="phrases"]').click();
+  const titles=await page.locator('#phraseCards .phrase-card > summary').evaluateAll(s=>s.map(x=>x.textContent.replace('수정 제안 있음','').replace('✎','').trim()));
+  const fromDoc=titles.slice(0,titles.length-3);
+  const mine=a.phrases.sections.flatMap(s=>s.items);
+  assert.equal(titles.length,53,'화면 멘트 53장(13 문서 50 + 전환·리뷰 원문 3)');
+  assert.equal(mine.length,50);
+  assert.deepEqual(mine.map(x=>x.situation),fromDoc.map(t=>t.replace(/^\d+-\d+\s+/,'')),'멘트 50장 상황·순서');
+  const groups=await page.locator('#phraseCards .phrase-group').allInnerTexts();
+  assert.deepEqual(a.phrases.sections.map(s=>s.title),groups.slice(0,7).map(g=>g.replace(/^\d+\.\s*/,'')),'멘트 소제목');
+  const customerTotal=mine.reduce((n,i)=>n+i.lines.filter(l=>l.kind==='customer').length,0),staffTotal=mine.reduce((n,i)=>n+i.lines.filter(l=>l.kind==='staff').length,0);
+  assert(customerTotal>40&&staffTotal>5);
+  assert(mine.filter(i=>i.confirm).length>=15);
+  console.log('콘텐츠 추출 점검 통과: 안주 '+a.recipes.appetizers.length+' · 칵테일 확정 4(+후보 7) · 매장 칵테일·음료 6 · 멘트 50(소제목 7) · 손님 발화 '+customerTotal+'줄 · 직원 안내 '+staffTotal+'줄 · id '+ids.length+'개');
+ }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exitCode=1;});
