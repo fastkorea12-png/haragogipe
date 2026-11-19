@@ -13,13 +13,13 @@ const ph=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_화이트�
 assert.deepEqual(r.groups[1].items.map(i=>[i.order,i.name]),ph.items.map(p=>[p.number,p.name]));
 assert(!r.groups[1].items.some(i=>/킬리힐|상쎄르/.test(i.name)));
 assert.equal(r.groups[1].items.find(i=>i.order===13).id,'wc0ec4602','카룬도 샤도네이 id 유지');
-// 레드: 페이히어 번호·이름 그대로(11/2 번호 변경), CSV 26종의 id 모두 유지(비냐 란자 틴토=비노 틴토 22번, 도멘 말백=25번) + 호노로 베라(15번, CSV에 없음) 새 id
+// 레드: 페이히어 번호·이름 그대로(11/2 번호 변경), CSV 26종의 id 모두 유지(비냐 란자 틴토=비노 틴토 27번·QR 숨김, 도멘 말백=24번, 11/19) + 호노로 베라(15번, CSV에 없음) 새 id
 const red=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_레드_1027.json'),'utf8'));
 assert.deepEqual(r.groups[0].items.map(i=>[i.order,i.name]),red.items.filter(p=>p.name!=='폼비스 런 쉬라즈').map((p,i)=>[i+1,p.name]),'재고_제외: 폼비스 런 쉬라즈 빠짐(11/5)');
 const snapRed=JSON.parse(fs.readFileSync(extract.SNAPSHOT,'utf8')).groups.find(g=>g.id==='red').items;
 assert.deepEqual(r.groups[0].items.filter(i=>i.name!=='호노로 베라 까베르네 소비뇽').map(i=>i.id).sort(),snapRed.filter(i=>i.name!=='폼비스 런 쉬라즈').map(i=>i.id).sort(),'레드 id 유지');
 assert.equal(r.groups[0].items.find(i=>i.order===15).name,'호노로 베라 까베르네 소비뇽','호노로 베라 15번(CSV에 없음, QR 숨김)');
-assert.equal(r.groups[0].items.find(i=>i.order===25).id,'w2895862b','도멘 말백 id 유지');
+assert.equal(r.groups[0].items.find(i=>i.order===24).id,'w2895862b','도멘 말백 id 유지(11/19 비노 틴토가 맨 뒤로 가서 24번)');
 // 스파클링: 페이히어 번호·이름 그대로(11/3), CSV 13종의 id 모두 유지(미라벤토 모스카토 핑크=핑크 모스카토 스푸만테 4번), 신규 3종(펄 드 시드르 2·펀 키스 14·시모네 페브르 15) 새 id
 const spk=JSON.parse(fs.readFileSync(path.join(__dirname,'페이히어_스파클링_1103.json'),'utf8'));
 assert.deepEqual(r.groups[2].items.map(i=>[i.order,i.name]),spk.items.map(p=>[p.number,p.name]));

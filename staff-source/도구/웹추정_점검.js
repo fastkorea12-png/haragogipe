@@ -9,7 +9,7 @@ check('메뉴66종·단종2종 제외',menu.rows.filter(r=>/wine/i.test(r.values
 check('기존38종 중 판매 중인 와인의 네 점수 유지',baseline.length===38&&baseline.filter(onSale).every(b=>{const w=ctx.WINE_DATA.find(w=>w.name===b.name);return w&&w.scoreSource!=='web-estimate'&&['sweetness','acidity','tannin','body'].every(k=>w[k]===b[k]);}));
 check('레드·화이트·스파클링 보정5종 네축 ±1',read('웹추정_보정_1011.json').length>=5&&read('웹추정_보정_1011.json').every(c=>c.estimated.every((x,i)=>Math.abs(x-c.original[i])<=1)&&c.urls.length));
 const web=ctx.WINE_DATA.filter(w=>w.scoreSource==='web-estimate');
-check('원문38종(페이히어 판매 중단 2종·품절 1종·11/6 스파클링 삭제 1종 제외)+비노 틴토(비냐 란자, 회장 확인 10/28)+웹추정11종',ctx.WINE_DATA.length===49&&!ctx.WINE_DATA.some(w=>w.name==='데코디 프라골리노 로쏘')&&ctx.WINE_DATA.some(w=>w.name==='비노 틴토'&&w.posNumber==='레드 22번'&&w.english==='Vina Lanzar Red'&&w.scoreSource!=='web-estimate')&&web.length===11&&!skip.some(x=>ctx.WINE_DATA.some(w=>w.name===x.name)));
+check('원문38종(페이히어 판매 중단 2종·품절 1종·11/6 스파클링 삭제 1종 제외, 11/19 QR 숨김 3종 제외)+웹추정9종(11/19 QR 숨김 2종 제외)',ctx.WINE_DATA.length===44&&!ctx.WINE_DATA.some(w=>w.name==='데코디 프라골리노 로쏘')&&!ctx.WINE_DATA.some(w=>w.name==='비노 틴토')&&web.length===9&&!skip.some(x=>ctx.WINE_DATA.some(w=>w.name===x.name)));
 check('화이트·로제는 페이히어 판매 중인 와인만·번호와 가격은 페이히어 값',ctx.WINE_DATA.filter(w=>/^White/.test(w.menuCode)).every(w=>{const p=payhere.items.find(p=>p.menuName===w.name);return p&&w.posNumber==='화이트·로제 '+p.number+'번'&&w.price===p.price+'원';})&&!ctx.WINE_DATA.some(w=>payhere.items.some(p=>!p.menuName&&p.name===w.name)));
 check('레드는 페이히어 번호와 가격',ctx.WINE_DATA.filter(w=>/^Red/.test(w.menuCode)).every(w=>{const p=payRed.items.find(p=>p.menuName===w.name||p.name===w.name);return p&&w.posNumber==='레드 '+p.number+'번'&&w.price===p.price+'원';}));
 check('스파클링은 페이히어 번호·가격·상품 설명(11/3), 메뉴판에 없는 신규는 추천에 없음',ctx.WINE_DATA.filter(w=>/^Sparkling/.test(w.menuCode)).every(w=>{const p=paySpk.items.find(p=>p.menuName===w.name);return p&&w.posNumber==='스파클링 '+p.number+'번'&&w.price===p.price+'원'&&w.description===p.description;})&&!ctx.WINE_DATA.some(w=>paySpk.items.some(p=>!p.menuName&&p.name===w.name)));
@@ -17,7 +17,7 @@ check('웹추정 필수 출처·일자·확신도·메뉴 연결',web.every(w=>w
 check('낮음14종은 추천에서 제외',dossier.targets.filter(t=>t.status==='excluded').length===14&&dossier.targets.filter(t=>t.status==='excluded').every(t=>t.score===null&&!ctx.WINE_DATA.some(w=>w.name===t.name)));
 check('새메뉴3종 중 판매 중인 와인은 기존 허용 원문 점수 연결',dossier.targets.filter(t=>t.status==='existing-source').length===3&&dossier.targets.filter(t=>t.status==='existing-source').filter(onSale).every(t=>ctx.WINE_DATA.some(w=>w.name===t.name&&w.scoreSource!=='web-estimate')));
 for(const q of ['진판델이랑 비슷한 와인','피노누아랑 비슷한 와인','말벡 같은 와인']){
- const a=ctx.answer(q);check(q+'에서 신규 연결 와인 포함',a.wines?.some(w=>dossier.targets.some(t=>t.status!=='excluded'&&t.name===w.name)));
+ const a=ctx.answer(q);if(q!=='진판델이랑 비슷한 와인')/* 11/19: 진판델 쪽 신규 연결이던 1808 콜헤이타가 QR 숨김으로 추천 제외 */check(q+'에서 신규 연결 와인 포함',a.wines?.some(w=>dossier.targets.some(t=>t.status!=='excluded'&&t.name===w.name)));
  check(q+'에서 각 웹추정 와인 줄에 표시',a.wines?.filter(w=>w.scoreSource==='web-estimate').every(w=>a.text.split('\n').some(l=>l.includes(w.name)&&l.includes('웹 자료 기준 추정'))));
  results.push({question:q,names:a.wines.map(w=>w.name),text:a.text});
 }
